@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--用户产生的内容-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/home_item_paddingbottom"
+            android:paddingTop="@dimen/home_item_paddingtop"
+              android:background="@color/hei"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/rl_item0_1"
+        android:paddingRight="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/image_1"
+            android:src="@drawable/icon_login_photo"
+            android:padding="10dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"/>
+
+        <TextView
+            android:id="@+id/tv_1"
+            android:textSize="10sp"
+            android:layout_marginTop="14dp"
+            android:layout_toRightOf="@id/image_1"
+            android:textColor="@color/bai_40"
+            android:text="09:30 pm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_2"
+            android:textSize="14sp"
+            android:layout_toRightOf="@id/image_1"
+            android:layout_below="@id/tv_1"
+            android:textColor="@color/text_click_bai60"
+            android:text="名字名字"
+            android:paddingTop="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/ib_1"
+        android:background="@null"
+        android:src="@drawable/btn_home_follow_selector"
+        android:layout_alignParentRight="true"
+        android:paddingTop="16dp"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <!-- 填充图片的内容区域 -->
+    <RelativeLayout
+        android:id="@+id/rl_2"
+        android:layout_marginTop="3dp"
+        android:layout_below="@id/rl_item0_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_3"
+        android:layout_below="@id/rl_2"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="18dp"
+        android:textColor="@color/bai_50"
+        android:textSize="15sp"
+        android:lineSpacingExtra="3dp"
+        android:text="周六带妹子去拍照，只有这张比较好"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/iv_tag_1"
+        android:layout_below="@id/tv_3"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/icon_home_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_3"
+        android:layout_below="@id/tv_3"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="9dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/ib_item0_more"
+        android:background="@null"
+        android:src="@drawable/btn_home_more_selector"
+        android:layout_below="@id/rl_3"
+        android:padding="10dp"
+        android:layout_marginTop="6dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_like_1"
+        android:layout_below="@id/rl_3"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="18dp"
+        android:drawablePadding="8dp"
+        android:padding="8dp"
+        android:text="17"
+        android:layout_toLeftOf="@id/ib_item0_more"
+        android:textSize="14sp"
+        android:textColor="@color/bai_60"
+        android:drawableLeft="@drawable/btn_home_like_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+    <TextView
+        android:id="@+id/tv_comment_1"
+        android:layout_below="@id/rl_3"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="18dp"
+        android:drawablePadding="8dp"
+        android:padding="8dp"
+        android:text="17"
+        android:textSize="14sp"
+        android:layout_toLeftOf="@id/tv_like_1"
+        android:textColor="@color/bai_60"
+        android:drawableLeft="@drawable/btn_home_comment_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

@@ -1,0 +1,129 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.0"
+
+    defaultConfig {
+        applicationId "com.juzi.xinyitu"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+
+    //    200       华为应用市场
+//    201       金立应用市场
+//    202       oppo应用市场
+//    203       酷派应用市场
+//    204       91应用市场
+
+//    205       豌豆荚应用市场
+//    206      360应用市场
+//    207      小米应用市场
+//    208      联想应用市场
+//    209      安卓市场
+
+//    210      安智市场
+//    211      应用汇
+//    212      腾讯
+//    213      一图官方H5
+//    214      好看图片新闻
+
+//    215      三星应用市场
+//    216      好看锁屏官方
+//    217      当乐
+//    218      UC
+//    219      N多网
+//    220      魅族应用市场
+//    221      GooglePlay商店
+
+    productFlavors {
+        huawei {
+            manifestPlaceholders = [CHANNEL_NAME: "200"]
+        }
+        jinli {
+            manifestPlaceholders = [CHANNEL_NAME: "201"]
+        }
+        oppo {
+            manifestPlaceholders = [CHANNEL_NAME: "202"]
+        }
+        kupai {
+            manifestPlaceholders = [CHANNEL_NAME: "203"]
+        }
+        shichang91 {
+            manifestPlaceholders = [CHANNEL_NAME: "204"]
+        }
+        wandoujia {
+            manifestPlaceholders = [CHANNEL_NAME: "205"]
+        }
+        shichang360 {
+            manifestPlaceholders = [CHANNEL_NAME: "206"]
+        }
+        xiaomi {
+            manifestPlaceholders = [CHANNEL_NAME: "207"]
+        }
+        lianxiang {
+            manifestPlaceholders = [CHANNEL_NAME: "208"]
+        }
+        anzhuo {
+            manifestPlaceholders = [CHANNEL_NAME: "209"]
+        }
+        anzhi {
+            manifestPlaceholders = [CHANNEL_NAME: "210"]
+        }
+        yingyonghui {
+            manifestPlaceholders = [CHANNEL_NAME: "211"]
+        }
+        tengxun {
+            manifestPlaceholders = [CHANNEL_NAME: "212"]
+        }
+        haokanyitu {
+            manifestPlaceholders = [CHANNEL_NAME: "213"]
+        }
+        haokanxinwen {
+            manifestPlaceholders = [CHANNEL_NAME: "214"]
+        }
+        sansung {
+            manifestPlaceholders = [CHANNEL_NAME: "215"]
+        }
+        haokanlookscreen {
+            manifestPlaceholders = [CHANNEL_NAME: "216"]
+        }
+        dangle {
+            manifestPlaceholders = [CHANNEL_NAME: "217"]
+        }
+        uc {
+            manifestPlaceholders = [CHANNEL_NAME: "218"]
+        }
+        nduowang {
+            manifestPlaceholders = [CHANNEL_NAME: "219"]
+        }
+        meizu {
+            manifestPlaceholders = [CHANNEL_NAME: "220"]
+        }
+        googleplay {
+            manifestPlaceholders = [CHANNEL_NAME: "221"]
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.loopj.android:android-async-http:1.4.9'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'com.j256.ormlite:ormlite-core:4.48'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
+    compile 'com.umeng.analytics:analytics:latest.integration'
+    compile files('libs/umeng-update-v2.6.0.1.jar')
+    compile project(':pullToRefreshLibrary')
+}

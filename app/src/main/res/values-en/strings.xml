@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">New Yitu</string>
+    <string name="lookmore">Look More</string>
+    <string name="welcome">Welcome</string>
+    <string name="welcome_sub">Only we know this place, a place where we belong</string>
+    <string name="have_account">Have account?</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="phonenum">PhoneNum</string>
+    <string name="invitecode">InviteCode</string>
+    <string name="indentifycode">Verify Code</string>
+    <string name="getindentifycode">Get Verify Code</string>
+    <string name="personal_data">Personal data</string>
+    <string name="skip">Skip</string>
+    <string name="nickname">Nickname</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+</resources>

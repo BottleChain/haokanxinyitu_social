@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension" />
+        <attr name="civ_border_color" format="color" />
+        <attr name="civ_border_overlay" format="boolean" />
+        <attr name="civ_fill_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="ClipCoverView">
+        <attr name="ccv_radius" format="dimension" />
+        <attr name="ccv_bg_color" format="color" />
+        <attr name="ccv_centerX" format="dimension" />
+        <attr name="ccv_centerY" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ZoomImageView">
+        <attr name="ziv_scaleType" format="integer" />
+        <attr name="ziv_hasClip" format="boolean" />
+    </declare-styleable>
+</resources>

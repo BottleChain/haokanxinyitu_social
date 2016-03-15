@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_marginTop="37dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/login_register_bg"
+        android:id="@+id/rl_item0_1"
+        android:layout_width="285dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_1"
+            android:text="@string/nickname"
+            android:textSize="14sp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginTop="74dp"
+            android:textColor="@color/hei_30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/et_1"
+            android:textSize="14sp"
+            android:background="@null"
+            android:layout_marginLeft="2dp"
+            android:layout_alignBaseline="@id/tv_1"
+            android:layout_toRightOf="@id/tv_1"
+            android:textColor="@color/edittext"
+            android:padding="7dp"
+            android:layout_marginRight="30dp"
+            android:inputType="phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:id="@+id/devider_1"
+            android:layout_below="@id/tv_1"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:background="@color/hei_10"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <TextView
+            android:id="@+id/tv_2"
+            android:text="@string/password"
+            android:textSize="14sp"
+            android:layout_below="@id/devider_1"
+            android:layout_marginLeft="36dp"
+            android:layout_marginTop="25dp"
+            android:textColor="@color/hei_30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/et_2"
+            android:textSize="14sp"
+            android:enabled="true"
+            android:background="@null"
+            android:layout_marginLeft="2dp"
+            android:inputType="textPassword"
+            android:padding="7dp"
+            android:layout_alignBaseline="@id/tv_2"
+            android:layout_toRightOf="@id/tv_2"
+            android:textColor="@color/edittext"
+            android:layout_marginRight="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:id="@+id/divider_2"
+            android:layout_below="@id/tv_2"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:background="@color/hei_10"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <TextView
+            android:id="@+id/tv_4"
+            android:layout_below="@id/divider_2"
+            android:layout_marginTop="29dp"
+            android:layout_marginBottom="25dp"
+            android:layout_centerHorizontal="true"
+            android:textSize="18sp"
+            android:text="@string/confirm"
+            android:padding="10dp"
+            android:textColor="@color/anhuang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <com.haokan.xinyitu.CustomView.CircleImageView
+        android:id="@+id/civ_1"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:src="@drawable/icon_login_photo"
+        app:civ_border_color = "#cce7e7e7"
+        app:civ_border_width = "4dp"
+        app:civ_border_overlay = "false"
+        android:layout_centerHorizontal="true"
+        android:layout_width="76dp"
+        android:layout_height="76dp"/>
+
+    <ImageView
+        android:src="@drawable/icon_login_editphoto"
+        android:layout_alignBottom="@id/civ_1"
+        android:layout_alignRight="@id/civ_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

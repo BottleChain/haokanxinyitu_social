@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="home_item_paddingtop">8dp</dimen>
+    <dimen name="home_item_paddingbottom">25dp</dimen>
+</resources>

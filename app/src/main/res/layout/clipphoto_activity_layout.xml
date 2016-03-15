@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@color/hei"
+    android:layout_height="match_parent">
+
+    <com.haokan.xinyitu.CustomView.ZoomImageView
+        android:id="@+id/ziv_1"
+        android:scaleType="matrix"
+        app:ziv_hasClip="true"
+        app:ziv_scaleType="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.haokan.xinyitu.clipphoto.ClipCoveredView
+        android:id="@+id/ccv_1"
+        app:ccv_radius="140dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/tv_1"
+        android:text="拖动或者缩放图片到合适位置"
+        android:textSize="16sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="65dp"
+        android:textColor="@color/bai"
+        android:layout_width="130dp"
+        android:gravity="center"
+        android:lineSpacingExtra="5dp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_2"
+        android:text="重新选择"
+        android:textSize="16sp"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/bai"
+        android:layout_width="100dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:layout_height="70dp"/>
+
+    <TextView
+        android:id="@+id/tv_3"
+        android:text="确认"
+        android:textSize="16sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/shihuang"
+        android:layout_width="100dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:layout_height="70dp"/>
+</RelativeLayout>

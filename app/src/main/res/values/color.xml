@@ -1,0 +1,31 @@
+<resources>
+    <color name="touming">#00000000</color>
+    <color name="bai">#ffffff</color>
+    <color name="bai_90">#e5ffffff</color>
+    <color name="bai_80">#ccffffff</color>
+    <color name="bai_70">#b2ffffff</color>
+    <color name="bai_60">#99ffffff</color>
+    <color name="bai_50">#7fffffff</color>
+    <color name="bai_40">#66ffffff</color>
+    <color name="bai_30">#4cffffff</color>
+    <color name="bai_20">#33ffffff</color>
+    <color name="bai_10">#19ffffff</color>
+
+    <color name="hei">#000000</color>
+    <color name="hei_90">#e5000000</color>
+    <color name="hei_80">#cc000000</color>
+    <color name="hei_70">#b2000000</color>
+    <color name="hei_60">#99000000</color>
+    <color name="hei_50">#7f000000</color>
+    <color name="hei_40">#66000000</color>
+    <color name="hei_30">#4c000000</color>
+    <color name="hei_20">#33000000</color>
+    <color name="hei_10">#19000000</color>
+
+    <color name="he1">#373737</color>
+
+    <color name="anhuang">#8c8c26</color>
+    <color name="shihuang">#ffbcbc24</color>
+    <color name="edittext">#ff000000</color>
+    <color name="minghuang">#ffDDD13B</color>
+</resources>

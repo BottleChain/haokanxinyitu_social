@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--这些家伙很牛B-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:paddingLeft="5dp"
+              android:paddingRight="5dp"
+              android:paddingTop="3dp"
+              android:paddingBottom="13dp"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:baselineAligned="false">
+
+    <include layout="@layout/item_timeline_3_child_child"
+             android:id="@+id/child1"
+             android:layout_weight="1"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+        />
+    <include layout="@layout/item_timeline_3_child_child"
+             android:id="@+id/child2"
+             android:layout_weight="1"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+        />
+
+    <include layout="@layout/item_timeline_3_child_child"
+             android:id="@+id/child3"
+             android:layout_weight="1"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+        />
+</LinearLayout>
