@@ -15,12 +15,13 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-import com.haokan.xinyitu.CustomView.ZoomImageView;
+import com.haokan.xinyitu.customView.ZoomImageView;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseActivity;
 import com.haokan.xinyitu.util.FileUtil;
 import com.haokan.xinyitu.util.ImageLoaderManager;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 public class ClipPhotoActivity extends BaseActivity implements View.OnClickListener {
@@ -44,8 +45,9 @@ public class ClipPhotoActivity extends BaseActivity implements View.OnClickListe
             public void onGlobalLayout() {
                 Rect clipRect = mCcv.getBoundRect();
                 mZiv.setClipRect(new RectF(clipRect));
+                mZiv.setEdgeRect(null);
                 mZiv.setMaxMinScale(3.0f, .01f);
-                ImageLoaderManager.getInstance().loadLocalPic(path, mZiv, new ImageLoadingListener() {
+                ImageLoaderManager.getInstance().loadLocalPic(ImageDownloader.Scheme.FILE.wrap(path), mZiv, new ImageLoadingListener() {
                     @Override
                     public void onLoadingStarted(String imageUri, View view) {
 
@@ -127,7 +129,7 @@ public class ClipPhotoActivity extends BaseActivity implements View.OnClickListe
             String path = ClipPhotoManager.onPickImgResult(this, data);
             if (!TextUtils.isEmpty(path)) {
                 mZiv.setImageBitmap(null);
-                ImageLoaderManager.getInstance().loadLocalPic(path, mZiv, null);
+                ImageLoaderManager.getInstance().loadLocalPic(ImageDownloader.Scheme.FILE.wrap(path), mZiv, null);
             }
         }
     }

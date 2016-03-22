@@ -1,8 +1,8 @@
 package com.haokan.xinyitu.login_register;
 
-import com.haokan.xinyitu.base.BaseBean;
+import com.haokan.xinyitu.base.BaseResponseBean;
 
-public class ResponseBeanRegister extends BaseBean {
+public class ResponseBeanRegister extends BaseResponseBean {
 
     /**
      * data : {"UserId":"1000016","SessionId":"01o485uhj7n9vumu0o0uqjjen7"}

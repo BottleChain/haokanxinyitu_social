@@ -8,7 +8,6 @@ import android.util.Log;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
-import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.ResponseHandlerInterface;
 
@@ -27,8 +26,9 @@ public class HttpClientManager {
 
     private HttpClientManager(Context context) {
         client = new AsyncHttpClient();
-        PersistentCookieStore myCookieStore = new PersistentCookieStore(context);
-        client.setCookieStore(myCookieStore);
+        //设置支持cookie
+//        PersistentCookieStore myCookieStore = new PersistentCookieStore(context);
+//        client.setCookieStore(myCookieStore);
     }
 
     public static HttpClientManager getInstance(Context context) {
@@ -99,7 +99,13 @@ public class HttpClientManager {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        // 上传文件
+        client.post(url, params, handler);
+    }
 
+    public void scondUploadCheck(String url, String fileMd5, AsyncHttpResponseHandler handler) {
+        RequestParams params = new RequestParams();
+        params.put("unique_id", fileMd5);
         // 上传文件
         client.post(url, params, handler);
     }

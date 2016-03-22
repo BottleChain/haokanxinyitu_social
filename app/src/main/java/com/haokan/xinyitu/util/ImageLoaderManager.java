@@ -17,7 +17,6 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.assist.ViewScaleType;
-import com.nostra13.universalimageloader.core.download.ImageDownloader;
 import com.nostra13.universalimageloader.core.imageaware.NonViewAware;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
@@ -48,7 +47,7 @@ public class ImageLoaderManager {
     }
 
     public void loadLocalPic(String path, ImageView img, ImageLoadingListener loadingListener) {
-        ImageLoader.getInstance().displayImage(ImageDownloader.Scheme.FILE.wrap(path), img, loadingListener);
+        ImageLoader.getInstance().displayImage(path, img, loadingListener);
     }
 
 	/**

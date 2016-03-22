@@ -1,6 +1,8 @@
 package com.haokan.xinyitu.login_register;
 
-public class RequestBeanLoginSms {
+import com.haokan.xinyitu.base.BaseRequestBean;
+
+public class RequestBeanLoginSms extends BaseRequestBean {
     private String mobile;
     private String smscode;
 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bai">
+
+    <RelativeLayout
+        android:id="@+id/rl_header"
+        android:background="@color/hei"
+        android:layout_width="match_parent"
+        android:layout_height="75dp">
+
+        <ImageButton
+            android:id="@+id/ib_bigimg_close"
+            android:background="@null"
+            android:layout_alignParentBottom="true"
+            android:padding="13dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/icon_bigimg_picclose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_upload_pickfolder"
+            android:text="所有照片"
+            android:textSize="14sp"
+            android:textColor="@color/click_bai"
+            android:padding="15dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="3dp"
+            android:drawablePadding="4dp"
+            android:drawableRight="@drawable/icon_upload_allpics_jiantou"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_confirm"
+            android:text="完成"
+            android:textSize="14sp"
+            android:textColor="@color/click_huang_2"
+            android:padding="18dp"
+            android:layout_marginRight="2dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/gv_upload_gridview"
+        android:layout_below="@id/rl_header"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:horizontalSpacing="3dp"
+        android:verticalSpacing="3dp"
+        android:listSelector="@null"
+        android:numColumns="3"
+        android:stretchMode="columnWidth">
+    </GridView>
+
+</RelativeLayout>

@@ -19,11 +19,13 @@
     <string name="nickname">昵称</string>
     <string name="confirm">确认</string>
     <string name="cancel">取消</string>
+    <!--<string name="upload_et_count">%1$d/150</string>-->
+
 
     <!-- view tag 中用到的key-->
     <string name="TAG_KEY_IMG_HOLDER">TAG_KEY_IMG_HOLDER</string>
     <string name="TAG_KEY_LISTENER_HOLDER">TAG_KEY_LISTENER_HOLDER</string>
-    <string name="TAG_KEY_SUB_BEAN">TAG_KEY_SUB_BEAN</string>
     <string name="TAG_KEY_IS_FADEIN">TAG_KEY_IS_FADEIN</string>
     <string name="TAG_KEY_POSITION">TAG_KEY_POSITION</string>
+    <string name="TAG_KEY_BEAN_FOR_BIGIMG">TAG_KEY_POSITION</string>
 </resources>

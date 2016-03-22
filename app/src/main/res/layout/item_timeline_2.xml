@@ -67,7 +67,7 @@
             android:textSize="14sp"
             android:layout_toRightOf="@id/image_1"
             android:layout_below="@id/tv_2"
-            android:textColor="@color/text_click_bai60"
+            android:textColor="@color/click_bai60"
             android:text="Colay Meyer"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"

@@ -1,6 +1,8 @@
 package com.haokan.xinyitu.login_register;
 
-public class RequestBeanRegister {
+import com.haokan.xinyitu.base.BaseRequestBean;
+
+public class RequestBeanRegister extends BaseRequestBean {
     private String mobile;
     private String nickname;
     private String invite;

@@ -3,7 +3,9 @@ package com.haokan.xinyitu.main;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
@@ -16,12 +18,26 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
+import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseActivity;
+import com.haokan.xinyitu.bigimgbrowse.BigImgBrowseActivity;
 import com.haokan.xinyitu.login_register.Login_Register_Activity;
+import com.haokan.xinyitu.main.discovery.DiscoveryFragment;
+import com.haokan.xinyitu.upload.UpLoadGalleryActivity;
 import com.haokan.xinyitu.util.CommonUtil;
 import com.haokan.xinyitu.util.ImageUtil;
+import com.haokan.xinyitu.util.ToastManager;
+import com.umeng.socialize.Config;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+
+import java.util.ArrayList;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -60,6 +76,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         assignViews();
 
         setDiscoveryFragment();
+
+        initShare();
+    }
+
+    private UMShareListener mUMShareListener;
+    /**
+     * 初始化分享用的一些东西，如dialog样式，回调监听，等
+     */
+    private void initShare() {
+        ProgressDialog dialog =  new ProgressDialog(this);
+        dialog.setMessage("分享中...");
+        Config.dialog = dialog;
+        Config.IsToastTip = true;
+        mUMShareListener = new UMShareListener() {
+            @Override
+            public void onResult(SHARE_MEDIA platform) {
+                Toast.makeText(MainActivity.this, platform + " 分享成功啦", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(SHARE_MEDIA platform, Throwable t) {
+                Toast.makeText(MainActivity.this, platform + " 分享失败啦", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancel(SHARE_MEDIA platform) {
+                //Toast.makeText(MainActivity.this, platform + " 分享取消了", Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
     private void setDiscoveryFragment() {
@@ -70,20 +115,41 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         transaction.commitAllowingStateLoss();
     }
 
-
+    private View mMorePopBtn; //点击弹出分享框的按钮，需要改变其select的状态，所以每次点击弹窗是记住点击的按钮，取消时把此按钮select（false）
     @Override
     public void onClick(View v) {
         if (CommonUtil.isQuickClick()) {
             return;
         }
-        if (v instanceof ImageView) {
+        if (v instanceof ImageView && !(v instanceof ImageButton)) {
             ImageUtil.changeLight((ImageView) v, true);
         }
         int id = v.getId();
         switch (id) {
+            case R.id.iv_for_bigimg: //点击图片进入大图浏览页
+                Object object = v.getTag(R.string.TAG_KEY_BEAN_FOR_BIGIMG);
+                if (object == null) {
+                    ToastManager.showShort(MainActivity.this, "该图片没有绑定数据");
+                } else {
+                    ArrayList<DemoImgBean> imgs = (ArrayList<DemoImgBean>) object;
+                    int pos = (int) v.getTag(R.string.TAG_KEY_POSITION);
+                    Intent ibigimg = new Intent(MainActivity.this, BigImgBrowseActivity.class);
+                    ibigimg.putExtra(BigImgBrowseActivity.EXTRA_USED, 1);
+                    ibigimg.putExtra(BigImgBrowseActivity.EXTRA_INIT_POSITION, pos);
+                    ibigimg.putParcelableArrayListExtra(BigImgBrowseActivity.EXTRA_IMG_DATA, imgs);
+                    startActivity(ibigimg);
+                    overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_retain);
+                }
+                break;
+            case R.id.iv_bottom_bar_3:
+                Intent i3 = new Intent(MainActivity.this, UpLoadGalleryActivity.class);
+                startActivity(i3);
+                overridePendingTransition(R.anim.activity_in_bottom2top, R.anim.activity_out_boootom2top);
+                break;
             case R.id.iv_bottom_bar_5:
-                Intent i = new Intent(MainActivity.this, Login_Register_Activity.class);
-                startActivity(i);
+                Intent i5 = new Intent(MainActivity.this, Login_Register_Activity.class);
+                startActivity(i5);
+                overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
                 break;
             case R.id.ib_item0_more://条目0的更多按钮
                 if (mMorePopupWindow == null) {
@@ -96,10 +162,73 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 mMorePopupWindow.showAtLocation(getWindow().getDecorView(), Gravity.BOTTOM, 0, 0);
                 mMorePopBg.startAnimation(AnimationUtils.loadAnimation(this, R.anim.popupwindow_bg_in));
                 mMorePopContent.startAnimation(AnimationUtils.loadAnimation(this, R.anim.popupwindow_bottom_in));
+                v.setSelected(true);
+                mMorePopBtn = v;
                 break;
-            case R.id.tv_morepop_cancel:
+            case R.id.tv_pop_cancel:
             case R.id.pop_shadow:
                 disMissMorePop();
+                mMorePopBtn.setSelected(false);
+                break;
+            case R.id.tv_morepop_weixin://微信分享
+                UMImage image = new UMImage(MainActivity.this,
+                        BitmapFactory.decodeResource(getResources(), R.drawable.icon_home_hot));
+
+                new ShareAction(this)
+                        .setPlatform(SHARE_MEDIA.WEIXIN)
+                        .setCallback(mUMShareListener)
+                        .withText("hello umeng video")
+                        .withTargetUrl("http://www.baidu.com")
+                        .withMedia(image)
+                        .share();
+                break;
+            case R.id.tv_morepop_qq://qq分享
+                UMImage image1 = new UMImage(MainActivity.this,
+                        BitmapFactory.decodeResource(getResources(), R.drawable.icon_home_hot));
+
+                new ShareAction(this)
+                        .setPlatform(SHARE_MEDIA.QQ)
+                        .setCallback(mUMShareListener)
+                        .withText("hello umeng video")
+                        .withTargetUrl("http://www.baidu.com")
+                        .withMedia(image1)
+                        .share();
+                break;
+            case R.id.tv_morepop_qqzone://qqzone分享
+                UMImage image2 = new UMImage(MainActivity.this,
+                        BitmapFactory.decodeResource(getResources(), R.drawable.icon_home_hot));
+
+                new ShareAction(this)
+                        .setPlatform(SHARE_MEDIA.QZONE)
+                        .setCallback(mUMShareListener)
+                        .withText("hello umeng video")
+                        .withTargetUrl("http://www.baidu.com")
+                        .withMedia(image2)
+                        .share();
+                break;
+            case R.id.tv_morepop_pengyouquan://朋友圈分享
+                UMImage image3 = new UMImage(MainActivity.this,
+                        BitmapFactory.decodeResource(getResources(), R.drawable.icon_home_hot));
+
+                new ShareAction(this)
+                        .setPlatform(SHARE_MEDIA.WEIXIN_CIRCLE)
+                        .setCallback(mUMShareListener)
+                        .withText("hello umeng video")
+                        .withTargetUrl("http://www.baidu.com")
+                        .withMedia(image3)
+                        .share();
+                break;
+            case R.id.tv_morepop_weibo://weibo分享
+                UMImage image4 = new UMImage(MainActivity.this,
+                        BitmapFactory.decodeResource(getResources(), R.drawable.icon_home_hot));
+
+                new ShareAction(this)
+                        .setPlatform(SHARE_MEDIA.SINA)
+                        .setCallback(mUMShareListener)
+                        .withText("hello umeng video")
+                        .withTargetUrl("http://www.baidu.com")
+                        .withMedia(image4)
+                        .share();
                 break;
             default:
                 break;
@@ -107,21 +236,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);//友盟分享需要重写的
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        App app = (App) getApplication();
+        if (app != null) { //为了清空app中的集合对象，这些对象是在upload一系列界面中赋值的，用来传递和共享数据
+            app.setBigImgData(null);
+            app.setImgDirs(null);
+            app.setCheckedImgs(null);
+        }
+    }
+
+    @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (mMorePopupWindow != null && mMorePopupWindow.isShowing()) {
+            disMissMorePop();
+            mMorePopBtn.setSelected(false);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void initMorePopupWindow() {
         View v = LayoutInflater.from(this).inflate(R.layout.homepage_more_popupwindow, null);
         mMorePopupWindow = new PopupWindow(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mMorePopupWindow.setFocusable(true);
+        mMorePopupWindow.setFocusable(false);
         mMorePopupWindow.setAnimationStyle(0);
 
         mMorePopBg = v.findViewById(R.id.pop_shadow);
-        mMorePopContent = v.findViewById(R.id.rl_content);
+        mMorePopContent = v.findViewById(R.id.ll_morepop_content);
 
         mMorePopBg.setOnClickListener(this);
-        v.findViewById(R.id.tv_morepop_cancel).setOnClickListener(this);
+        v.findViewById(R.id.tv_pop_cancel).setOnClickListener(this);
         v.findViewById(R.id.tv_morepop_qq).setOnClickListener(this);
         v.findViewById(R.id.tv_morepop_qqzone).setOnClickListener(this);
         v.findViewById(R.id.tv_morepop_weibo).setOnClickListener(this);
@@ -130,6 +281,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         v.findViewById(R.id.tv_morepop_jubao).setOnClickListener(this);
         v.findViewById(R.id.tv_morepop_download).setOnClickListener(this);
         v.findViewById(R.id.tv_morepop_delete).setOnClickListener(this);
+        mMorePopContent.setOnClickListener(this);
     }
 
     private void disMissMorePop() {
@@ -162,5 +314,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             animation.setFillAfter(true);
             mMorePopContent.startAnimation(animation);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Config.dialog = null; //释放一些绑定了此activity的资源，防止内存泄露
     }
 }

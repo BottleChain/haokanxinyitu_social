@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseActivity;
-import com.haokan.xinyitu.base.BaseBean;
+import com.haokan.xinyitu.base.BaseResponseBean;
 import com.haokan.xinyitu.clipphoto.ClipPhotoActivity;
 import com.haokan.xinyitu.clipphoto.ClipPhotoManager;
 import com.haokan.xinyitu.main.MainActivity;
@@ -36,6 +36,7 @@ import com.haokan.xinyitu.util.ToastManager;
 import com.haokan.xinyitu.util.UrlsUtil;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.io.File;
@@ -420,9 +421,9 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             Log.d("wangzixu", "getVerfyCodeToRegister url = " + url);
 
             startCountDown(mTvRegisterGetVerfyCode);
-            HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<BaseBean>() {
+            HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseBean response) {
+                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
                     if (response != null && response.getErr_code() != 0) {
                         ToastManager.showShort(Login_Register_Activity.this, response.getErr_msg());
                         resetGetVerfyCodeTv(mTvRegisterGetVerfyCode);
@@ -432,14 +433,14 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                 }
 
                 @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseBean errorResponse) {
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
                     ToastManager.showShort(Login_Register_Activity.this, "访问服务器失败");
                     resetGetVerfyCodeTv(mTvRegisterGetVerfyCode);
                 }
 
                 @Override
-                protected BaseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
-                    return JsonUtil.fromJson(rawJsonData, BaseBean.class);
+                protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                    return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
                 }
             });
         }
@@ -534,7 +535,6 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                 case R.id.civ_1: //头像选取
                     //ToastManager.showShort(Login_Register_Activity.this, "头像选取");
                     ImageUtil.changeLight(mIvPersonDataPhoto, true);
-
                     ClipPhotoManager.startPickImg(Login_Register_Activity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
                     break;
                 case R.id.tv_4: //确认
@@ -549,9 +549,9 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                         } else {
                             Log.d("wangzixu", "PersonDataClickListener sessionId = " + sessionId);
                         }
-                        String url = UrlsUtil.getUploadUrl(sessionId);
+                        String url = UrlsUtil.getUploadAvatarUrl(sessionId);
                         Log.d("wangzixu", "PersonDataClickListener url = " + url);
-                        HttpClientManager.getInstance(Login_Register_Activity.this).LogCookcie();
+                        //HttpClientManager.getInstance(Login_Register_Activity.this).LogCookcie();
                         File file = new File(mClipedHpPath);
                         if (file.exists() && file.length() > 0) {
                             HttpClientManager.getInstance(Login_Register_Activity.this).upLoadFile(url, file, new BaseJsonHttpResponseHandler<ResponseBeanUploadPh>() {
@@ -589,6 +589,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         if (resultCode != RESULT_OK) {
             return;
         }
+        Log.d("wangzixu", "onActivityResult resultCode, data = " + resultCode + ", " + data);
         if (requestCode == ClipPhotoManager.REQUEST_SELECT_PICK && data != null ) {
             Log.d("wangzixu", "onActivityResult data = " + data.getData());
             String path = ClipPhotoManager.onPickImgResult(this, data);
@@ -600,7 +601,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         } else if (requestCode == ClipPhotoManager.REQUEST_CLIP_PIC && data != null) {
             mClipedHpPath = data.getStringExtra(ClipPhotoManager.KEY_CLIP_PATH);
             if (!TextUtils.isEmpty(mClipedHpPath)) {
-                ImageLoaderManager.getInstance().loadLocalPic(mClipedHpPath, mIvPersonDataPhoto, new ImageLoadingListener() {
+                ImageLoaderManager.getInstance().loadLocalPic(ImageDownloader.Scheme.FILE.wrap(mClipedHpPath), mIvPersonDataPhoto, new ImageLoadingListener() {
                     @Override
                     public void onLoadingStarted(String imageUri, View view) {
                     }
@@ -681,7 +682,6 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                         edit.putString(ConstantValues.KEY_SP_USERID, userId);
                         edit.putString(ConstantValues.KEY_SP_SESSIONID, sessionId);
                         edit.apply();
-
                         goHomePageActivity();
                     } else {
                         ToastManager.showShort(Login_Register_Activity.this, response.getErr_msg());
@@ -711,9 +711,9 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             Log.d("wangzixu", "getVerfyCodeToRegister url = " + url);
 
             startCountDown(mTvLoginSmsGetVerfyCode);
-            HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<BaseBean>() {
+            HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseBean response) {
+                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
                     if (response != null && response.getErr_code() != 0) {
                         ToastManager.showShort(Login_Register_Activity.this, response.getErr_msg());
                     } else {
@@ -722,14 +722,14 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                 }
 
                 @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseBean errorResponse) {
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
                     ToastManager.showShort(Login_Register_Activity.this, "访问服务器失败");
                     resetGetVerfyCodeTv(mTvLoginSmsGetVerfyCode);
                 }
 
                 @Override
-                protected BaseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
-                    return JsonUtil.fromJson(rawJsonData, BaseBean.class);
+                protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                    return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
                 }
             });
         }
@@ -750,6 +750,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         super.onBackPressed();
+        overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
     }
 
     private Dialog mLoadingProgress;

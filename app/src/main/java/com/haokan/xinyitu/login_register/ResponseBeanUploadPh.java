@@ -1,8 +1,8 @@
 package com.haokan.xinyitu.login_register;
 
-import com.haokan.xinyitu.base.BaseBean;
+import com.haokan.xinyitu.base.BaseResponseBean;
 
-public class ResponseBeanUploadPh extends BaseBean {
+public class ResponseBeanUploadPh extends BaseResponseBean {
 
     private DataBean data;
 

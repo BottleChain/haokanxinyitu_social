@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"/>
     </RelativeLayout>
 
-    <com.haokan.xinyitu.CustomView.CircleImageView
+    <com.haokan.xinyitu.customView.CircleImageView
         android:id="@+id/civ_1"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:src="@drawable/icon_login_photo"

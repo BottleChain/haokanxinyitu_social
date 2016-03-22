@@ -12,7 +12,7 @@
         android:paddingTop="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#171717"
+        android:background="#ff111111"
         >
 
         <TextView
@@ -30,7 +30,7 @@
         <TextView
             android:id="@+id/tv_2"
             android:textSize="12sp"
-            android:textColor="@color/text_click_bai40"
+            android:textColor="@color/click_bai40"
             android:text="换一波"
             android:layout_alignParentRight="true"
             android:paddingLeft="10dp"

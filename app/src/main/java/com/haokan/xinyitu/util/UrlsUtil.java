@@ -22,6 +22,7 @@ public class UrlsUtil {
         public static final String URL_V = "1";
 
         public static final String URL_HOST_user = "http://user.demo.levect.com"; //用户部分域名，https://user.levect.com
+        public static final String URL_HOST_yitu = "http://1px.demo.levect.com"; //用户部分域名，http://1px.levect.com
         //注册登录
         public static final String URL_user_c = "apiUserLogin";
         public static final String URL_sendsms_a = "SendSms"; //发送短信
@@ -31,6 +32,10 @@ public class UrlsUtil {
         //用户上传头像
         public static final String URL_user_upload_c = "apiUserAvatar";
         public static final String URL_sendsms_upload_a = "Upload";
+
+
+        public static final String URL_img_upload_c = "apiimages";
+        public static final String URL_img_seconduploadCheck_a = "SecondUploadCheck"; //秒传a
     }
 
     public static String getSendSmsUrl(Context context, String jsonData) {
@@ -45,8 +50,12 @@ public class UrlsUtil {
         return getYiTuUrl(Urls.URL_HOST_user, Urls.URL_loginsms_a, Urls.URL_user_c, jsonData, Urls.URL_V, context);
     }
 
-    public static String getUploadUrl(String sessidonId) {
+    public static String getUploadAvatarUrl(String sessidonId) {
         return getYiTuUrlWithSessionId(Urls.URL_HOST_user, Urls.URL_sendsms_upload_a, Urls.URL_user_upload_c, null, Urls.URL_V, sessidonId);
+    }
+
+    public static String getSecondUploadCheckUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_img_seconduploadCheck_a, Urls.URL_img_upload_c, null, Urls.URL_V, sessidonId);
     }
 
 

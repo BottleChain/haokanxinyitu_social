@@ -39,7 +39,7 @@ public class SecurityUtil {
         InputStream fis;
         fis = new FileInputStream(file);
         byte [] buffer =  new   byte [1024];
-        int  numRead =  0 ;
+        int  numRead;
         while  ((numRead = fis.read(buffer)) >  0 ) {
             sMessageDigest.update(buffer, 0 , numRead);
         }
@@ -47,7 +47,7 @@ public class SecurityUtil {
         return  toHexString(sMessageDigest.digest());
     }
 
-	private static String toHexString(byte[] b) { // String to byte
+	private static String toHexString(byte[] b) { // byte 2 string
 		StringBuilder sb = new StringBuilder(b.length * 2);
         for (byte aB : b) {
             sb.append(HEX_DIGITS[(aB & 0xf0) >>> 4]);

@@ -35,7 +35,7 @@
             android:textSize="14sp"
             android:layout_toRightOf="@id/image_1"
             android:layout_below="@id/tv_1"
-            android:textColor="@color/text_click_bai60"
+            android:textColor="@color/click_bai60"
             android:text="名字名字"
             android:paddingTop="4dp"
             android:layout_width="wrap_content"
@@ -95,15 +95,31 @@
         android:layout_height="wrap_content">
     </RelativeLayout>
 
+        <!--android:padding="10dp"-->
+        <!--android:src="@drawable/btn_home_more_selector"-->
+    <!--<TextView-->
+        <!--android:id="@+id/ib_item0_more"-->
+        <!--android:background="@null"-->
+        <!--android:layout_below="@id/rl_3"-->
+        <!--android:layout_marginTop="7dp"-->
+        <!--android:drawableTop="@drawable/btn_home_more_selector"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_marginRight="5dp"-->
+        <!--android:paddingTop="8dp"-->
+        <!--android:layout_width="50dp"-->
+        <!--android:layout_height="34dp"/>-->
+
     <ImageButton
         android:id="@+id/ib_item0_more"
         android:background="@null"
         android:src="@drawable/btn_home_more_selector"
         android:layout_below="@id/rl_3"
-        android:padding="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="18dp"
         android:layout_marginTop="6dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -111,7 +127,7 @@
         android:id="@+id/tv_like_1"
         android:layout_below="@id/rl_3"
         android:layout_marginTop="8dp"
-        android:layout_marginRight="18dp"
+        android:layout_marginRight="10dp"
         android:drawablePadding="8dp"
         android:padding="8dp"
         android:text="17"

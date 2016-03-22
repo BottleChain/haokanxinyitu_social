@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 public class ClipPhotoManager {
 //    public static void startPickImg(Activity context, int requestCode) {
 //        Intent intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
 //        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
 //        context.startActivityForResult(intent, requestCode);
 //    }

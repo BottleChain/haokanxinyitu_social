@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <com.haokan.xinyitu.customView.ZoomImageViewPager
+        android:id="@+id/zivp_bigimg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <ImageButton
+        android:visibility="gone"
+        android:id="@+id/ib_bigimg_close"
+        android:background="@null"
+        android:src="@drawable/icon_bigimg_picclose"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <!-- 上传预览页用到的顶部样式 -->
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/rl_upload_preview"
+        android:background="@color/hei_50"
+        android:layout_width="match_parent"
+        android:layout_height="62dp">
+        <ImageButton
+            android:id="@+id/ib_upload_preview_back"
+            android:background="@null"
+            android:layout_alignParentBottom="true"
+            android:padding="18dp"
+            android:layout_marginLeft="2dp"
+            android:src="@drawable/icon_back_white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/ib_upload_preview_checked"
+            android:padding="15dp"
+            android:background="@null"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/upload_preivew_checked_bg_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <!-- 上传图片编辑也用到的顶部 -->
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/rl_upload_imgedit"
+        android:background="@color/hei_50"
+        android:layout_width="match_parent"
+        android:layout_height="62dp">
+        <ImageButton
+            android:id="@+id/ib_upload_imgedit_back"
+            android:background="@null"
+            android:layout_alignParentBottom="true"
+            android:padding="18dp"
+            android:layout_marginLeft="2dp"
+            android:src="@drawable/icon_back_white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_upload_imgedit_title"
+            android:text="2/6"
+            android:textColor="@color/bai"
+            android:textSize="13sp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/ib_upload_imgedit_delete"
+            android:padding="16dp"
+            android:background="@null"
+            android:layout_marginRight="4dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/icon_upload_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+</RelativeLayout>

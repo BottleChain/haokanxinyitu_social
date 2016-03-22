@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
 public class Login_Register_SwAnim_Manager {
-    private static TimeInterpolator sInterpolatorIn = new TimeInterpolator() {
+    public static TimeInterpolator sInterpolatorIn = new TimeInterpolator() {
         @Override
         public float getInterpolation(float input) {
             input -= 1.0f;

@@ -5,7 +5,7 @@
     android:background="@color/hei"
     android:layout_height="match_parent">
 
-    <com.haokan.xinyitu.CustomView.ZoomImageView
+    <com.haokan.xinyitu.customView.ZoomImageView
         android:id="@+id/ziv_1"
         android:scaleType="matrix"
         app:ziv_hasClip="true"
