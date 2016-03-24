@@ -16,7 +16,8 @@ public class ImgAndTagWallManager {
     private int mMinItemH; //特别扁的图片的最小高度
     private int mMinItemImgW; //特别长的图片的最小宽度
     private int mMaxCountInItem = 5; //每个条目最多容许几张图片
-    private int mTagTextSize;
+
+    private int mTagTextSize; //tag的字体大小
     private int mTagTextPadding; //左右上下各有5dp的padding，好点击
     private int mTagRlMargin; //左右各15dp margin
     private int mTagBaseW; //tags第一行的左边偏移量
@@ -50,29 +51,54 @@ public class ImgAndTagWallManager {
         mTagRlMargin = DisplayUtil.dip2px(context, 15);
     }
 
-    public void initTagsWall(ArrayList<DemoTagBean> tags) {
+    public void initTagsWallForItem0(ArrayList<DemoTagBean> tags) {
         int textPadding = 2 * mTagTextPadding; //左右上下各有5dp的padding，好点击，所以罗列高度时需要加上2倍padding值
         int rlWidth = mScreenW - mTagRlMargin * 2; //左右各15dp
         int baseW = mTagBaseW;
         int currentTop = 0;
+        int textSize = mTagTextSize;
 
+        initTagsWall(tags, textPadding, textPadding, rlWidth, baseW, currentTop, textSize, textSize, 0, 0, 0, 0);
+    }
+
+    /**
+     * 标签显示的位置计算，暂时只考虑了水平有drawable情况，竖直没有drawable。
+     * @param tags 标签实体类
+     * @param textPaddingH 标签的水平padding，左padding+右padding
+     * @param textPaddingV 标签的竖直padding，上padding + 下padding
+     * @param rlWidth 标签父容器的width
+     * @param baseW 第一行tag的左偏移量
+     * @param currentTop 第一行tag的顶部起始偏移量
+     * @param textSize 字体大小
+     * @param textHeight 字体高，可能drawable比较高，所以字高不一定能用textsize
+     * @param drawablePadding 水平drawable padding
+     * @param drawableWidth 水平drawable宽
+     */
+    public void initTagsWall(ArrayList<DemoTagBean> tags, int textPaddingH, int textPaddingV
+            , int rlWidth, int baseW, int currentTop, int textSize, int textHeight, int drawablePadding, int drawableWidth
+            , int textMarginH, int textMarginV) {
+
+        int currentLineCount = 0; //当前行有几个标签了，每行至少有一个标签，长过一行，后面省略
         for (int i = 0; i < tags.size(); i++) {
             DemoTagBean bean = tags.get(i);
             String tag = bean.getName();
-            int tagw = tag.length() * mTagTextSize + textPadding;
+            int tagw = tag.length() * textSize + textPaddingH + drawablePadding + drawableWidth + textMarginH; //tag有多宽，字数*字宽 + xxx
             bean.setMarginTop(currentTop);
             bean.setMarginLeft(baseW);
             baseW = baseW + tagw;
             int delta = rlWidth - baseW; //当前行右边还剩下多少空间
-            if (delta < 0) {//加上此行溢出了，所以要换行。textPadding + 2 * mTagTextSize
+            if (delta < 0 && currentLineCount > 0) {//加上此行溢出了，所以要换行。textPadding + 2 * mTagTextSize
+                currentLineCount = 0;
                 i--;
-                currentTop = currentTop + mTagTextSize + textPadding;
+                currentTop = currentTop + textHeight + textPaddingV + textMarginV;
                 baseW = 0;
+            } else {
+                currentLineCount ++;
             }
         }
     }
 
-    public void processImgAndTagWall(ArrayList<ResponseBeanDiscovery> data) {
+    public void processImgAndTagWallForItem0(ArrayList<ResponseBeanDiscovery> data) {
         for (int i = 0; i <data.size(); i++) {
             ResponseBeanDiscovery beanDiscovery = data.get(i);
             int type = beanDiscovery.getType();
@@ -82,7 +108,7 @@ public class ImgAndTagWallManager {
             }
             if (type == 0) { //带标签的类型，需要处理标签
                 ArrayList<DemoTagBean> tags = beanDiscovery.getTags();
-                initTagsWall(tags);
+                initTagsWallForItem0(tags);
             }
         }
     }

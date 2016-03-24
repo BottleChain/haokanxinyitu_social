@@ -69,7 +69,7 @@ public class DiscoveryFragmentAdapter extends BaseAdapter {
 
         mHelper = new FragmentAdapterItemHelper(context, onClickListener);
         //处理数据中的imgLine和tags
-        ImgAndTagWallManager.getInstance(context).processImgAndTagWall(mData);
+        ImgAndTagWallManager.getInstance(context).processImgAndTagWallForItem0(mData);
     }
 
     @Override

@@ -96,7 +96,7 @@ public class FragmentAdapterItemHelper {
         int textPadding = ImgAndTagWallManager.getInstance(mContext).getTagTextPadding();
         for (int i = 0; i < tags.size(); i++) {
             DemoTagBean bean = tags.get(i);
-            String tag = tags.get(i).getName();
+            String tag = bean.getName();
             TextView tv = new TextView(mContext);
             tv.setText(tag);
             tv.setTextColor(mTagTextColor);
@@ -111,7 +111,7 @@ public class FragmentAdapterItemHelper {
 //                    + ", " + bean.getItemWidth() + ", " + bean.getItemHeigh());
             tv.setLayoutParams(lp);
             holder.rl3.addView(tv);
-
+            tv.setId(R.id.tv_tag);
             tv.setOnClickListener(mOnClickListener);
         }
         return convertView;

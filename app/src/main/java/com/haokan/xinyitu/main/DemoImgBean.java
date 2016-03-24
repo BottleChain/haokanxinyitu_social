@@ -15,16 +15,24 @@ public class DemoImgBean implements Parcelable {
     private int itemWidth;
     private int itemHeigh;
 
-//    private boolean isChecked; //该图片是否被选中
+    private boolean upLoadFailed; //图片上传接口上，此张图上传失败了
+    private String image_id; //图片id
 
-//    public boolean isChecked() {
-//        return isChecked;
-//    }
+    public String getImage_id() {
+        return image_id;
+    }
 
-//    public void setIsChecked(boolean isChecked) {
-//        this.isChecked = isChecked;
-//    }
+    public void setImage_id(String image_id) {
+        this.image_id = image_id;
+    }
 
+    public boolean isUpLoadFailed() {
+        return upLoadFailed;
+    }
+
+    public void setUpLoadFailed(boolean upLoadFailed) {
+        this.upLoadFailed = upLoadFailed;
+    }
 
     public String getMd5() {
         return md5;

@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
-                android:id="@+id/et_uploadmain_edit"
+                android:id="@+id/et_upload_edit"
                 android:hint="描述一下您的作品吧"
                 android:paddingTop="10dp"
                 android:paddingLeft="10dp"
@@ -58,7 +58,7 @@
 
             <TextView
                 android:id="@+id/tv_textcount"
-                android:layout_below="@id/et_uploadmain_edit"
+                android:layout_below="@id/et_upload_edit"
                 android:gravity="right"
                 android:paddingBottom="10dp"
                 android:paddingRight="15dp"

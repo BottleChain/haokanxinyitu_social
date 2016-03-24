@@ -554,7 +554,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                         //HttpClientManager.getInstance(Login_Register_Activity.this).LogCookcie();
                         File file = new File(mClipedHpPath);
                         if (file.exists() && file.length() > 0) {
-                            HttpClientManager.getInstance(Login_Register_Activity.this).upLoadFile(url, file, new BaseJsonHttpResponseHandler<ResponseBeanUploadPh>() {
+                            HttpClientManager.getInstance(Login_Register_Activity.this).upLoadAvatarFile(url, file, new BaseJsonHttpResponseHandler<ResponseBeanUploadPh>() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanUploadPh response) {
                                     ToastManager.showShort(Login_Register_Activity.this, "上传成功 = " + response.getErr_msg());

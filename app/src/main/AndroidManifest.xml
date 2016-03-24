@@ -16,6 +16,14 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <!--用于进行网络定位-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!--用于访问GPS定位-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!--这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <!--用于读取手机当前的状态-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
@@ -25,6 +33,10 @@
                  android:name=".App"
                  android:icon="@mipmap/ic_launcher"
                  android:theme="@style/AppTheme">
+
+        <!-- 高德定位key-->
+        <meta-data android:name="com.amap.api.v2.apikey" android:value="79a70f1aae29c8340b42646cae9dfcc8">
+        </meta-data>
 
         <!-- ###################添加UmengAppkey###################### -->
         <meta-data
@@ -86,6 +98,9 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <!--###################友盟分享用到的activity，end###################### -->
 
+        <!-- 高德定位服务-->
+        <service android:name="com.amap.api.location.APSService"/>
+
         <activity
             android:name="com.haokan.xinyitu.splash.SplashActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
@@ -126,6 +141,15 @@
             <!--android:launchMode="singleInstance"-->
         <activity
             android:name=".upload.UpLoadMainActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".upload.UploadTagsActivity"
+            android:windowSoftInputMode = "adjustResize"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".upload.UploadLocationActivity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:screenOrientation="portrait" />
     </application>

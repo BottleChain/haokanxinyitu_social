@@ -3,6 +3,7 @@ package com.haokan.xinyitu.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -13,6 +14,7 @@ import com.loopj.android.http.ResponseHandlerInterface;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.client.protocol.ClientContext;
@@ -92,7 +94,7 @@ public class HttpClientManager {
         params.put("soundtrack", new ByteArrayInputStream(myByteArray), "she-wolf.mp3");
      */
 
-    public void upLoadFile(String url, File file, AsyncHttpResponseHandler handler) {
+    public void upLoadAvatarFile(String url, File file, AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         try {
             params.put("upfile", file);
@@ -106,6 +108,41 @@ public class HttpClientManager {
     public void scondUploadCheck(String url, String fileMd5, AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         params.put("unique_id", fileMd5);
+        // 上传文件
+        client.post(url, params, handler);
+    }
+
+    public void upLoadImgFile(String url, File file,String title,ArrayList<String> tags,AsyncHttpResponseHandler handler) {
+        RequestParams params = new RequestParams();
+        try {
+            params.put("upfile", file);
+            if (!TextUtils.isEmpty(title)) {
+                params.put("image_title", title);
+            }
+            if (tags != null) {
+                for (int i = 0; i < tags.size(); i++) {
+                    params.add("tags[]", tags.get(i));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        // 上传文件
+        client.post(url, params, handler);
+    }
+
+    public void secondUpLoadFile(String url, String unique_id, String title, String fileName, ArrayList<String> tags,AsyncHttpResponseHandler handler) {
+        RequestParams params = new RequestParams();
+        params.put("unique_id", unique_id);
+        params.put("file_name", fileName);
+        if (!TextUtils.isEmpty(title)) {
+            params.put("image_title", title);
+        }
+        if (tags != null) {
+            for (int i = 0; i < tags.size(); i++) {
+                params.add("tags[]", tags.get(i));
+            }
+        }
         // 上传文件
         client.post(url, params, handler);
     }

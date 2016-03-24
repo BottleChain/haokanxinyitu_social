@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="#e7e7e7">
+
+    <RelativeLayout
+        android:id="@+id/rl_header"
+        android:background="@color/hei"
+        android:layout_width="match_parent"
+        android:layout_height="72dp">
+
+        <ImageButton
+            android:id="@+id/ib_back"
+            android:background="@null"
+            android:layout_alignParentBottom="true"
+            android:padding="18dp"
+            android:src="@drawable/icon_back_white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_upload_pickfolder"
+            android:text="所在位置"
+            android:textSize="14sp"
+            android:textColor="@color/click_bai"
+            android:padding="15dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/et_upload_edit"
+        android:layout_below="@id/rl_header"
+        android:layout_marginTop="9dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textSize="14sp"
+        android:background="@drawable/location_edit_bg"
+        android:paddingLeft="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"/>
+
+    <TextView
+        android:id="@+id/tv_edit_bg"
+        android:focusable="false"
+        android:layout_below="@id/rl_header"
+        android:text="搜索附近位置"
+        android:textSize="14sp"
+        android:textColor="@color/hei_30"
+        android:drawableLeft="@drawable/icon_upload_search"
+        android:drawablePadding="6dp"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="9dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_height="30dp"/>
+
+    <ListView
+        android:id="@+id/lv_location"
+        android:layout_below="@+id/et_upload_edit"
+        android:layout_marginTop="9dp"
+        android:listSelector="@color/touming"
+        android:divider="@null"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
+
+</RelativeLayout>

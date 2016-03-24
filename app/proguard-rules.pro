@@ -184,3 +184,9 @@
 -printusage unused.txt
 #混淆前后的映射
 -printmapping mapping.txt
+
+# -------begin高德地图--------
+-keep class com.amap.api.location.**{*;}
+-keep class com.amap.api.fence.**{*;}
+-keep class com.autonavi.aps.amapapi.model.**{*;}
+# -------end高德地图--------
