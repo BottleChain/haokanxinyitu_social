@@ -24,7 +24,6 @@ import com.haokan.xinyitu.base.BaseActivity;
 import com.haokan.xinyitu.base.BaseResponseBean;
 import com.haokan.xinyitu.clipphoto.ClipPhotoActivity;
 import com.haokan.xinyitu.clipphoto.ClipPhotoManager;
-import com.haokan.xinyitu.main.MainActivity;
 import com.haokan.xinyitu.util.CommonUtil;
 import com.haokan.xinyitu.util.ConstantValues;
 import com.haokan.xinyitu.util.HttpClientManager;
@@ -49,6 +48,7 @@ import cz.msebera.android.httpclient.Header;
 public class Login_Register_Activity extends BaseActivity implements View.OnClickListener {
 
     private RelativeLayout mRlContent;
+    private RelativeLayout mRlThirdLogin;
     private ImageView mIvBg;
     private ImageButton mClose;
     private ImageButton mBack;
@@ -74,6 +74,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
 
     private void assignViews() {
         mRlContent = (RelativeLayout) findViewById(R.id.rl_content);
+        mRlThirdLogin = (RelativeLayout) findViewById(R.id.rl_third_login);
         mIvBg = (ImageView) findViewById(R.id.iv_bg);
         int i = new Random().nextInt(3);
         mIvBg.setImageResource(mBgIds[i]);
@@ -300,6 +301,8 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         mTvSkip.setVisibility(View.VISIBLE);
         mTvSkip.setTranslationX(mScreenW);
 
+//        final ValueAnimator animout = Login_Register_SwAnim_Manager.rightToLeftOut(mScreenW
+//                , mLayoutRegister, mWelcome, mWelcomeSub, mRlThirdLogin);
         final ValueAnimator animout = Login_Register_SwAnim_Manager.rightToLeftOut(mScreenW
                 , mLayoutRegister, mWelcome, mWelcomeSub);
         final ValueAnimator animin = Login_Register_SwAnim_Manager.rightToLeftIn(mScreenW
@@ -747,10 +750,10 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     }
 
     private void goHomePageActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, MainActivity.class);
+//        startActivity(intent);
         super.onBackPressed();
-        overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+        overridePendingTransition(R.anim.activity_in_top2bottom, R.anim.activity_out_top2bottom);
     }
 
     private Dialog mLoadingProgress;

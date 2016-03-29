@@ -3,12 +3,15 @@ package com.haokan.xinyitu;
 import android.app.Application;
 
 import com.haokan.xinyitu.main.DemoImgBean;
+import com.haokan.xinyitu.main.DemoTagBean;
 import com.haokan.xinyitu.util.ImageLoaderManager;
 import com.umeng.socialize.PlatformConfig;
 
 import java.util.ArrayList;
 
 public class App extends Application {
+    public static String sessionId = "";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -55,5 +58,19 @@ public class App extends Application {
 
     public void setCheckedImgs(ArrayList<DemoImgBean> checkedImgs) {
         mCheckedImgs = checkedImgs;
+    }
+
+    /**
+     * 发布作品是需要添加标签，标签页和添加页之间的标签数据需要来回传递，用intent麻烦，而且数据model没必要来回new新的，用app共享数据
+     * //注意置空
+     */
+    private ArrayList<DemoTagBean> mTagsTemp;
+
+    public ArrayList<DemoTagBean> getTagsTemp() {
+        return mTagsTemp;
+    }
+
+    public void setTagsTemp(ArrayList<DemoTagBean> tagsTemp) {
+        mTagsTemp = tagsTemp;
     }
 }

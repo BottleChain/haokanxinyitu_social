@@ -80,25 +80,37 @@
                 android:id="@+id/rl_uploadmian_addtag"
                 android:layout_below="@id/devider_1"
                 android:layout_width="match_parent"
+                android:paddingBottom="7dp"
+                android:paddingLeft="7dp"
+                android:paddingTop="7dp"
                 android:background="@drawable/rl_bg_selector_bai"
-                android:layout_height="44dp">
-
-                <TextView
-                    android:text="# 点击添加标签"
-                    android:textSize="14sp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="14dp"
-                    android:textColor="@color/hei_40"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
+                android:layout_height="wrap_content">
                 <ImageView
+                    android:id="@+id/iv_right_jiantou"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="15dp"
                     android:src="@drawable/icon_upload_right_jiantou"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
+
+                <RelativeLayout
+                    android:id="@+id/rl_uploadmian_addtag_container"
+                    android:layout_toLeftOf="@id/iv_right_jiantou"
+                    android:layout_marginRight="2dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_add_tag"
+                        android:text="# 点击添加标签"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="7dp"
+                        android:textColor="@color/hei_40"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
 
             </RelativeLayout>
 

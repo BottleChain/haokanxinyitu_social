@@ -64,8 +64,8 @@ public class ImgAndTagWallManager {
     /**
      * 标签显示的位置计算，暂时只考虑了水平有drawable情况，竖直没有drawable。
      * @param tags 标签实体类
-     * @param textPaddingH 标签的水平padding，左padding+右padding
-     * @param textPaddingV 标签的竖直padding，上padding + 下padding
+     * @param textPaddingW 标签的水平padding，左padding+右padding
+     * @param textPaddingH 标签的竖直padding，上padding + 下padding
      * @param rlWidth 标签父容器的width
      * @param baseW 第一行tag的左偏移量
      * @param currentTop 第一行tag的顶部起始偏移量
@@ -74,7 +74,7 @@ public class ImgAndTagWallManager {
      * @param drawablePadding 水平drawable padding
      * @param drawableWidth 水平drawable宽
      */
-    public void initTagsWall(ArrayList<DemoTagBean> tags, int textPaddingH, int textPaddingV
+    public void initTagsWall(ArrayList<DemoTagBean> tags, int textPaddingW, int textPaddingH
             , int rlWidth, int baseW, int currentTop, int textSize, int textHeight, int drawablePadding, int drawableWidth
             , int textMarginH, int textMarginV) {
 
@@ -82,7 +82,7 @@ public class ImgAndTagWallManager {
         for (int i = 0; i < tags.size(); i++) {
             DemoTagBean bean = tags.get(i);
             String tag = bean.getName();
-            int tagw = tag.length() * textSize + textPaddingH + drawablePadding + drawableWidth + textMarginH; //tag有多宽，字数*字宽 + xxx
+            int tagw = tag.length() * textSize + textPaddingW + drawablePadding + drawableWidth + textMarginH; //tag有多宽，字数*字宽 + xxx
             bean.setMarginTop(currentTop);
             bean.setMarginLeft(baseW);
             baseW = baseW + tagw;
@@ -90,7 +90,7 @@ public class ImgAndTagWallManager {
             if (delta < 0 && currentLineCount > 0) {//加上此行溢出了，所以要换行。textPadding + 2 * mTagTextSize
                 currentLineCount = 0;
                 i--;
-                currentTop = currentTop + textHeight + textPaddingV + textMarginV;
+                currentTop = currentTop + textHeight + textPaddingH + textMarginV;
                 baseW = 0;
             } else {
                 currentLineCount ++;

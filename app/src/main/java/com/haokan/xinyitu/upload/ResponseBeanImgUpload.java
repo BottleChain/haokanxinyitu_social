@@ -1,6 +1,7 @@
 package com.haokan.xinyitu.upload;
 
 import com.haokan.xinyitu.base.BaseResponseBean;
+import com.haokan.xinyitu.main.DemoTagBean;
 
 import java.util.List;
 
@@ -27,13 +28,13 @@ public class ResponseBeanImgUpload extends BaseResponseBean{
          */
 
         private RBIUImageBean image;
-        private List<RBIUTagsBean> tags;
+        private List<DemoTagBean> tags;
 
         public void setImage(RBIUImageBean image) {
             this.image = image;
         }
 
-        public void setTags(List<RBIUTagsBean> tags) {
+        public void setTags(List<DemoTagBean> tags) {
             this.tags = tags;
         }
 
@@ -41,7 +42,7 @@ public class ResponseBeanImgUpload extends BaseResponseBean{
             return image;
         }
 
-        public List<RBIUTagsBean> getTags() {
+        public List<DemoTagBean> getTags() {
             return tags;
         }
 
@@ -98,32 +99,6 @@ public class ResponseBeanImgUpload extends BaseResponseBean{
 
             public String getCreate_time() {
                 return create_time;
-            }
-        }
-
-        public static class RBIUTagsBean {
-            /**
-             * id : 83879b097a78f99f
-             * name : 测试标题2
-             */
-
-            private String id;
-            private String name;
-
-            public void setId(String id) {
-                this.id = id;
-            }
-
-            public void setName(String name) {
-                this.name = name;
-            }
-
-            public String getId() {
-                return id;
-            }
-
-            public String getName() {
-                return name;
             }
         }
     }

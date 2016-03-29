@@ -110,6 +110,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".login_register.Login_Register_Activity"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
@@ -145,7 +146,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".upload.UploadTagsActivity"
-            android:windowSoftInputMode = "adjustResize"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:screenOrientation="portrait" />
         <activity

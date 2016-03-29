@@ -6,12 +6,15 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.widget.ImageView;
 
+import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseActivity;
-import com.haokan.xinyitu.login_register.Login_Register_Activity;
+import com.haokan.xinyitu.main.MainActivity;
 import com.haokan.xinyitu.util.CommonUtil;
+import com.haokan.xinyitu.util.ConstantValues;
 import com.haokan.xinyitu.util.HttpClientManager;
 
 public class SplashActivity extends BaseActivity {
@@ -37,6 +40,9 @@ public class SplashActivity extends BaseActivity {
                 launcherHome();
             }
         };
+
+        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        App.sessionId = defaultSharedPreferences.getString(ConstantValues.KEY_SP_SESSIONID, "");
 
         String versionName = CommonUtil.getLocalVersionName(this);
         SharedPreferences sp = getSharedPreferences(PREFERENCE_GUIDE_PAGE, Context.MODE_PRIVATE);
@@ -69,7 +75,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void launcherHome() {
-        Intent i = new Intent(SplashActivity.this, Login_Register_Activity.class);
+        Intent i = new Intent(SplashActivity.this, MainActivity.class);
         startActivity(i);
         finish();
         overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);

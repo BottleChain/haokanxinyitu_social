@@ -1,15 +1,15 @@
 package com.haokan.xinyitu.upload;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -18,10 +18,12 @@ import android.widget.TextView;
 import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseActivity;
+import com.haokan.xinyitu.base.BaseResponseBean;
 import com.haokan.xinyitu.bigimgbrowse.BigImgBrowseActivity;
 import com.haokan.xinyitu.main.DemoImgBean;
+import com.haokan.xinyitu.main.DemoTagBean;
 import com.haokan.xinyitu.util.CommonUtil;
-import com.haokan.xinyitu.util.ConstantValues;
+import com.haokan.xinyitu.util.DisplayUtil;
 import com.haokan.xinyitu.util.HttpClientManager;
 import com.haokan.xinyitu.util.ImageLoaderManager;
 import com.haokan.xinyitu.util.ImageUtil;
@@ -46,18 +48,26 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
     private TextView mTvConfirm;
     private EditText mEtUploadmainEdit;
     private TextView mTvTextcount;
-    private View mDevider1;
     private RelativeLayout mRlUploadmianAddtag;
-    private View mDevider2;
+    private RelativeLayout mRlUploadmianAddtagContainer;
     private TextView mTvUploadmainGoonadd;
+    private TextView mTvAddTag;
     private RelativeLayout mRlUploadmain;
     private RelativeLayout mRlUploadmainLocation;
     private ArrayList<DemoImgBean> mImgData;
     private Handler mHandler = new Handler();
-
     private int mLastLoadImgCount;
-    private SharedPreferences mDefaultSharedPreferences;
+    private ProgressDialog mProgressDialog;
 
+    private int START_CODE_TAG = 100;
+    private int START_CODE_LOCATION = 101;
+
+    private int mTagTextPadding;
+    private int mTagTextSizePx; //px
+    private int mTagTextSize; //sp
+    private int mTagDrawablePading;
+    private int mTagDrawableWidth;
+    private int mTagRlWidth;
 
     private void assignViews() {
         mRlHeader = (RelativeLayout) findViewById(R.id.rl_header);
@@ -65,9 +75,9 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
         mTvConfirm = (TextView) findViewById(R.id.tv_confirm);
         mEtUploadmainEdit = (EditText) findViewById(R.id.et_upload_edit);
         mTvTextcount = (TextView) findViewById(R.id.tv_textcount);
-        mDevider1 = findViewById(R.id.devider_1);
+        mTvAddTag = (TextView) findViewById(R.id.tv_add_tag);
         mRlUploadmianAddtag = (RelativeLayout) findViewById(R.id.rl_uploadmian_addtag);
-        mDevider2 = findViewById(R.id.devider_2);
+        mRlUploadmianAddtagContainer = (RelativeLayout) findViewById(R.id.rl_uploadmian_addtag_container);
         mTvUploadmainGoonadd = (TextView) findViewById(R.id.tv_uploadmain_goonadd);
         mRlUploadmain = (RelativeLayout)findViewById(R.id.rl_uploadmain);
         mRlUploadmainLocation = (RelativeLayout)findViewById(R.id.rl_uploadmian_location);
@@ -78,6 +88,14 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
         mRlUploadmianAddtag.setOnClickListener(this);
         mTvUploadmainGoonadd.setOnClickListener(this);
         mRlUploadmainLocation.setOnClickListener(this);
+
+        //添加标签用的属性值
+        mTagTextSize = 14;
+        mTagTextSizePx = DisplayUtil.sp2px(this, mTagTextSize);
+        mTagTextPadding = DisplayUtil.dip2px(this, 7);
+        mTagRlWidth = getResources().getDisplayMetrics().widthPixels - DisplayUtil.dip2px(this, 30);
+        mTagDrawablePading = DisplayUtil.dip2px(this, 4);
+        mTagDrawableWidth = DisplayUtil.dip2px(this, 13);
     }
 
     @Override
@@ -144,31 +162,31 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
 
     private boolean mHasFillTagIds;
     private ArrayList<String> mTagIds;
+    private String mAlbumDes; //组图的配字
     /**
      * 发布图片，包括3步，1-检测图片是否支持秒传，2-支持秒传则走秒传接口，否则走传图片接口，3-发布组图
      * ps：步骤1和2是每张图进行一次，把服务器返回的每张图片的码集合起来一起再发布组图
      */
     private void releaseImgs() {
-        if (mDefaultSharedPreferences == null) {
-            mDefaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        }
-        final String sessionId = mDefaultSharedPreferences.getString(ConstantValues.KEY_SP_SESSIONID, "");
-        if (TextUtils.isEmpty(sessionId)) {
-            //ToastManager.showShort(this, "sessionId null, return!");
-            Log.d("wangzixu", "releaseImgs sessionId is null, return");
+        if (TextUtils.isEmpty(App.sessionId)) {
+            ToastManager.showShort(UpLoadMainActivity.this, "sessionId null, return!");
+            mProgressDialog.dismiss();
             return;
         }
-        Log.d("wangzixu", "releaseImgs sessionId = " + sessionId);
 
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mProgressDialog.dismiss();
+                onBackPressed();
+            }
+        }, 600);
+
+        mAlbumDes = mEtUploadmainEdit.getText().toString();
         //获取标签
-        final ArrayList<String> tags = new ArrayList<>();
-        tags.add("测试标签1");
-        tags.add("测试标签2");
-        tags.add("测试标签3");
-        tags.add("测试标签4");
 
         //1,检测图片是否支持秒传
-        String scecondUploadCheckUrl = UrlsUtil.getSecondUploadCheckUrl(sessionId);
+        String scecondUploadCheckUrl = UrlsUtil.getSecondUploadCheckUrl(App.sessionId);
         Log.d("wangzixu", "releaseImgs scecondUploadCheckUrl = " + scecondUploadCheckUrl);
         for (int i = 0; i < mImgData.size(); i++) {
             final int finalI = i;
@@ -179,10 +197,10 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanSecondUploadCheck response) {
                     if (response != null && response.getErr_code() == 0) { //成功支持秒传
                         Log.d("wangzixu", "releaseImgs scecondUploadCheck 支持 = " + finalI);
-                        secondUpload(finalI, sessionId, tags, response.getData().getUnique_id(), response.getData().getFile_name());
+                        secondUpload(finalI, App.sessionId, mTags, response.getData().getUnique_id(), response.getData().getFile_name());
                     } else { //不支持秒传
                         Log.d("wangzixu", "releaseImgs scecondUploadCheck 不支持 = " + finalI);
-                        uploadImgFile(finalI, sessionId, tags, mImgData.get(finalI));
+                        uploadImgFile(finalI, App.sessionId, mTags, mImgData.get(finalI));
                     }
                 }
 
@@ -201,7 +219,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    private void secondUpload(final int index, String sessonId, ArrayList<String> tags, String unique_id, String fileName) {
+    private void secondUpload(final int index, String sessonId, ArrayList<DemoTagBean> tags, String unique_id, String fileName) {
         String url = UrlsUtil.getSecondUploadUrl(sessonId);
         Log.d("wangzixu", "releaseImgs secondUpload url = " + url);
 
@@ -241,7 +259,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
     /**
      * 上传单张图片
      */
-    private void uploadImgFile(final int index, String sessonId, ArrayList<String> tags, DemoImgBean bean) {
+    private void uploadImgFile(final int index, String sessonId, ArrayList<DemoTagBean> tags, DemoImgBean bean) {
         String upfileUrl = UrlsUtil.getImageUploadUrl(sessonId);
         Log.d("wangzixu", "releaseImgs uploadImgFile upfileUrl = " + upfileUrl);
         String filePath = ImageDownloader.Scheme.FILE.crop(bean.getPath());
@@ -281,7 +299,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
         });
     }
 
-    private void fillTagIds(List<ResponseBeanImgUpload.DataBean.RBIUTagsBean> tags) {
+    private void fillTagIds(List<DemoTagBean> tags) {
         mHasFillTagIds = true;
         mTagIds = new ArrayList<>();
         for (int i = 0; i < tags.size(); i++) {
@@ -299,9 +317,29 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                 isSuccess = false;
             }
         }
+        Log.d("wangzixu", "releaseImgs tryCreateAblum 所有组图已经上传完成，标题, 描述 = " + "组图标题" + ", " + mAlbumDes);
         //每个图片的imageid都不为null了，说明全部传完了-----
         if (isSuccess) { //全部上传成功了，发组图
+            String url = UrlsUtil.getCreateAblumUrl(App.sessionId);
+            Log.d("wangzixu", "releaseImgs tryCreateAblum url = " + url);
+            HttpClientManager.getInstance(UpLoadMainActivity.this).createAblum(url, "组图标题", mAlbumDes
+                    , mImgData, mTagIds, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+                    Log.d("wangzixu", "releaseImgs tryCreateAblum success , errorCode = " + response.getErr_code());
+                }
 
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
+                    Log.d("wangzixu", "releaseImgs tryCreateAblum onFailure");
+                }
+
+                @Override
+                protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                    Log.d("wangzixu", "releaseImgs uploadImgFile rawJsonData = " + rawJsonData);
+                    return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+                }
+            });
         } else { //没有上传成功，需要把失败信息存到某一个地方，在个人中心页中能展示出来这些失败的信息
 
         }
@@ -331,6 +369,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                     ToastManager.showShort(this, "网络连接不可用!");
                     return;
                 }
+                mProgressDialog = ProgressDialog.show(this, null, "图片载入中...");
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -344,6 +383,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                             });
                         } catch (IOException e) {
                             Log.d("wangzixu", "releaseImgs 传图时报了Io异常");
+                            mProgressDialog.dismiss();
                             //ToastManager.showShort(UpLoadMainActivity.this, "传图时报了Io异常");
                             e.printStackTrace();
                         }
@@ -355,7 +395,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.rl_uploadmian_addtag:
                 Intent iTag = new Intent(UpLoadMainActivity.this, UploadTagsActivity.class);
-                startActivity(iTag);
+                startActivityForResult(iTag, START_CODE_TAG);
                 overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
                 break;
             case R.id.rl_uploadmian_location:
@@ -387,6 +427,49 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                 break;
             default:
                 break;
+        }
+    }
+
+    private ArrayList<DemoTagBean> mTags;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("wangzixu", "onActivityResult requestCode, resultCode = " + requestCode + ", " + resultCode);
+        Log.d("wangzixu", "onActivityResult data = " + data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == START_CODE_TAG) { //添加标签页回来，添加标签
+                App app = (App) getApplication();
+                mTags = app.getTagsTemp();
+                if (mTags == null || mTags.size() == 0) {
+                    if (mRlUploadmianAddtagContainer.indexOfChild(mTvAddTag) == -1) {
+                        mRlUploadmianAddtagContainer.removeAllViewsInLayout();
+                        mRlUploadmianAddtagContainer.addView(mTvAddTag);
+                    }
+                    return;
+                }
+                ImgAndTagWallManager.getInstance(this).initTagsWall(mTags, mTagTextPadding * 2, mTagTextPadding * 2
+                        , mTagRlWidth, 0, 0, mTagTextSizePx, mTagTextSizePx, mTagDrawablePading, mTagDrawableWidth, 0, 0);
+                mRlUploadmianAddtagContainer.removeAllViewsInLayout();
+                for (int i = 0; i < mTags.size(); i++) {
+                    DemoTagBean bean = mTags.get(i);
+                    String tag = bean.getName();
+                    TextView tv = new TextView(this);
+                    tv.setText(tag);
+                    tv.setTextSize(mTagTextSize);
+                    tv.setTextColor(getResources().getColor(R.color.hei_60));
+                    tv.setSingleLine();
+                    tv.setEllipsize(TextUtils.TruncateAt.END);
+                    tv.setPadding(mTagTextPadding, mTagTextPadding, mTagTextPadding, mTagTextPadding);
+                    tv.setCompoundDrawablePadding(mTagDrawablePading);
+                    tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_upload_tag, 0, 0, 0);
+                    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT
+                            , ViewGroup.LayoutParams.WRAP_CONTENT);
+                    lp.leftMargin = bean.getMarginLeft();
+                    lp.topMargin = bean.getMarginTop();
+                    tv.setLayoutParams(lp);
+                    mRlUploadmianAddtagContainer.addView(tv);
+                }
+            }
         }
     }
 

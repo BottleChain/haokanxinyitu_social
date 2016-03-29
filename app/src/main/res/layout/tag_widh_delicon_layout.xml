@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/tv_title"
+        android:text="无敌佳能600D"
+        android:textSize="14sp"
+        android:textColor="@color/hei_80"
+        android:drawablePadding="4dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="10dp"
+        android:singleLine="true"
+        android:drawableLeft="@drawable/icon_upload_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_toRightOf="@id/tv_title"
+        android:paddingLeft="4dp"
+        android:paddingTop="9dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="12dp"
+        android:src="@drawable/btn_upload_tab_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

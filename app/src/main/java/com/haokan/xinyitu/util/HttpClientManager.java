@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.haokan.xinyitu.main.DemoImgBean;
+import com.haokan.xinyitu.main.DemoTagBean;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
@@ -112,7 +114,7 @@ public class HttpClientManager {
         client.post(url, params, handler);
     }
 
-    public void upLoadImgFile(String url, File file,String title,ArrayList<String> tags,AsyncHttpResponseHandler handler) {
+    public void upLoadImgFile(String url, File file,String title,ArrayList<DemoTagBean> tags,AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         try {
             params.put("upfile", file);
@@ -121,7 +123,7 @@ public class HttpClientManager {
             }
             if (tags != null) {
                 for (int i = 0; i < tags.size(); i++) {
-                    params.add("tags[]", tags.get(i));
+                    params.add("tags[]", tags.get(i).getName());
                 }
             }
         } catch (FileNotFoundException e) {
@@ -131,7 +133,7 @@ public class HttpClientManager {
         client.post(url, params, handler);
     }
 
-    public void secondUpLoadFile(String url, String unique_id, String title, String fileName, ArrayList<String> tags,AsyncHttpResponseHandler handler) {
+    public void secondUpLoadFile(String url, String unique_id, String title, String fileName, ArrayList<DemoTagBean> tags,AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         params.put("unique_id", unique_id);
         params.put("file_name", fileName);
@@ -140,7 +142,30 @@ public class HttpClientManager {
         }
         if (tags != null) {
             for (int i = 0; i < tags.size(); i++) {
-                params.add("tags[]", tags.get(i));
+                params.add("tags[]", tags.get(i).getName());
+            }
+        }
+        // 上传文件
+        client.post(url, params, handler);
+    }
+
+    public void createAblum(String url, String album_title, String album_desc
+            , ArrayList<DemoImgBean> imgBeans, ArrayList<String> tagIds, AsyncHttpResponseHandler handler) {
+        RequestParams params = new RequestParams();
+        if (!TextUtils.isEmpty(album_title)) {
+            params.put("info[album_title]", album_title);
+        }
+        if (!TextUtils.isEmpty(album_desc)) {
+            params.put("info[album_desc]", album_desc);
+        }
+        if (imgBeans != null) {
+            for (int i = 0; i < imgBeans.size(); i++) {
+                params.add("images[]", imgBeans.get(i).getImage_id());
+            }
+        }
+        if (tagIds != null) {
+            for (int i = 0; i < tagIds.size(); i++) {
+                params.add("tags[]", tagIds.get(i));
             }
         }
         // 上传文件

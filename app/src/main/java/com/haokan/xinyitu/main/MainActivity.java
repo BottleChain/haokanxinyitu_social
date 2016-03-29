@@ -1,6 +1,5 @@
 package com.haokan.xinyitu.main;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -110,9 +109,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void setDiscoveryFragment() {
         mIvBottomBar1.setSelected(true);
         FragmentTransaction transaction = mFm.beginTransaction();
-        Fragment discoveryFragment = new DiscoveryFragment();
+        DiscoveryFragment discoveryFragment = new DiscoveryFragment();
         transaction.replace(R.id.fl_content, discoveryFragment);
         transaction.commitAllowingStateLoss();
+        discoveryFragment.loadAlbumListData(this);
     }
 
     private View mMorePopBtn; //点击弹出分享框的按钮，需要改变其select的状态，所以每次点击弹窗是记住点击的按钮，取消时把此按钮select（false）
@@ -149,7 +149,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.iv_bottom_bar_5:
                 Intent i5 = new Intent(MainActivity.this, Login_Register_Activity.class);
                 startActivity(i5);
-                overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+                overridePendingTransition(R.anim.activity_in_bottom2top, R.anim.activity_out_boootom2top);
                 break;
             case R.id.ib_item0_more://条目0的更多按钮
                 if (mMorePopupWindow == null) {
@@ -249,6 +249,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             app.setBigImgData(null);
             app.setImgDirs(null);
             app.setCheckedImgs(null);
+            app.setTagsTemp(null);
         }
     }
 

@@ -18,6 +18,7 @@ import java.util.Random;
 public class DiscoveryFragmentAdapter extends BaseAdapter {
     private Context mContext;
     private FragmentAdapterItemHelper mHelper;
+    private ArrayList<ResponseBeanAlbumInfo.DataBean> mAlbumInfoBean;
     ArrayList<ResponseBeanDiscovery> mData = new ArrayList<>();
 
     //制造假数据用的
@@ -27,8 +28,9 @@ public class DiscoveryFragmentAdapter extends BaseAdapter {
             , R.drawable.test04, R.drawable.test05, R.drawable.test06, R.drawable.test07};
     private static String[] sTags = {"风景如画", "猫", "好看摄影大赛第一季", "中国好声音", "萌", "北京雾霾天", "丝竹"};
 
-    public DiscoveryFragmentAdapter(Context context, View.OnClickListener onClickListener) {
+    public DiscoveryFragmentAdapter(Context context, ArrayList<ResponseBeanAlbumInfo.DataBean> albumInfoBean, View.OnClickListener onClickListener) {
         mContext = context;
+        mAlbumInfoBean = albumInfoBean;
 
         Random random = new Random();
         for (int i = 0; i < 20; i++) {

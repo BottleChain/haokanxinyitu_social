@@ -40,7 +40,9 @@ public class UrlsUtil {
         public static final String URL_img_ImageUpload_a = "ImageUpload"; //图片上传a
 
         public static final String URL_apialbum_c = "apialbum";
-        public static final String URL_apialbum_a = "CreateAlbum"; //上传组图
+        public static final String URL_CreateAlbum_a = "CreateAlbum"; //上传组图
+        public static final String URL_NewAlbums_a = "NewAlbums"; //请求最新组图
+        public static final String URL_AlbumInfo_a = "AlbumInfo"; //请求组图信息
     }
 
     public static String getSendSmsUrl(Context context, String jsonData) {
@@ -72,7 +74,18 @@ public class UrlsUtil {
     }
 
     public static String getCreateAblumUrl(String sessidonId) {
-        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_apialbum_a, Urls.URL_apialbum_c, null, Urls.URL_V, sessidonId);
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_CreateAlbum_a, Urls.URL_apialbum_c, null, Urls.URL_V, sessidonId);
+    }
+
+    /**
+     * 请求最新的组图列表
+     */
+    public static String getLastestAblumUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_NewAlbums_a, Urls.URL_apialbum_c, null, Urls.URL_V, sessidonId);
+    }
+
+    public static String getAblumInfoUrl(String sessidonId, String data) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_AlbumInfo_a, Urls.URL_apialbum_c, data, Urls.URL_V, sessidonId);
     }
 
 
