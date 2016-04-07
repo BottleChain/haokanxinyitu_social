@@ -5,7 +5,7 @@
     android:background="@color/hei">
     <RelativeLayout
         android:id="@+id/rl_header"
-        android:background="@color/hei"
+        android:background="@color/main_color_actionbar_item01"
         android:layout_width="match_parent"
         android:layout_height="72dp">
 
@@ -159,7 +159,7 @@
             <TextView
                 android:id="@+id/tv_uploadmain_goonadd"
                 android:layout_below="@id/devider_3"
-                android:background="@color/hei"
+                android:background="@color/main_color_bg"
                 android:text="+  继续添加"
                 android:textColor="@color/click_bai60"
                 android:textSize="15sp"

@@ -4,13 +4,18 @@ import android.app.Application;
 
 import com.haokan.xinyitu.main.DemoImgBean;
 import com.haokan.xinyitu.main.DemoTagBean;
+import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
 import com.haokan.xinyitu.util.ImageLoaderManager;
 import com.umeng.socialize.PlatformConfig;
 
 import java.util.ArrayList;
 
 public class App extends Application {
-    public static String sessionId = "";
+    public static String sessionId = null;
+    public static String user_Id = "";
+    public static float sDensity = 3;
+    public static int sPreviewImgSize = 240; //加载图片时缩略图的大小，应该在splash时根据density给此值赋值，默认240宽
+    public static int sBigImgSize = 720; //加载图片时大图的大小，应该在splash时根据density给此值赋值，默认240宽
 
     @Override
     public void onCreate() {
@@ -35,6 +40,20 @@ public class App extends Application {
     private ArrayList<DemoImgBean> mBigImgData = new ArrayList<>();
     private ArrayList<DemoImgBean> mCheckedImgs = new ArrayList<>();
     private ArrayList<ArrayList<DemoImgBean>> mImgDirs = new ArrayList<>();
+
+    /**
+     * 用户最新上传的一个组图，为了上传完后立马在主页面显示上传的结果，用这个变量temp一下
+     * 上传完成后，给这个值赋值，然后通知主页，主页获取后取到这个值然后添加在第一个位置，然后情况这个值
+     */
+    private ResponseBeanAlbumInfo.DataEntity mLastestUploadAlbum;
+
+    public ResponseBeanAlbumInfo.DataEntity getLastestUploadAlbum() {
+        return mLastestUploadAlbum;
+    }
+
+    public void setLastestUploadAlbum(ResponseBeanAlbumInfo.DataEntity lastestUploadAlbum) {
+        mLastestUploadAlbum = lastestUploadAlbum;
+    }
 
     public ArrayList<ArrayList<DemoImgBean>> getImgDirs() {
         return mImgDirs;

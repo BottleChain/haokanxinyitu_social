@@ -9,7 +9,7 @@
         android:id="@+id/ziv_1"
         android:scaleType="matrix"
         app:ziv_hasClip="true"
-        app:ziv_scaleType="1"
+        app:ziv_scaleType="2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
@@ -45,7 +45,7 @@
         android:layout_height="70dp"/>
 
     <TextView
-        android:id="@+id/tv_3"
+        android:id="@+id/tv_desc"
         android:text="确认"
         android:textSize="16sp"
         android:layout_alignParentBottom="true"

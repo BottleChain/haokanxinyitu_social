@@ -160,7 +160,8 @@ public class HttpClientManager {
         }
         if (imgBeans != null) {
             for (int i = 0; i < imgBeans.size(); i++) {
-                params.add("images[]", imgBeans.get(i).getImage_id());
+                params.add("images["+ i +"]", imgBeans.get(i).getId());
+                Log.d("wangzix" , "createAblum imgid = " + imgBeans.get(i).getId());
             }
         }
         if (tagIds != null) {

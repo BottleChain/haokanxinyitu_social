@@ -43,6 +43,17 @@ public class SplashActivity extends BaseActivity {
 
         SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         App.sessionId = defaultSharedPreferences.getString(ConstantValues.KEY_SP_SESSIONID, "");
+        App.user_Id = defaultSharedPreferences.getString(ConstantValues.KEY_SP_USERID, "");
+
+        float density = getResources().getDisplayMetrics().density;
+        App.sDensity = density;
+        if (density >= 3) {
+            App.sBigImgSize = 1080;
+            App.sPreviewImgSize = 720;
+        } else {
+            App.sBigImgSize = 720;
+            App.sPreviewImgSize = 720;
+        }
 
         String versionName = CommonUtil.getLocalVersionName(this);
         SharedPreferences sp = getSharedPreferences(PREFERENCE_GUIDE_PAGE, Context.MODE_PRIVATE);

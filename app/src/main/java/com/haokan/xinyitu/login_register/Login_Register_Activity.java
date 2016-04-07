@@ -19,11 +19,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseActivity;
 import com.haokan.xinyitu.base.BaseResponseBean;
 import com.haokan.xinyitu.clipphoto.ClipPhotoActivity;
 import com.haokan.xinyitu.clipphoto.ClipPhotoManager;
+import com.haokan.xinyitu.main.mypersonalcenter.ResponseBeanUserInfo;
 import com.haokan.xinyitu.util.CommonUtil;
 import com.haokan.xinyitu.util.ConstantValues;
 import com.haokan.xinyitu.util.HttpClientManager;
@@ -84,7 +86,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         mTvPersonalData = (TextView) findViewById(R.id.tv_1);
         mTvSkip = (TextView) findViewById(R.id.tv_4);
         mWelcome = (ImageView) findViewById(R.id.tv_2);
-        mWelcomeSub = (TextView) findViewById(R.id.tv_3);
+        mWelcomeSub = (TextView) findViewById(R.id.tv_desc);
         mStubRegister = (ViewStub) findViewById(R.id.layout_register);
         mStubLogin = (ViewStub) findViewById(R.id.layout_login);
         mStubLoginSms = (ViewStub) findViewById(R.id.layout_login_sms);
@@ -119,7 +121,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             mEtRegisterPhoneNum = (EditText) mLayoutRegister.findViewById(R.id.et_1);
             mEtRegisterVerfyCode = (EditText) mLayoutRegister.findViewById(R.id.et_2);
             mEtRegisterInviteCode = (EditText) mLayoutRegister.findViewById(R.id.et_3);
-            mTvRegisterGetVerfyCode = (TextView) mLayoutRegister.findViewById(R.id.tv_3);
+            mTvRegisterGetVerfyCode = (TextView) mLayoutRegister.findViewById(R.id.tv_desc);
             mTvRegisterRegister = (TextView) mLayoutRegister.findViewById(R.id.tv_4);
             mTvRegisterLogin = (TextView) mLayoutRegister.findViewById(R.id.tv_6);
 
@@ -163,7 +165,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             mLayoutLoginSms = mStubLoginSms.inflate();
             mEtLoginSmsPhoneNum = (EditText) mLayoutLoginSms.findViewById(R.id.et_1);
             mEtLoginSmsVerfyCode = (EditText) mLayoutLoginSms.findViewById(R.id.et_2);
-            mTvLoginSmsGetVerfyCode = (TextView) mLayoutLoginSms.findViewById(R.id.tv_3);
+            mTvLoginSmsGetVerfyCode = (TextView) mLayoutLoginSms.findViewById(R.id.tv_desc);
             mTvLoginSmsLogin = (TextView) mLayoutLoginSms.findViewById(R.id.tv_4);
 
             View.OnClickListener listener = new LoginSmsClickListener();
@@ -348,7 +350,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             }
             int id = v.getId();
             switch (id) {
-                case R.id.tv_3: //获取验证码
+                case R.id.tv_desc: //获取验证码
                     getVerfyCodeToRegister();
                     break;
                 case R.id.tv_4: //注册
@@ -561,7 +563,9 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanUploadPh response) {
                                     ToastManager.showShort(Login_Register_Activity.this, "上传成功 = " + response.getErr_msg());
-                                    Log.d("wangzixu", "PersonDataClickListener 上传成功 = " + rawJsonResponse);
+                                    mDefaultSharedPreferences.edit().putString(ConstantValues.KEY_SP_AVATAR_URL
+                                            , ImageDownloader.Scheme.FILE.wrap(mClipedHpPath))
+                                            .apply(); //保存头像信息
                                 }
 
                                 @Override
@@ -634,7 +638,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             }
             int id = v.getId();
             switch (id) {
-                case R.id.tv_3: //获取验证码
+                case R.id.tv_desc: //获取验证码
                     getVerfyCodeToLoginsms();
                     break;
                 case R.id.tv_4: //登录
@@ -681,10 +685,15 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                         if (mDefaultSharedPreferences == null) {
                             mDefaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(Login_Register_Activity.this);
                         }
+
                         SharedPreferences.Editor edit = mDefaultSharedPreferences.edit();
                         edit.putString(ConstantValues.KEY_SP_USERID, userId);
                         edit.putString(ConstantValues.KEY_SP_SESSIONID, sessionId);
                         edit.apply();
+                        App.sessionId = sessionId;
+                        App.user_Id = userId;
+
+                        getMyInfo();
                         goHomePageActivity();
                     } else {
                         ToastManager.showShort(Login_Register_Activity.this, response.getErr_msg());
@@ -701,6 +710,39 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             @Override
             protected ResponseBeanLogin parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
                 return JsonUtil.fromJson(rawJsonData, ResponseBeanLogin.class);
+            }
+        });
+    }
+
+    public void getMyInfo() {
+        //获取个人信息存下来
+        String myinfoUrl = UrlsUtil.getMyinfoUrl(App.sessionId);
+        Log.d("wangzixu", "getMyInfo myinfoUrl = " + myinfoUrl);
+
+        HttpClientManager.getInstance(this).getData(myinfoUrl, new BaseJsonHttpResponseHandler<ResponseBeanUserInfo>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanUserInfo response) {
+                if (response.getErr_code() == 0) {
+                    String avatarUrl;
+                    if (App.sDensity >= 3) {
+                        avatarUrl = response.getData().getAvatar_url().getS150();
+                    } else {
+                        avatarUrl = response.getData().getAvatar_url().getS100();
+                    }
+                    SharedPreferences.Editor edit = mDefaultSharedPreferences.edit();
+                    edit.putString(ConstantValues.KEY_SP_AVATAR_URL, avatarUrl);
+                    edit.putString(ConstantValues.KEY_SP_NICKNAME, response.getData().getNickname());
+                    edit.apply();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanUserInfo errorResponse) {
+            }
+
+            @Override
+            protected ResponseBeanUserInfo parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return JsonUtil.fromJson(rawJsonData, ResponseBeanUserInfo.class);
             }
         });
     }

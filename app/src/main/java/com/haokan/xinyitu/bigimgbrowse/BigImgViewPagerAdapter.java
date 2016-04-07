@@ -51,7 +51,7 @@ public class BigImgViewPagerAdapter extends PagerAdapter {
         }
         container.addView(imageView);
 
-        final String path = imageViewBean.getPath();
+        final String path = imageViewBean.getUrl();
         ImageLoaderManager.getInstance().loadLocalPic(path, imageView, null);
 
         return imageView;

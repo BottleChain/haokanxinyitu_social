@@ -1,0 +1,8 @@
+<resources>
+
+    <dimen name="discoveryitem0_tv1_margintop">9dp</dimen>
+    <dimen name="discoveryitem0_tv2_margintop">2dp</dimen>
+
+    <dimen name="followsitem_tv1_margintop">12dp</dimen>
+    <dimen name="followsitem_tv2_margintop">3dp</dimen>
+</resources>

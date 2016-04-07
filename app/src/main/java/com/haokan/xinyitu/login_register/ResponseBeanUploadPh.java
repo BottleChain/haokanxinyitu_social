@@ -16,7 +16,7 @@ public class ResponseBeanUploadPh extends BaseResponseBean {
 
     public static class DataBean {
         /**
-         * filename : sadfas
+         * filename : ss
          */
 
         private String filename;

@@ -43,6 +43,20 @@ public class UrlsUtil {
         public static final String URL_CreateAlbum_a = "CreateAlbum"; //上传组图
         public static final String URL_NewAlbums_a = "NewAlbums"; //请求最新组图
         public static final String URL_AlbumInfo_a = "AlbumInfo"; //请求组图信息
+        public static final String URL_MyAlbums_a = "MyAlbums"; //我发布过的组图
+
+        public static final String URL_apiUser_c = "apiUser";
+        public static final String URL_MyInfo_a = "MyInfo"; //我的个人信息
+        public static final String URL_UserInfo_a = "UserInfo"; //获取别的用户的信息
+
+        public static final String URL_apifollow_c = "apifollow"; //关注相关
+        public static final String URL_addFollow_a = "addFollow"; //添加关注
+        public static final String URL_delFollow_a = "delFollow"; //取消关注
+        public static final String URL_getIlike_a = "getIlike"; //获取我关注的人列表
+        public static final String URL_getLikeMe_a = "getLikeMe"; //获取关注我的人列表
+
+
+
     }
 
     public static String getSendSmsUrl(Context context, String jsonData) {
@@ -86,6 +100,38 @@ public class UrlsUtil {
 
     public static String getAblumInfoUrl(String sessidonId, String data) {
         return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_AlbumInfo_a, Urls.URL_apialbum_c, data, Urls.URL_V, sessidonId);
+    }
+
+    public static String getMyAlbumsUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_MyAlbums_a, Urls.URL_apialbum_c, null, Urls.URL_V, sessidonId);
+    }
+
+    public static String getMyinfoUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_MyInfo_a, Urls.URL_apiUser_c, null, Urls.URL_V, sessidonId);
+    }
+
+    public static String getUserinfoUrl(String sessidonId, String data) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_UserInfo_a, Urls.URL_apiUser_c, data, Urls.URL_V, sessidonId);
+    }
+
+    public static String getaddFollowUrl(String sessidonId, String userId) {
+        String data = "{\"followid\":" + userId + "}";
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_addFollow_a, Urls.URL_apifollow_c, data, Urls.URL_V, sessidonId);
+    }
+
+
+    public static String getdelFollowUrl(String sessidonId, String userId) {
+        String data = "{\"followid\":" + userId + "}";
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_delFollow_a, Urls.URL_apifollow_c, null, Urls.URL_V, sessidonId);
+    }
+
+
+    public static String getIlikeUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_getIlike_a, Urls.URL_apifollow_c, null, Urls.URL_V, sessidonId);
+    }
+
+    public static String getLikeMeUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_getLikeMe_a, Urls.URL_apifollow_c, null, Urls.URL_V, sessidonId);
     }
 
 

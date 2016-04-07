@@ -157,8 +157,8 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
                         }
                         Log.d("wangzixu", "loadData w,h = " + w + ", " + h);
                         bean.setWidth(Integer.valueOf(w));
-                        bean.setHeigh(Integer.valueOf(h));
-                        bean.setPath(ImageDownloader.Scheme.FILE.wrap(path));
+                        bean.setHeight(Integer.valueOf(h));
+                        bean.setUrl(ImageDownloader.Scheme.FILE.wrap(path));
                         mData.add(bean);
 
                         // 获取父文件夹路径
@@ -190,11 +190,34 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
+    public void onBackPressed() {
+        if (mPopWindow != null && mPopWindow.isShowing()) {
+            disMissPop();
+        } else {
+            super.onBackPressed();
+            if (mIsFromAddMore) {
+                overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
+            } else {
+                overridePendingTransition(R.anim.activity_in_top2bottom, R.anim.activity_out_top2bottom);
+            }
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
             case R.id.ib_bigimg_close: //关闭按钮
-                onBackPressed();
+                if (mPopWindow != null && mPopWindow.isShowing()) {
+                    disMissPop();
+                } else {
+                    super.onBackPressed();
+                    if (mIsFromAddMore) {
+                        overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
+                    } else {
+                        overridePendingTransition(R.anim.activity_in_top2bottom, R.anim.activity_out_top2bottom);
+                    }
+                }
                 break;
             case R.id.tv_confirm: //完成按钮
                 if (mPopWindow != null && mPopWindow.isShowing()) {
@@ -202,14 +225,20 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
                 } else if (mCheckedImgs.size() <= 0) {
                     ToastManager.showShort(UpLoadGalleryActivity.this, "您还没有选择图片");
                 } else {
-                    Intent intent = new Intent(UpLoadGalleryActivity.this, UpLoadMainActivity.class);
-                    App app = (App) getApplication();
-                    app.setCheckedImgs(mCheckedImgs);
-                    app.setImgDirs(mImgDirs);
-                    app.setBigImgData(mImgDirs.get(mCrrentSelectFolder));
-                    startActivity(intent);
+                    if (!mIsFromAddMore) {
+                        Intent intent = new Intent(UpLoadGalleryActivity.this, UpLoadMainActivity.class);
+                        App app = (App) getApplication();
+                        app.setCheckedImgs(mCheckedImgs);
+                        app.setImgDirs(mImgDirs);
+                        app.setBigImgData(mImgDirs.get(mCrrentSelectFolder));
+                        startActivity(intent);
+                    }
                     super.onBackPressed();
-                    overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+                    if (mIsFromAddMore) {
+                        overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
+                    } else {
+                        overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+                    }
                 }
                 break;
             case R.id.tv_upload_pickfolder: //中间选择按钮，弹出选择文件夹popupwindow
@@ -296,20 +325,6 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
     }
 
     @Override
-    public void onBackPressed() {
-        if (mPopWindow != null && mPopWindow.isShowing()) {
-            disMissPop();
-        } else {
-            super.onBackPressed();
-            if (mIsFromAddMore) {
-                overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
-            } else {
-                overridePendingTransition(R.anim.activity_in_top2bottom, R.anim.activity_out_top2bottom);
-            }
-        }
-    }
-
-    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ImageView imageView = (ImageView) view.findViewById(R.id.iv_pickimage_item);
         ImageUtil.changeLight(imageView, true);
@@ -351,7 +366,7 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
 
             ArrayList<DemoImgBean> list = mImgDirs.get(position);
             DemoImgBean first = list.get(0);
-            final String path = first.getPath();
+            final String path = first.getUrl();
 
             // 数量
             holder.tvcount.setText(list.size() + "");

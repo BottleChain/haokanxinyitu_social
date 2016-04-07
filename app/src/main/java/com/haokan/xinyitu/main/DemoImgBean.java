@@ -4,9 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class DemoImgBean implements Parcelable {
+    private String id;
+    private String name;
+    private String url;
     private int width;
-    private int heigh;
-    private String path;
+    private int height;
+
     private String md5; //图片对应的MD5唯一码
 
     //这四个属性都是用来确定图片位置的，不是服务器给的，需要自己算出
@@ -16,15 +19,6 @@ public class DemoImgBean implements Parcelable {
     private int itemHeigh;
 
     private boolean upLoadFailed; //图片上传接口上，此张图上传失败了
-    private String image_id; //图片id
-
-    public String getImage_id() {
-        return image_id;
-    }
-
-    public void setImage_id(String image_id) {
-        this.image_id = image_id;
-    }
 
     public boolean isUpLoadFailed() {
         return upLoadFailed;
@@ -32,6 +26,46 @@ public class DemoImgBean implements Parcelable {
 
     public void setUpLoadFailed(boolean upLoadFailed) {
         this.upLoadFailed = upLoadFailed;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     public String getMd5() {
@@ -74,30 +108,6 @@ public class DemoImgBean implements Parcelable {
         this.itemWidth = itemWidth;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public int getHeigh() {
-        return heigh;
-    }
-
-    public void setHeigh(int heigh) {
-        this.heigh = heigh;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -105,20 +115,20 @@ public class DemoImgBean implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.url);
         dest.writeInt(this.width);
-        dest.writeInt(this.heigh);
-        dest.writeString(this.path);
-//        dest.writeByte(isChecked ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.height);
     }
 
     public DemoImgBean() {
     }
 
     protected DemoImgBean(Parcel in) {
+        this.id = in.readString();
+        this.url = in.readString();
         this.width = in.readInt();
-        this.heigh = in.readInt();
-        this.path = in.readString();
-//        this.isChecked = in.readByte() != 0;
+        this.height = in.readInt();
     }
 
     public static final Parcelable.Creator<DemoImgBean> CREATOR = new Parcelable.Creator<DemoImgBean>() {

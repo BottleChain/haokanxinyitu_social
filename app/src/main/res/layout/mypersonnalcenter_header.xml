@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--用户产生的内容-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:background="@color/main_color_actionbar_item01"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:src="@drawable/icon_login_photo"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="6dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_below="@id/iv_avatar"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/bai"
+        android:textSize="25dp"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:text="Effie Riley"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+        <!--android:lineSpacingMultiplier="1.2"-->
+    <TextView
+        android:id="@+id/tv_desc"
+        android:layout_below="@id/tv_name"
+        android:layout_marginTop="6dp"
+        android:layout_marginLeft="17dp"
+        android:text="xcddddyyyyjjjjxcddddyyyyjjjjxcddddyyyyjjjjxcddddyyyyjjjjxcddddyyyyjjjjxcddddyyyyjjjjxcddddyyyyjjjj
+        xcddddyyyyjjjjxcddddyyyyjjjjxcddddyyyyjjjjxcddddyyyyjjjjxcddddyyyyjjjj"
+        android:lineSpacingExtra="3dp"
+        android:textSize="12sp"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:textColor="@color/bai_70"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_mygallery"
+        android:layout_below="@id/tv_desc"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginTop="19dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_mygallery_count"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:text="251"
+            android:textSize="15sp"
+            android:textColor="@color/selector_bai_50_100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_mygallery"
+            android:layout_below="@id/tv_mygallery_count"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:text="我的作品"
+            android:textSize="10sp"
+            android:layout_marginTop="4.5dp"
+            android:textColor="@color/selector_bai_50_100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_myfollow"
+        android:layout_below="@id/tv_desc"
+        android:layout_toRightOf="@id/rl_mygallery"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="19dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_myfollow_count"
+            android:text="1212"
+            android:textSize="15sp"
+            android:textColor="@color/selector_bai_50_100"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_myfollow"
+            android:layout_below="@id/tv_myfollow_count"
+            android:text="我关注的人"
+            android:textSize="10sp"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:layout_marginTop="4.5dp"
+            android:textColor="@color/selector_bai_50_100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_followme"
+        android:layout_below="@id/tv_desc"
+        android:layout_toRightOf="@id/rl_myfollow"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="5dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="19dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_followme_count"
+            android:layout_marginTop="5dp"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:text="230"
+            android:textSize="15sp"
+            android:textColor="@color/selector_bai_50_100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_followme"
+            android:layout_below="@id/tv_followme_count"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:text="关注我的粉丝"
+            android:textSize="10sp"
+            android:layout_marginTop="4.5dp"
+            android:textColor="@color/selector_bai_50_100"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_followme_notice"
+            android:gravity="center"
+            android:paddingTop="1dp"
+            android:textSize="7sp"
+            android:textColor="@color/hei"
+            android:text="2"
+            android:background="@drawable/icon_upload_chose_after_nember"
+            android:layout_toRightOf="@id/tv_followme_count"
+            android:layout_width="11dp"
+            android:layout_height="11dp"/>
+    </RelativeLayout>
+
+    <View
+        android:id="@id/divider_1"
+        android:layout_below="@id/rl_followme"
+        android:background="@color/main_color_devider_2"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
+    <View
+        android:id="@id/divider_2"
+        android:layout_below="@id/divider_1"
+        android:background="@color/hei"
+        android:layout_width="match_parent"
+        android:layout_height="9dp"/>
+</RelativeLayout>

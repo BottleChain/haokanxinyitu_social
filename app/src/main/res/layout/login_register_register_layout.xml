@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@+id/tv_3"
+            android:id="@+id/tv_desc"
             android:textColor="@color/anhuang"
             android:textSize="14sp"
             android:layout_alignBaseline="@id/tv_2"
@@ -79,7 +79,7 @@
             android:inputType="number"
             android:layout_alignBaseline="@id/tv_2"
             android:layout_toRightOf="@id/tv_2"
-            android:layout_toLeftOf="@id/tv_3"
+            android:layout_toLeftOf="@id/tv_desc"
             android:textColor="@color/edittext"
             android:padding="7dp"
             android:layout_width="match_parent"
@@ -89,7 +89,7 @@
         <View
             android:layout_below="@id/devider_1"
             android:layout_marginTop="27dp"
-            android:layout_toLeftOf="@id/tv_3"
+            android:layout_toLeftOf="@id/tv_desc"
             android:layout_marginRight="1dp"
             android:background="@color/hei_10"
             android:layout_width="1dp"

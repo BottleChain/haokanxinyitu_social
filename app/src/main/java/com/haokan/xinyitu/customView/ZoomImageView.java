@@ -158,7 +158,7 @@ public class ZoomImageView extends ImageView {
         //如果有剪裁框，那么需要使用者主动去指定边缘框，如果还没指定，则返回
         //因为有剪裁框时，有时候需要依据剪裁框填充图片，例如截图用来锁屏，
         //有时候需要依据屏幕边缘剪裁图片，例如用来截取头像
-        //如果设置为null，则自动去屏幕边缘
+        //如果设置为null，则自动取屏幕边缘作为边缘框
         if (mHasClip && !mHasSetEdgeRect) {
             return;
         }
@@ -190,30 +190,11 @@ public class ZoomImageView extends ImageView {
         mBmpHeight = scale * mOriBmpHeight;
         calcRedundantSpace();
 
-//		if (mScaleType == 1) { //center_crop
-//            if (mOriBmpWidth * mEdgeRect.height() > mEdgeRect.width() * mOriBmpHeight) {
-//                scale = mEdgeRect.height() / mOriBmpHeight;
-//                dx = mEdgeRect.left + (mEdgeRect.width() - mOriBmpWidth * scale) * 0.5f;
-//            } else {
-//                scale = mEdgeRect.width() / mOriBmpWidth;
-//                dy = mEdgeRect.top + (mEdgeRect.height() - mOriBmpHeight * scale) * 0.5f;
-//            }
-//            mMatrix.setScale(scale, scale);
-//            mMatrix.postTranslate(Math.round(dx), Math.round(dy));
-//            setImageMatrix(mMatrix);
-//        } else  {//fitCenter
-//            float dx = 0, dy = 0;
-//            if (mOriBmpWidth * mEdgeRect.height() > mEdgeRect.width() * mOriBmpHeight) {
-//                scale = mEdgeRect.width() / mOriBmpWidth;
-//                dy = mEdgeRect.top + (mEdgeRect.height() - mOriBmpHeight * scale) * 0.5f;
-//            } else {
-//                scale = mEdgeRect.height() / mOriBmpHeight;
-//                dx = mEdgeRect.left + (mEdgeRect.width() - mOriBmpWidth * scale) * 0.5f;
-//            }
-//        }
+		float Xoffset = mEdgeRect.width() - mSavedScale * mBmpWidth;
+		float Yoffset = mEdgeRect.height() - mSavedScale * mBmpHeight;
 
-        dx = mEdgeRect.left + mRedundantXSpace / 2.0f;
-        dy = mEdgeRect.top + mRedundantYSpace / 2.0f;
+        dx = mEdgeRect.left + Xoffset / 2.0f;
+        dy = mEdgeRect.top + Yoffset / 2.0f;
 
         mMatrix.setScale(scale, scale);
         mMatrix.postTranslate(Math.round(dx), Math.round(dy));

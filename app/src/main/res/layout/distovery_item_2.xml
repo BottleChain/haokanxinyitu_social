@@ -2,47 +2,56 @@
 <!--优秀摄影师推荐-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-                android:paddingBottom="@dimen/home_item_paddingbottom"
-                android:paddingTop="@dimen/home_item_paddingtop"
               android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/divider_1"
+        android:background="@color/main_color_bg"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_item_divider_h"/>
+
+    <View
+        android:id="@+id/divider_2"
+        android:layout_below="@id/divider_1"
+        android:background="@color/main_color_devider_1"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
 
     <TextView
         android:id="@+id/tv_1"
+        android:layout_below="@id/divider_2"
         android:textSize="13sp"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:textColor="@color/minghuang"
         android:text="优秀摄影师推荐"
         android:drawableLeft="@drawable/icon_home_cameraman"
         android:drawablePadding="8dp"
-        android:layout_marginLeft="13dp"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"/>
+        android:background="@color/main_color_item234"
+        android:paddingLeft="13dp"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"/>
+
+    <View
+        android:id="@+id/divider_3"
+        android:layout_below="@id/tv_1"
+        android:background="@color/main_color_devider_1"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
     <!--<RelativeLayout-->
         <!--android:id="@+id/rl_1"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="36dp">-->
     <!--</RelativeLayout>-->
 
-    <ImageButton
-        android:id="@+id/ib_1"
-        android:background="@null"
-        android:layout_below="@id/tv_1"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/btn_home_follow_selector"
-        android:layout_alignParentRight="true"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
     <RelativeLayout
         android:id="@+id/rl_item0_1"
-        android:layout_below="@id/tv_1"
-        android:layout_marginTop="9dp"
+        android:layout_below="@id/divider_3"
+        android:paddingTop="9dp"
+        android:paddingBottom="13dp"
         android:paddingRight="8dp"
-        android:layout_width="wrap_content"
+        android:background="@color/main_color_item234"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/image_1"
@@ -63,7 +72,7 @@
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@+id/tv_3"
+            android:id="@+id/tv_desc"
             android:textSize="14sp"
             android:layout_toRightOf="@id/image_1"
             android:layout_below="@id/tv_2"
@@ -77,12 +86,33 @@
             android:layout_height="wrap_content"/>
     </RelativeLayout>
 
+    <ImageButton
+        android:id="@+id/ib_1"
+        android:background="@null"
+        android:layout_below="@id/divider_3"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/btn_home_follow_selector"
+        android:layout_alignParentRight="true"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <RelativeLayout
-        android:id="@+id/rl_2"
-        android:layout_marginTop="13dp"
+        android:id="@+id/rl_img_container"
+        android:background="@color/main_color_bg"
+        android:paddingBottom="@dimen/home_item_divider_h"
         android:layout_below="@id/rl_item0_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
     </RelativeLayout>
+
+    <View
+        android:id="@+id/divider_4"
+        android:layout_below="@id/rl_img_container"
+        android:background="@color/main_color_devider_2"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
 </RelativeLayout>

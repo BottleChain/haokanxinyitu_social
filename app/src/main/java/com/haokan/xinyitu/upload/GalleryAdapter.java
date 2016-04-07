@@ -90,7 +90,7 @@ public class GalleryAdapter extends BaseAdapter {
             holder.mShadow.setVisibility(View.GONE);
         }
 
-        final String path = bean.getPath();
+        final String path = bean.getUrl();
         ImageLoaderManager.getInstance().asyncLoadImage(holder.mImageView, path, mItemWidth, mItemHeight);
         return convertView;
     }

@@ -56,6 +56,8 @@ public class ClipCoveredView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        //原理是先在屏幕上画个暗背景，再在中间画个圆，paint设置了遮罩，重叠的部分挖掉，
+        //在硬件加速的层上无法使用带透明度或者抠图的遮罩，所以需要自己搞个图层在自己的图层上画
         int scaveCount = canvas.saveLayer(0,0,mScreenW,mScreenH,null, Canvas.ALL_SAVE_FLAG);
         canvas.drawColor(mBgColor);
         canvas.drawCircle(mCenterX, mCenterY, mRadius, mCirclePaint);

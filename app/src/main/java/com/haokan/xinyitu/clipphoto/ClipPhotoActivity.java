@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.haokan.xinyitu.customView.ZoomImageView;
@@ -33,7 +34,7 @@ public class ClipPhotoActivity extends BaseActivity implements View.OnClickListe
 
     private void assignViews() {
         TextView tv2 = (TextView) findViewById(R.id.tv_2);
-        TextView tv3 = (TextView) findViewById(R.id.tv_3);
+        TextView tv3 = (TextView) findViewById(R.id.tv_desc);
         tv2.setOnClickListener(this);
         tv3.setOnClickListener(this);
 
@@ -44,9 +45,10 @@ public class ClipPhotoActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onGlobalLayout() {
                 Rect clipRect = mCcv.getBoundRect();
+                mZiv.setScaleType(ImageView.ScaleType.MATRIX);
                 mZiv.setClipRect(new RectF(clipRect));
                 mZiv.setEdgeRect(null);
-                mZiv.setMaxMinScale(3.0f, .01f);
+                mZiv.setMaxMinScale(3.5f, .01f);
                 ImageLoaderManager.getInstance().loadLocalPic(ImageDownloader.Scheme.FILE.wrap(path), mZiv, new ImageLoadingListener() {
                     @Override
                     public void onLoadingStarted(String imageUri, View view) {
@@ -91,7 +93,7 @@ public class ClipPhotoActivity extends BaseActivity implements View.OnClickListe
             case R.id.tv_2://重新选择
                 ClipPhotoManager.startPickImg(ClipPhotoActivity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
                 break;
-            case R.id.tv_3: //剪裁
+            case R.id.tv_desc: //剪裁
                 mProgressDialog = ProgressDialog.show(this, null, "剪裁中...");
                 new Thread(new Runnable() {
                     @Override

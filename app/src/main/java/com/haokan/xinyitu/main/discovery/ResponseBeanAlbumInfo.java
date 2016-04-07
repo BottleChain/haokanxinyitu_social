@@ -1,6 +1,8 @@
 package com.haokan.xinyitu.main.discovery;
 
+import com.haokan.xinyitu.base.AvatarUrlBean;
 import com.haokan.xinyitu.base.BaseResponseBean;
+import com.haokan.xinyitu.main.DemoImgBean;
 import com.haokan.xinyitu.main.DemoTagBean;
 
 import java.util.List;
@@ -8,35 +10,57 @@ import java.util.List;
 public class ResponseBeanAlbumInfo extends BaseResponseBean {
 
     /**
-     * data : [{"album_id":"131","user_id":"1000015","album_title":"组图标题","album_desc":"组图描述","createtime":"1458887009","tags":[{"id":"0932a2eb9924300a","name":"好看"}]},{"album_id":"130","user_id":"1000015","album_title":"组图标题","album_desc":"组图描述","createtime":"1458887009","tags":[{"id":"0932a2eb9924300a","name":"好看"}]},{"album_id":"129","user_id":"1000015","album_title":"组图标题","album_desc":"组图描述","createtime":"1458886992","tags":[{"id":"0932a2eb9924300a","name":"好看"}]},{"album_id":"128","user_id":"1000015","album_title":"组图标题","album_desc":"组图描述","createtime":"1458886845","tags":[{"id":"0932a2eb9924300a","name":"好看"}]},{"album_id":"127","user_id":"1000015","album_title":"组图标题","album_desc":"组图描述","createtime":"1458886845","tags":[{"id":"0932a2eb9924300a","name":"好看"}]},{"album_id":"126","user_id":"1000015","album_title":"组图标题","album_desc":"组图描述","createtime":"1458886823","tags":[{"id":"0932a2eb9924300a","name":"好看"}]},{"album_id":"125","user_id":"1000015","album_title":"组图标题","album_desc":"组图描述","createtime":"1458886771","tags":[{"id":"0932a2eb9924300a","name":"好看"}]},{"album_id":"124","user_id":"1000015","album_title":"组图标题","album_desc":"组图描述","createtime":"1458886409","tags":[{"id":"0932a2eb9924300a","name":"好看"}]},{"album_id":"123","user_id":"1000015","album_title":"组图标题","album_desc":"组图描述","createtime":"1458886323","tags":[{"id":"0932a2eb9924300a","name":"好看"}]},{"album_id":"122","user_id":"1000016","album_title":"组图标题","album_desc":"","createtime":"1458879905","tags":[{"id":"25084cf9c5f60a31","name":"测试标签4"},{"id":"65cfd300fe57111a","name":"测试标签2"},{"id":"cccd83be5cf131de","name":"测试标签1"},{"id":"f2e49ce23e813170","name":"测试标签3"}]}]
+     * data : [{"album_id":"151","user_id":"1000016","album_title":"组图标题","album_desc":"测试上传","createtime":"1459307024","images":[{"id":"100315","name":"145930649666673131964.jpg","url":"http://haokanres.img-cn-hangzhou.aliyuncs.com/images/64/19/145930649666673131964.jpg@!fw240","width":"800","height":"411"},{"id":"100316","name":"145930649666667234593.jpg","url":"http://haokanres.img-cn-hangzhou.aliyuncs.com/images/93/45/145930649666667234593.jpg@!fw240","width":"800","height":"415"},{"id":"100317","name":"145930649666061963943.jpg","url":"http://haokanres.img-cn-hangzhou.aliyuncs.com/images/43/39/145930649666061963943.jpg@!fw240","width":"800","height":"409"},{"id":"100318","name":"145930702398064278561.jpg","url":"http://haokanres.img-cn-hangzhou.aliyuncs.com/images/61/85/145930702398064278561.jpg@!fw240","width":"800","height":"413"},{"id":"100319","name":"145930702403460579161.jpg","url":"http://haokanres.img-cn-hangzhou.aliyuncs.com/images/61/91/145930702403460579161.jpg@!fw240","width":"800","height":"416"}],"tags":[{"id":"1ecf3adb83863f05","name":"动物"},{"id":"853dc138a581c9a7","name":"北京雾霾天"},{"id":"869b3abbe2771fe3","name":"中国好声音"}],"nickname":"用户_1457510026808822","avatar_url":{"50":"http://haokanres.img-cn-hangzhou.aliyuncs.com/avatar/62/15/145930787122507831562.jpeg@!at50","100":"http://haokanres.img-cn-hangzhou.aliyuncs.com/avatar/62/15/145930787122507831562.jpeg@!at100","150":"http://haokanres.img-cn-hangzhou.aliyuncs.com/avatar/62/15/145930787122507831562.jpeg@!at150"}},{"album_id":"150","user_id":"1000014","album_title":"aaaaa","album_desc":"呵呵哈哈","createtime":"1459306846","images":[{"id":"100152","name":"","url":"","width":"","height":""},{"id":"100153","name":"","url":"","width":"","height":""},{"id":"100154","name":"","url":"","width":"","height":""},{"id":"100155","name":"","url":"","width":"","height":""}],"tags":[{"id":"99ab0bf4e9d02dfd","name":"t1"},{"id":"cf68c399c5f4cf32","name":"t2"}],"nickname":"","avatar_url":{"50":"","100":"","150":""}}]
      */
 
-    private List<DataBean> data;
+    private List<DataEntity> data;
 
-    public void setData(List<DataBean> data) {
+    public void setData(List<DataEntity> data) {
         this.data = data;
     }
 
-    public List<DataBean> getData() {
+    public List<DataEntity> getData() {
         return data;
     }
 
-    public static class DataBean {
+    public static class DataEntity {
         /**
-         * album_id : 131
-         * user_id : 1000015
+         * album_id : 151
+         * user_id : 1000016
          * album_title : 组图标题
-         * album_desc : 组图描述
-         * createtime : 1458887009
-         * tags : [{"id":"0932a2eb9924300a","name":"好看"}]
+         * album_desc : 测试上传
+         * createtime : 1459307024
+         * images : [{"id":"100315","name":"145930649666673131964.jpg","url":"http://haokanres.img-cn-hangzhou.aliyuncs.com/images/64/19/145930649666673131964.jpg@!fw240","width":"800","height":"411"},{"id":"100316","name":"145930649666667234593.jpg","url":"http://haokanres.img-cn-hangzhou.aliyuncs.com/images/93/45/145930649666667234593.jpg@!fw240","width":"800","height":"415"},{"id":"100317","name":"145930649666061963943.jpg","url":"http://haokanres.img-cn-hangzhou.aliyuncs.com/images/43/39/145930649666061963943.jpg@!fw240","width":"800","height":"409"},{"id":"100318","name":"145930702398064278561.jpg","url":"http://haokanres.img-cn-hangzhou.aliyuncs.com/images/61/85/145930702398064278561.jpg@!fw240","width":"800","height":"413"},{"id":"100319","name":"145930702403460579161.jpg","url":"http://haokanres.img-cn-hangzhou.aliyuncs.com/images/61/91/145930702403460579161.jpg@!fw240","width":"800","height":"416"}]
+         * tags : [{"id":"1ecf3adb83863f05","name":"动物"},{"id":"853dc138a581c9a7","name":"北京雾霾天"},{"id":"869b3abbe2771fe3","name":"中国好声音"}]
+         * nickname : 用户_1457510026808822
+         * avatar_url : {"50":"http://haokanres.img-cn-hangzhou.aliyuncs.com/avatar/62/15/145930787122507831562.jpeg@!at50","100":"http://haokanres.img-cn-hangzhou.aliyuncs.com/avatar/62/15/145930787122507831562.jpeg@!at100","150":"http://haokanres.img-cn-hangzhou.aliyuncs.com/avatar/62/15/145930787122507831562.jpeg@!at150"}
          */
-
         private String album_id;
         private String user_id;
         private String album_title;
         private String album_desc;
         private String createtime;
+        private String nickname;
+        private List<DemoImgBean> images;
         private List<DemoTagBean> tags;
+        private AvatarUrlBean avatar_url;
+        private int type; //发现页第2,6,12显示不同个type
+
+        public AvatarUrlBean getAvatar_url() {
+            return avatar_url;
+        }
+
+        public void setAvatar_url(AvatarUrlBean avatar_url) {
+            this.avatar_url = avatar_url;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
+        }
 
         public void setAlbum_id(String album_id) {
             this.album_id = album_id;
@@ -56,6 +80,14 @@ public class ResponseBeanAlbumInfo extends BaseResponseBean {
 
         public void setCreatetime(String createtime) {
             this.createtime = createtime;
+        }
+
+        public void setNickname(String nickname) {
+            this.nickname = nickname;
+        }
+
+        public void setImages(List<DemoImgBean> images) {
+            this.images = images;
         }
 
         public void setTags(List<DemoTagBean> tags) {
@@ -80,6 +112,14 @@ public class ResponseBeanAlbumInfo extends BaseResponseBean {
 
         public String getCreatetime() {
             return createtime;
+        }
+
+        public String getNickname() {
+            return nickname;
+        }
+
+        public List<DemoImgBean> getImages() {
+            return images;
         }
 
         public List<DemoTagBean> getTags() {

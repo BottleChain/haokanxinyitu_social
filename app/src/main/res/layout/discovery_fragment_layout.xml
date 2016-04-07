@@ -20,9 +20,10 @@
         android:divider="@null"
 
         ptr:ptrAnimationStyle = "rotate"
-        ptr:ptrHeaderBackground="@color/hei_90"
+        ptr:ptrHeaderBackground="@color/main_color_actionbar_item01"
         ptr:ptrMode="pullDownFromTop"
         />
+        <!--android:visibility="invisible"-->
 
     <include
         android:id="@+id/net_error_layout"

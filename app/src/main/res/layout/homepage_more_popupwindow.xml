@@ -115,7 +115,7 @@
                 android:background="@color/hei_10"
                 />
             <RelativeLayout
-                android:id="@+id/rl_2"
+                android:id="@+id/rl_img_container"
                 android:layout_below="@id/devider_1"
                 android:layout_marginTop="12.5dp"
                 android:layout_alignLeft="@id/rl_item0_1"

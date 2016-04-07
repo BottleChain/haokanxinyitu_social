@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--这些家伙很牛B-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/divider_1"
+        android:background="@color/main_color_bg"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_item_divider_h"/>
+
+    <View
+        android:id="@+id/divider_2"
+        android:layout_below="@id/divider_1"
+        android:background="@color/main_color_devider_1"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
+    <TextView
+        android:id="@+id/tv_1"
+        android:layout_below="@id/divider_2"
+        android:textSize="14sp"
+        android:gravity="center_vertical"
+        android:textColor="@color/minghuang"
+        android:background="@color/main_color_item234"
+        android:text="这些家伙都挺牛B"
+        android:drawableLeft="@drawable/icon_home_cameramans"
+        android:drawablePadding="8dp"
+        android:paddingLeft="13dp"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"/>
+
+    <TextView
+        android:id="@+id/tv_2"
+        android:layout_below="@id/divider_2"
+        android:textSize="12sp"
+        android:textColor="@color/click_bai40"
+        android:text="换一波"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="13dp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"/>
+
+    <View
+        android:id="@+id/divider_3"
+        android:layout_below="@id/tv_1"
+        android:background="@color/main_color_devider_1"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/rl_1"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="36dp">-->
+    <!--</RelativeLayout>-->
+
+    <LinearLayout
+        android:id="@+id/rl_item0_1"
+        android:background="@color/main_color_item234"
+        android:orientation="vertical"
+        android:layout_below="@id/divider_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/child1"
+            layout="@layout/distovery_item_3_child"/>
+
+        <include
+            android:id="@+id/child2"
+            layout="@layout/distovery_item_3_child"/>
+    </LinearLayout>
+    <View
+        android:id="@+id/divider_4"
+        android:layout_below="@id/rl_item0_1"
+        android:background="@color/main_color_devider_1"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
+    <View
+        android:id="@+id/divider_5"
+        android:layout_below="@id/divider_4"
+        android:background="@color/main_color_bg"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_item_divider_h"/>
+    <View
+        android:id="@+id/divider_6"
+        android:layout_below="@id/divider_5"
+        android:background="@color/main_color_devider_2"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+</RelativeLayout>

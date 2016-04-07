@@ -2,11 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/hei"
     android:fitsSystemWindows="true">
     <LinearLayout
         android:id="@+id/ll_bottom_bar"
         android:orientation="horizontal"
+        android:background="@color/main_color_bg"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_height="48dp">
@@ -57,4 +57,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </FrameLayout>
+    <View
+        android:background="#242424"
+        android:layout_above="@id/ll_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
 </RelativeLayout>

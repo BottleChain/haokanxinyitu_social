@@ -10,6 +10,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
 import com.haokan.xinyitu.R;
+import com.haokan.xinyitu.customView.CircleDisplayer;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -17,6 +18,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.assist.ViewScaleType;
+import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.nostra13.universalimageloader.core.imageaware.NonViewAware;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
@@ -28,6 +30,7 @@ public class ImageLoaderManager {
     private ImageLoaderManager(){}
 
     private DisplayImageOptions display_img_options;
+    private DisplayImageOptions display_circle_img_options;
 
     public static final int IMAGE_LOAD_DURATION = 200;
     public static Interpolator sInterpolator = new LinearInterpolator();
@@ -75,9 +78,10 @@ public class ImageLoaderManager {
 		ImageLoader.getInstance().init(config); // 全局初始化此配置
 	}
 
-    public void loadThumbnailFromWeb(String uri, NonViewAware viewAware,
-                                     ImageLoadingListener loadingListener, ImageLoadingProgressListener progressListener) {
-        loadThumbnailFromWeb(uri, viewAware, null, loadingListener, progressListener);
+    public void loadThumbnailFromWeb(String uri, NonViewAware viewAware
+            , ImageLoadingListener loadingListener, ImageLoadingProgressListener progressListener
+            , DisplayImageOptions options) {
+        loadThumbnailFromWeb(uri, viewAware, options, loadingListener, progressListener);
     }
 
 	/**
@@ -92,6 +96,7 @@ public class ImageLoaderManager {
                     .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
                     .build();
         }
+
         if (options == null) {
             options = display_img_options;
         }
@@ -119,14 +124,26 @@ public class ImageLoaderManager {
         }
     }
 
+    public void asyncLoadCircleImage(final ImageView img, String imageUrl, int width, int heigh) {
+        if (display_circle_img_options == null) {
+            display_circle_img_options = new DisplayImageOptions.Builder()
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .displayer(new CircleDisplayer())
+                    .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+                    .build();
+        }
+        ImageLoader.getInstance().displayImage(imageUrl, new ImageViewAware(img), display_circle_img_options);
+    }
+
     public void asyncLoadImage(final ImageView img, String imageUrl, int width, int heigh) {
-        asyncLoadImage(img, imageUrl, width, heigh, null, null, null);
+        asyncLoadImage(img, imageUrl, width, heigh, null, null, null, null);
     }
 
     public void asyncLoadImage(final ImageView img, String imageUrl, int width, int heigh
             , SimpleImageLoadingListener simpleImageLoadingListener
             , ImageLoadingProgressListener imageLoadingProgressListener
-            , final ImageView.ScaleType scaleType) {
+            , final ImageView.ScaleType scaleType, DisplayImageOptions options) {
         if (imageUrl == null) {
             return;
         }
@@ -178,6 +195,6 @@ public class ImageLoaderManager {
         } else {
             holder = (ImgHolder) img.getTag(R.string.TAG_KEY_IMG_HOLDER);
         }
-        loadThumbnailFromWeb(imgUrl, holder.imgAware, holder.simpleImageLoadingListener, holder.imageLoadingProgressListener);
+        loadThumbnailFromWeb(imgUrl, holder.imgAware, holder.simpleImageLoadingListener, holder.imageLoadingProgressListener, options);
     }
 }

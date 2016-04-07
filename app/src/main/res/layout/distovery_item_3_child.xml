@@ -10,20 +10,20 @@
               android:layout_height="wrap_content"
               android:baselineAligned="false">
 
-    <include layout="@layout/item_timeline_3_child_child"
+    <include layout="@layout/distovery_item_3_child_child"
              android:id="@+id/child1"
              android:layout_weight="1"
              android:layout_width="0dp"
              android:layout_height="wrap_content"
         />
-    <include layout="@layout/item_timeline_3_child_child"
+    <include layout="@layout/distovery_item_3_child_child"
              android:id="@+id/child2"
              android:layout_weight="1"
              android:layout_width="0dp"
              android:layout_height="wrap_content"
         />
 
-    <include layout="@layout/item_timeline_3_child_child"
+    <include layout="@layout/distovery_item_3_child_child"
              android:id="@+id/child3"
              android:layout_weight="1"
              android:layout_width="0dp"

@@ -3,99 +3,108 @@ package com.haokan.xinyitu.main.discovery;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
-import com.haokan.xinyitu.base.BaseFragment;
+import com.haokan.xinyitu.base.BaseResponseBean;
+import com.haokan.xinyitu.main.Base_PTR_LoadMore_Fragment;
+import com.haokan.xinyitu.main.DemoImgBean;
 import com.haokan.xinyitu.util.HttpClientManager;
+import com.haokan.xinyitu.util.ImgAndTagWallManager;
 import com.haokan.xinyitu.util.JsonUtil;
 import com.haokan.xinyitu.util.UrlsUtil;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import cz.msebera.android.httpclient.Header;
 
-public class DiscoveryFragment extends BaseFragment {
+public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements PullToRefreshBase.OnRefreshListener<ListView>{
 
-    private ListView mPtrLv;
-    private View mLoadingLayout;
-    private View mNetErrorLayout;
-    private int mCurrentPage; //分页加载，当前第几页
-    private static final int COUNT_ONE_PAGE = 10; //每页多少个数据
     private List<ResponseBeanAlbumList.DataBean.AlbumListBean> mAlbumIdList;
-    private ArrayList<ResponseBeanAlbumInfo.DataBean> mAlbumInfoBeanLIst = new ArrayList<>();
+    private ArrayList<ResponseBeanAlbumInfo.DataEntity> mData = new ArrayList<>();
+    private DiscoveryFragmentAdapter mAdapter;
 
-    public DiscoveryFragment() {
-        Log.d("DiscoveryFragment", "DiscoveryFragment --");
-    }
+    //制造假数据用的
+    private static int[] sW = {1440, 599, 1024, 640, 1200, 400, 900};
+    private static int[] sH = {900, 686, 797, 640, 2132, 594, 596};
+    private static int[] sIds = {R.drawable.test01, R.drawable.test02, R.drawable.test03
+            , R.drawable.test04, R.drawable.test05, R.drawable.test06, R.drawable.test07};
+    private static String[] sTags = {"风景如画", "猫", "好看摄影大赛第一季", "中国好声音", "萌", "北京雾霾天", "丝竹"};
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d("DiscoveryFragment", "onCreateView --");
+    protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.discovery_fragment_layout, container, false);
-        mPtrLv = ((PullToRefreshListView) view.findViewById(R.id.ptrlv_1)).getRefreshableView();
+        mPullToRefreshListView = (PullToRefreshListView) view.findViewById(R.id.ptrlv_1);
+        mPullToRefreshListView.setOnRefreshListener(this);
+        mListView = mPullToRefreshListView.getRefreshableView();
         mLoadingLayout = view.findViewById(R.id.loading_layout);
         mNetErrorLayout = view.findViewById(R.id.net_error_layout);
-
-        mPtrLv.setOnScrollListener(new PauseLoadImgOnScrollListener());
-        DiscoveryFragmentAdapter adapter = new DiscoveryFragmentAdapter(getActivity(), mAlbumInfoBeanLIst, (View.OnClickListener)getActivity());
-        mPtrLv.setAdapter(adapter);
+        mBtnNetError = mNetErrorLayout.findViewById(R.id.iv_net_error);
         return view;
     }
 
-    public void loadAlbumListData(final Context context) {
+    @Override
+    protected String getLoadDataUrl() {
         String url = UrlsUtil.getLastestAblumUrl(App.sessionId);
-        Log.d("DiscoveryFragment", "loadAlbumListData url = " + url);
-
-        HttpClientManager.getInstance(context).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanAlbumList>() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanAlbumList response) {
-                if (response.getErr_code() == 0) {
-                    mAlbumIdList = null;
-                    mAlbumInfoBeanLIst.clear();
-                    mCurrentPage = 0;
-                    mAlbumIdList = response.getData().getAlbumList();
-                    loadAlbumInfoData(context);
-                } else {
-                    mLoadingLayout.setVisibility(View.GONE);
-                    //                    mNetErrorLayout.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanAlbumList errorResponse) {
-
-            }
-
-            @Override
-            protected ResponseBeanAlbumList parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
-                Log.d("DiscoveryFragment", "loadAlbumInfoData rawJsonData = " + rawJsonData);
-                return JsonUtil.fromJson(rawJsonData, ResponseBeanAlbumList.class);
-            }
-        });
+        Log.d("DiscoveryFragment", "loadData url = " + url);
+        return url;
     }
 
-    private boolean mIsLoading = false;
-    private boolean mHasMoreData = true;
-    public void loadAlbumInfoData(Context context) {
+    @Override
+    protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+        ResponseBeanAlbumList responseBeanAlbumList = (ResponseBeanAlbumList) response;
+        mPullToRefreshListView.setVisibility(View.VISIBLE);
+        mAlbumIdList = null;
+        //mData.clear();
+        mCurrentPage = 0;
+        mAlbumIdList = responseBeanAlbumList.getData().getAlbumList();
+        mHasMoreData = true;
+        loadAlbumInfoData(context, true);
+    }
+
+    @Override
+    protected void loadDataFailed() {
+        mLoadingLayout.setVisibility(View.GONE);
+        if (mData.size() == 0) {
+            mNetErrorLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    protected void loadMoreData() {
+        boolean loadMore = mListView.getLastVisiblePosition() + 5 >= mData.size();
+        if (loadMore) {
+            loadAlbumInfoData(getActivity(), false);
+        }
+    }
+
+    @Override
+    protected BaseResponseBean getResponse(String rawJsonData, boolean isFailure) {
+        return JsonUtil.fromJson(rawJsonData, ResponseBeanAlbumList.class);
+    }
+
+    public void loadAlbumInfoData(final Context context, final boolean isClearData) {
         if (mIsLoading) {
             return;
         }
         int begin = mCurrentPage * COUNT_ONE_PAGE;
         int end = Math.min((mCurrentPage + 1) * COUNT_ONE_PAGE, mAlbumIdList.size());
+        if (end >= mAlbumIdList.size()) {
+            mHasMoreData = false;
+        }
         if (begin < end) {
             mIsLoading = true;
             RequestBeanAlbumInfo requestBean = new RequestBeanAlbumInfo();
@@ -107,22 +116,42 @@ public class DiscoveryFragment extends BaseFragment {
                 albumBeans.add(albumBean);
             }
             requestBean.setAlbum(albumBeans);
-            String data = JsonUtil.toJson(requestBean);
+            requestBean.setSize(App.sPreviewImgSize);
+            final String data = JsonUtil.toJson(requestBean);
             String url = UrlsUtil.getAblumInfoUrl(App.sessionId, data);
             Log.d("DiscoveryFragment", "loadAlbumInfoData url = " + url);
             HttpClientManager.getInstance(context).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanAlbumInfo>() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanAlbumInfo response) {
                     if (response.getErr_code() == 0) {
-                        mCurrentPage ++;
-                        mAlbumInfoBeanLIst.addAll(response.getData());
+                        List<ResponseBeanAlbumInfo.DataEntity> data1 = response.getData();
+                        for (int i = 0; i < data1.size(); i++) {
+                            ImgAndTagWallManager.getInstance(context).initImgsWall(data1.get(i).getImages());
+                            ImgAndTagWallManager.getInstance(context).initTagsWallForItem0(data1.get(i).getTags());
+                        }
+                        if (isClearData) {
+                            mData.clear();
+                        }
+                        mData.addAll(response.getData());
+                        if (mCurrentPage == 0) { //造假数据
+                            createItem_2_6_12(context);
+                        }
+                        mCurrentPage++;
+                        if (mAdapter == null) {
+                            mAdapter = new DiscoveryFragmentAdapter(context, mData, (View.OnClickListener) getActivity());
+                            mListView.setAdapter(mAdapter);
+                        } else {
+                            mAdapter.notifyDataSetChanged();
+                        }
                     }
                     mIsLoading = false;
+                    mLoadingLayout.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanAlbumInfo errorResponse) {
                     mIsLoading = false;
+                    mLoadingLayout.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -131,8 +160,96 @@ public class DiscoveryFragment extends BaseFragment {
                     return JsonUtil.fromJson(rawJsonData, ResponseBeanAlbumInfo.class);
                 }
             });
-        } else {
-            mHasMoreData = false;
+        }
+    }
+
+    private void createItem_2_6_12(Context context) {
+        Random random = new Random();
+        if (mData.size() > 2) {
+            //第二块内容固定为今日最佳图片模块，造个假数据
+            ResponseBeanAlbumInfo.DataEntity bean1 = new ResponseBeanAlbumInfo.DataEntity();
+            bean1.setType(1);
+            ArrayList<DemoImgBean> list = new ArrayList<>();
+            int imgCount = random.nextInt(10) + 1;
+            for (int j = 0; j < imgCount; j++) {
+                DemoImgBean imgBean = new DemoImgBean();
+                int index = random.nextInt(7);
+                int id = sIds[index];
+                int w = sW[index];
+                int h = sH[index];
+                imgBean.setHeight(h);
+                imgBean.setWidth(w);
+                imgBean.setUrl(ImageDownloader.Scheme.DRAWABLE.wrap(String.valueOf(id)));
+                list.add(imgBean);
+            }
+            //处理图片数据
+            ImgAndTagWallManager.getInstance(context).initImgsWall(list);
+            bean1.setImages(list);
+            mData.add(2, bean1);
+        }
+
+        if (mData.size() > 6) {
+            //第6块内容固定为优秀摄影师推荐，造个假数据
+            ResponseBeanAlbumInfo.DataEntity bean2 = new ResponseBeanAlbumInfo.DataEntity();
+            bean2.setType(2);
+            ArrayList<DemoImgBean> list2 = new ArrayList<>();
+            int imgCount2 = random.nextInt(10) + 1;
+            for (int j = 0; j < imgCount2; j++) {
+                DemoImgBean imgBean = new DemoImgBean();
+                int index = random.nextInt(7);
+                int id = sIds[index];
+                int w = sW[index];
+                int h = sH[index];
+                imgBean.setHeight(h);
+                imgBean.setWidth(w);
+                imgBean.setUrl(ImageDownloader.Scheme.DRAWABLE.wrap(String.valueOf(id)));
+                list2.add(imgBean);
+            }
+            bean2.setImages(list2);
+            mData.add(6, bean2);
+            ImgAndTagWallManager.getInstance(context).initImgsWall(list2);
+        }
+
+        if (mData.size() > 12) {
+            //第12块内容固定为用户推荐，造个假数据
+            ResponseBeanAlbumInfo.DataEntity bean3 = new ResponseBeanAlbumInfo.DataEntity();
+            bean3.setType(3);
+            mData.add(12, bean3);
+        }
+    }
+
+    /**
+     * 在发完组图后，发现页和个人页需要立马添加一条刚刚发布的信息（自己模拟的数据）
+     */
+    @Override
+    public void addFirstAblum(ResponseBeanAlbumInfo.DataEntity album) {
+        if (mAdapter != null) {
+            //固定位置的条目，不能变了位置，所以需要处理下
+            ResponseBeanAlbumInfo.DataEntity remove2 = null;
+            ResponseBeanAlbumInfo.DataEntity remove6 = null;
+            ResponseBeanAlbumInfo.DataEntity remove12 = null;
+            if (mData.size() > 12) {
+                remove2 = mData.remove(12);
+            }
+            if (mData.size() > 6) {
+                remove2 = mData.remove(6);
+            }
+            if (mData.size() > 2) {
+                remove2 = mData.remove(2);
+            }
+            mData.add(0, album);
+            if (remove2 != null) {
+                mData.add(2, remove2);
+            }
+            if (remove6 != null) {
+                mData.add(6, remove6);
+            }
+            if (remove12 != null) {
+                mData.add(12, remove12);
+            }
+            mAdapter.notifyDataSetChanged();
+            mListView.setSelection(0);
+            mLastLoadDataTime = SystemClock.uptimeMillis();
         }
     }
 
@@ -200,32 +317,5 @@ public class DiscoveryFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         Log.d("DiscoveryFragment", "onDetach --");
-    }
-
-    private class PauseLoadImgOnScrollListener extends PauseOnScrollListener {
-        public PauseLoadImgOnScrollListener() {
-            super(ImageLoader.getInstance(), true, true, new AbsListView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(AbsListView view, int scrollState) {
-                    if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-                        if (mHasMoreData) {
-                            boolean loadMore = mPtrLv.getLastVisiblePosition() + 5 >= mAlbumInfoBeanLIst.size();
-                            if (loadMore) {
-                                //滑动到尾页的一半时继续加载下一页，使用户感觉有无限多的数据，实现方式有两种：
-                                //1，监听滚动停止事件，停止后添加
-                                //2，在adapter中getItem提供回调，position大于一定值开始加载
-                                //目前使用第一种方式
-                                loadAlbumInfoData(getActivity());
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                }
-            });
-        }
     }
 }

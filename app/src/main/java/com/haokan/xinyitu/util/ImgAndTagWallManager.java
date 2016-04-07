@@ -5,9 +5,9 @@ import android.util.Log;
 
 import com.haokan.xinyitu.main.DemoImgBean;
 import com.haokan.xinyitu.main.DemoTagBean;
-import com.haokan.xinyitu.main.discovery.ResponseBeanDiscovery;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ImgAndTagWallManager {
     private int mScreenW;
@@ -45,20 +45,18 @@ public class ImgAndTagWallManager {
         mMinItemH = DisplayUtil.dip2px(context, 60);
         mMinItemImgW = DisplayUtil.dip2px(context, 40);
 
-        mTagTextSize = DisplayUtil.sp2px(context, 14);
+        mTagTextSize = DisplayUtil.sp2px(context, 13);
         mTagTextPadding = DisplayUtil.dip2px(context, 5);
         mTagBaseW = DisplayUtil.dip2px(context, 18);
         mTagRlMargin = DisplayUtil.dip2px(context, 15);
     }
 
-    public void initTagsWallForItem0(ArrayList<DemoTagBean> tags) {
+    public void initTagsWallForItem0(List<DemoTagBean> tags) {
         int textPadding = 2 * mTagTextPadding; //左右上下各有5dp的padding，好点击，所以罗列高度时需要加上2倍padding值
         int rlWidth = mScreenW - mTagRlMargin * 2; //左右各15dp
         int baseW = mTagBaseW;
         int currentTop = 0;
-        int textSize = mTagTextSize;
-
-        initTagsWall(tags, textPadding, textPadding, rlWidth, baseW, currentTop, textSize, textSize, 0, 0, 0, 0);
+        initTagsWall(tags, textPadding, textPadding, rlWidth, baseW, currentTop, mTagTextSize, mTagTextSize, 0, 0, textPadding, 0);
     }
 
     /**
@@ -74,15 +72,15 @@ public class ImgAndTagWallManager {
      * @param drawablePadding 水平drawable padding
      * @param drawableWidth 水平drawable宽
      */
-    public void initTagsWall(ArrayList<DemoTagBean> tags, int textPaddingW, int textPaddingH
+    public void initTagsWall(List<DemoTagBean> tags, int textPaddingW, int textPaddingH
             , int rlWidth, int baseW, int currentTop, int textSize, int textHeight, int drawablePadding, int drawableWidth
-            , int textMarginH, int textMarginV) {
+            , int textMarginW, int textMarginH) {
 
         int currentLineCount = 0; //当前行有几个标签了，每行至少有一个标签，长过一行，后面省略
         for (int i = 0; i < tags.size(); i++) {
             DemoTagBean bean = tags.get(i);
             String tag = bean.getName();
-            int tagw = tag.length() * textSize + textPaddingW + drawablePadding + drawableWidth + textMarginH; //tag有多宽，字数*字宽 + xxx
+            int tagw = tag.length() * textSize + textPaddingW + drawablePadding + drawableWidth + textMarginW; //tag有多宽，字数*字宽 + xxx
             bean.setMarginTop(currentTop);
             bean.setMarginLeft(baseW);
             baseW = baseW + tagw;
@@ -90,7 +88,7 @@ public class ImgAndTagWallManager {
             if (delta < 0 && currentLineCount > 0) {//加上此行溢出了，所以要换行。textPadding + 2 * mTagTextSize
                 currentLineCount = 0;
                 i--;
-                currentTop = currentTop + textHeight + textPaddingH + textMarginV;
+                currentTop = currentTop + textHeight + textPaddingH + textMarginH;
                 baseW = 0;
             } else {
                 currentLineCount ++;
@@ -98,26 +96,26 @@ public class ImgAndTagWallManager {
         }
     }
 
-    public void processImgAndTagWallForItem0(ArrayList<ResponseBeanDiscovery> data) {
-        for (int i = 0; i <data.size(); i++) {
-            ResponseBeanDiscovery beanDiscovery = data.get(i);
-            int type = beanDiscovery.getType();
-            if (type != 3) { //只有类型3不要排图片墙
-                ArrayList<DemoImgBean> imgs = beanDiscovery.getImgs();
-                initImgsWall(imgs);
-            }
-            if (type == 0) { //带标签的类型，需要处理标签
-                ArrayList<DemoTagBean> tags = beanDiscovery.getTags();
-                initTagsWallForItem0(tags);
-            }
-        }
-    }
+//    public void processImgAndTagWallForItem0(ArrayList<ResponseBeanDiscovery> data) {
+//        for (int i = 0; i <data.size(); i++) {
+//            ResponseBeanDiscovery beanDiscovery = data.get(i);
+//            int type = beanDiscovery.getType();
+//            if (type != 3) { //只有类型3不要排图片墙
+//                ArrayList<DemoImgBean> imgs = beanDiscovery.getImgs();
+//                initImgsWall(imgs);
+//            }
+//            if (type == 0) { //带标签的类型，需要处理标签
+//                ArrayList<DemoTagBean> tags = beanDiscovery.getTags();
+//                initTagsWallForItem0(tags);
+//            }
+//        }
+//    }
 
     /**
      * 乱序显示照片墙，给出的是没个图片的相对父布局的位置和每个图片的宽高信息，用来在一个relative中不规则显示照片
      * @param data
      */
-    public void initImgsWall(ArrayList<DemoImgBean> data) {
+    public void initImgsWall(List<DemoImgBean> data) {
         int baseW = 0; //每行的当前的右边界, 屏幕两遍无边界
         int currentTop = 0; //当前行的marginTop
         boolean newline = true; //是否是新起一行
@@ -130,7 +128,7 @@ public class ImgAndTagWallManager {
                 baseW = 0;
             }
             DemoImgBean bean = data.get(i);
-            int imgW = (int)(mBaseHeigh * ((float)bean.getWidth() / bean.getHeigh()) + 0.5f);
+            int imgW = (int)(mBaseHeigh * ((float)bean.getWidth() / bean.getHeight()) + 0.5f);
             int delta = mScreenW - (imgW + baseW); //当前行加上当前图片后，条目右边还剩下多少空间
             if (item.size() > 0) {
                 delta -= mDividerW; //第一张图片开始，中间有间隙
@@ -158,7 +156,7 @@ public class ImgAndTagWallManager {
                      */
                     item.add(bean);
                     int itemW = mScreenW; //这行只有这一张图，行宽就确定了
-                    int itemH = (int) (bean.getHeigh() * (itemW /(float)bean.getWidth()));
+                    int itemH = (int) (bean.getHeight() * (itemW /(float)bean.getWidth()));
                     if (itemH < mMinItemH) {
                         itemH = mMinItemH;
                     }
@@ -207,7 +205,7 @@ public class ImgAndTagWallManager {
         int marginLeft = 0;
         for (int i = 0; i < item.size(); i++) {
             DemoImgBean bean = item.get(i);
-            int acturlImgW = (int) (acturlItemH * ((float)bean.getWidth() / bean.getHeigh()) + 0.5f);
+            int acturlImgW = (int) (acturlItemH * ((float)bean.getWidth() / bean.getHeight()) + 0.5f);
             if (acturlImgW < mMinItemImgW) {
                 //有张图太窄了，最小宽度有限制
                 overflowW = overflowW + (mMinItemImgW - acturlImgW);

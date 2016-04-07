@@ -6,15 +6,15 @@
 
     <RelativeLayout
         android:id="@+id/rl_header"
-        android:background="@color/hei"
+        android:background="@color/main_color_actionbar_item01"
         android:layout_width="match_parent"
-        android:layout_height="75dp">
+        android:layout_height="70dp">
 
         <ImageButton
             android:id="@+id/ib_bigimg_close"
             android:background="@null"
             android:layout_alignParentBottom="true"
-            android:padding="13dp"
+            android:padding="12dp"
             android:layout_marginLeft="5dp"
             android:src="@drawable/icon_bigimg_picclose"
             android:layout_width="wrap_content"
@@ -28,7 +28,6 @@
             android:padding="15dp"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="3dp"
             android:drawablePadding="4dp"
             android:drawableRight="@drawable/icon_upload_allpics_jiantou"
             android:layout_width="wrap_content"
@@ -39,8 +38,8 @@
             android:text="完成"
             android:textSize="14sp"
             android:textColor="@color/click_huang_2"
-            android:padding="18dp"
-            android:layout_marginRight="2dp"
+            android:padding="15dp"
+            android:layout_marginRight="5dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"

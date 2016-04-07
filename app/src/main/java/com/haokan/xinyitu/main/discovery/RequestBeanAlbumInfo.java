@@ -11,6 +11,15 @@ public class RequestBeanAlbumInfo extends BaseRequestBean {
      */
 
     private List<AlbumBean> album;
+    private int size;
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
 
     public void setAlbum(List<AlbumBean> album) {
         this.album = album;

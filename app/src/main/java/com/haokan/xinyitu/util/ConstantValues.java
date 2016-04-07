@@ -5,6 +5,8 @@ public class ConstantValues {
     //一些sharedpreference用到的key
     public static String KEY_SP_USERID = "userid";
     public static String KEY_SP_SESSIONID = "sessionid";
+    public static String KEY_SP_AVATAR_URL = "avatarurl"; //保存的头像地址
+    public static String KEY_SP_NICKNAME = "nickname"; //保存的昵称
 
     public static String PATH_CLIP_PH = "user_cut_ph"; //剪裁的头像存储的位置
     public static String PATH_DOWNLOAD_PIC = "/HaoKanYiTu/YituDownloadPic/"; //保存下载的图片到本地用的位置

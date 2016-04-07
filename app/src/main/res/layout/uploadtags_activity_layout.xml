@@ -6,9 +6,9 @@
 
     <RelativeLayout
         android:id="@+id/rl_header"
-        android:background="@color/hei"
+        android:background="@color/main_color_actionbar_item01"
         android:layout_width="match_parent"
-        android:layout_height="72dp">
+        android:layout_height="70dp">
 
         <ImageButton
             android:id="@+id/ib_back"
@@ -18,7 +18,7 @@
             android:paddingRight="20dp"
             android:paddingTop="20dp"
             android:layout_alignParentBottom="true"
-            android:src="@drawable/icon_back_white"
+            android:src="@drawable/icon_back_white_selector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

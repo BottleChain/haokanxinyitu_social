@@ -344,7 +344,7 @@ public class UploadTagsActivity extends BaseActivity implements View.OnClickList
                                     , ViewGroup.LayoutParams.WRAP_CONTENT);
                             lp.leftMargin = bean.getMarginLeft();
                             lp.topMargin = bean.getMarginTop();
-                            //            Log.d("wangzixu", "initItem0 i,l,t,w,h = " + i + ", " + bean.getMarginLeft() + ", " + bean.getMarginTop()
+                            //            Log.d("wangzixu", "initDiscoveryItem0 i,l,t,w,h = " + i + ", " + bean.getMarginLeft() + ", " + bean.getMarginTop()
                             //                    + ", " + bean.getItemWidth() + ", " + bean.getItemHeigh());
                             tv.setLayoutParams(lp);
                             mRlHottags.addView(tv);

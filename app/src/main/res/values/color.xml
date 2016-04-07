@@ -22,6 +22,12 @@
     <color name="hei_20">#33000000</color>
     <color name="hei_10">#19000000</color>
 
+    <color name="main_color_bg">#ff111111</color>
+    <color name="main_color_actionbar_item01">#ff141414</color>
+    <color name="main_color_item234">#ff1b1b1b</color>
+    <color name="main_color_devider_1">#ff2a2a2a</color>
+    <color name="main_color_devider_2">#212121</color>
+
     <color name="he1">#373737</color>
 
     <color name="anhuang">#8c8c26</color>

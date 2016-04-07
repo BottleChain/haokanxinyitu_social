@@ -1,7 +1,17 @@
 <resources>
     <dimen name="home_item_paddingtop">8dp</dimen>
     <dimen name="home_item_paddingbottom">25dp</dimen>
-
+    <dimen name="home_item_divider_h">11dp</dimen>
     <dimen name="pickimg_grid_img_height">118dp</dimen>
     <dimen name="pickimg_grid_img_width">118dp</dimen>
+
+    <dimen name="discoveryitem0_tv1_margintop">12dp</dimen>
+    <dimen name="discoveryitem0_tv2_margintop">5dp</dimen>
+
+    <dimen name="followsitem_tv1_margintop">15dp</dimen>
+    <dimen name="followsitem_tv2_margintop">6dp</dimen>
+
+    <!--<dimen name="personcenter_title_margintop">16dp</dimen>-->
+    <!--<dimen name="personcenter_desc_margintop">6dp</dimen>-->
+    <!--<dimen name="followsitem_tv2_margintop">6dp</dimen>-->
 </resources>
