@@ -13,6 +13,8 @@
 
         <TextView
             android:id="@+id/tv_1"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="@string/phonenum"
             android:textSize="14sp"
             android:layout_marginLeft="36dp"
@@ -23,6 +25,8 @@
 
         <EditText
             android:hint="请输入您的手机号码"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:id="@+id/et_1"
             android:textSize="14sp"
             android:background="@null"
@@ -48,6 +52,8 @@
 
         <TextView
             android:id="@+id/tv_2"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="@string/password"
             android:textSize="14sp"
             android:layout_below="@id/devider_1"
@@ -59,6 +65,8 @@
 
         <EditText
             android:id="@+id/et_2"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:textSize="14sp"
             android:enabled="true"
             android:background="@null"
@@ -104,6 +112,8 @@
 
         <TextView
             android:id="@+id/tv_4"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:layout_below="@id/divider_2"
             android:layout_marginTop="29dp"
             android:layout_marginBottom="25dp"
@@ -117,6 +127,8 @@
     </RelativeLayout>
     <TextView
         android:id="@+id/tv_5"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:text="@string/forget_password"
         android:textColor="#7fe7e7e7"
         android:textSize="14sp"
@@ -130,6 +142,8 @@
 
     <TextView
         android:id="@+id/tv_6"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:text="@string/sms_login"
         android:layout_toRightOf="@id/tv_5"
         android:layout_below="@id/rl_item0_1"

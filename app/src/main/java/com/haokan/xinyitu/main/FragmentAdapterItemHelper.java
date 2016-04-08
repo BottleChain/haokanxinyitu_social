@@ -2,6 +2,7 @@ package com.haokan.xinyitu.main;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -101,6 +102,8 @@ public class FragmentAdapterItemHelper {
             DemoTagBean bean = tags.get(i);
             String tag = bean.getName();
             TextView tv = new TextView(mContext);
+            tv.setIncludeFontPadding(false);
+            tv.setTypeface(Typeface.DEFAULT);
             tv.setText(tag);
             tv.setTextColor(mTagTextColor);
             tv.setSingleLine();
@@ -121,6 +124,9 @@ public class FragmentAdapterItemHelper {
         return convertView;
     }
 
+    /**
+     * 用户timeline
+     */
     public View initDiscoveryItem0(int position, ResponseBeanAlbumInfo.DataEntity beanDiscovery, View convertView, ViewGroup parent) {
         ViewHolderDiscoveryItem0 holder;
         boolean isShowFadeIn;
@@ -134,6 +140,7 @@ public class FragmentAdapterItemHelper {
             holder.tvlike1.setOnClickListener(mOnClickListener);
             holder.tvcomment1.setOnClickListener(mOnClickListener);
             holder.rl1.setOnClickListener(mOnClickListener);
+            holder.ib1.setOnClickListener(mOnClickListener);
         } else {
             holder = (ViewHolderDiscoveryItem0) convertView.getTag();
             isShowFadeIn = holder.pos != position;
@@ -144,15 +151,25 @@ public class FragmentAdapterItemHelper {
             holder.ib1.setVisibility(View.INVISIBLE);
         } else {
             holder.ib1.setVisibility(View.VISIBLE);
+            holder.ib1.setTag(beanDiscovery);
+            holder.ib1.setSelected(beanDiscovery.isFollowed());
         }
 
         //显示头像，日期，和名称
-        holder.imagePh.setImageResource(R.drawable.icon_login_photo);
-        if (beanDiscovery.getAvatar_url() != null) {
-            String avatarUrl = beanDiscovery.getAvatar_url().getS150();
-            ImageLoaderManager.getInstance().asyncLoadCircleImage(holder.imagePh, avatarUrl
+        if (beanDiscovery.getAvatar_url() != null && !TextUtils.isEmpty(beanDiscovery.getAvatar_url().getS150())) {
+            String path;
+            if (App.sDensity >= 3) {
+                path = beanDiscovery.getAvatar_url().getS150();
+            } else {
+                path = beanDiscovery.getAvatar_url().getS100();
+            }
+            ImageLoaderManager.getInstance().asyncLoadCircleImage(holder.imagePh, path
                     , mAvatarW, mAvatarH);
+        } else {
+            holder.imagePh.setImageResource(R.drawable.icon_login_photo);
         }
+        holder.rl1.setTag(beanDiscovery.getUser_id());
+
         holder.tv1.setText(DataFormatUtil.format(Long.valueOf(beanDiscovery.getCreatetime()) * 1000));
         holder.tv2.setText(beanDiscovery.getNickname());
         if (TextUtils.isEmpty(beanDiscovery.getAlbum_desc())) {
@@ -197,6 +214,8 @@ public class FragmentAdapterItemHelper {
             DemoTagBean bean = tags.get(i);
             String tag = bean.getName();
             TextView tv = new TextView(mContext);
+            tv.setIncludeFontPadding(false);
+            tv.setTypeface(Typeface.DEFAULT);
             tv.setText(tag);
             tv.setTextColor(mTagTextColor);
             tv.setSingleLine();
@@ -217,6 +236,9 @@ public class FragmentAdapterItemHelper {
         return convertView;
     }
 
+    /**
+     * 今日最佳图片
+     */
     public View initDiscoveryItem1(int position, ResponseBeanAlbumInfo.DataEntity beanDiscovery, View convertView, ViewGroup parent) {
         ViewHolderDiscoveryItem1 holder;
         boolean isShowFadeIn;
@@ -262,6 +284,9 @@ public class FragmentAdapterItemHelper {
         return convertView;
     }
 
+    /**
+     * 优秀摄影师推荐
+     */
     public View initDiscoveryItem2(int position, ResponseBeanAlbumInfo.DataEntity beanDiscovery, View convertView, ViewGroup parent) {
         ViewHolderDiscoveryItem2 holder;
         boolean isShowFadeIn;
@@ -277,6 +302,9 @@ public class FragmentAdapterItemHelper {
             isShowFadeIn = holder.pos != position;
         }
         holder.pos = position;
+        holder.ib1.setTag(beanDiscovery);
+        holder.ib1.setSelected(beanDiscovery.isFollowed());
+        holder.rl1.setTag(beanDiscovery.getUser_id());
 
         //显示图片
         List<DemoImgBean> imgs= beanDiscovery.getImages();

@@ -27,6 +27,8 @@
             <TextView
                 android:id="@id/tv_1"
                 android:text="分享到"
+                android:includeFontPadding="false"
+                android:typeface="normal"
                 android:textColor="@color/hei_50"
                 android:textSize="12sp"
                 android:layout_marginLeft="16dp"
@@ -43,6 +45,8 @@
                 <TextView
                     android:id="@+id/tv_morepop_pengyouquan"
                     android:text="朋友圈"
+                    android:includeFontPadding="false"
+                    android:typeface="normal"
                     android:textColor="@color/hei_50"
                     android:textSize="12sp"
                     android:gravity="center_horizontal"
@@ -54,6 +58,8 @@
                 <TextView
                     android:id="@+id/tv_morepop_weixin"
                     android:text="微信好友"
+                    android:includeFontPadding="false"
+                    android:typeface="normal"
                     android:textColor="@color/hei_50"
                     android:textSize="12sp"
                     android:layout_toRightOf="@id/tv_morepop_pengyouquan"
@@ -67,6 +73,8 @@
                 <TextView
                     android:id="@+id/tv_morepop_qq"
                     android:text="QQ好友"
+                    android:includeFontPadding="false"
+                    android:typeface="normal"
                     android:textColor="@color/hei_50"
                     android:textSize="12sp"
                     android:layout_toRightOf="@id/tv_morepop_weixin"
@@ -80,6 +88,8 @@
                 <TextView
                     android:id="@+id/tv_morepop_weibo"
                     android:text="微博"
+                    android:includeFontPadding="false"
+                    android:typeface="normal"
                     android:textColor="@color/hei_50"
                     android:textSize="12sp"
                     android:layout_toRightOf="@id/tv_morepop_qq"
@@ -93,6 +103,8 @@
                 <TextView
                     android:id="@+id/tv_morepop_qqzone"
                     android:text="QQ空间"
+                    android:includeFontPadding="false"
+                    android:typeface="normal"
                     android:textColor="@color/hei_50"
                     android:textSize="12sp"
                     android:layout_toRightOf="@id/tv_morepop_weibo"
@@ -124,6 +136,8 @@
                 <TextView
                     android:id="@+id/tv_morepop_jubao"
                     android:text="举报"
+                    android:includeFontPadding="false"
+                    android:typeface="normal"
                     android:textColor="@color/hei_50"
                     android:textSize="12sp"
                     android:gravity="center_horizontal"
@@ -135,6 +149,8 @@
                 <TextView
                     android:id="@+id/tv_morepop_download"
                     android:text="保存图片"
+                    android:includeFontPadding="false"
+                    android:typeface="normal"
                     android:textColor="@color/hei_50"
                     android:textSize="12sp"
                     android:layout_toRightOf="@id/tv_morepop_jubao"
@@ -148,6 +164,8 @@
                 <TextView
                     android:id="@+id/tv_morepop_delete"
                     android:text="删除图册"
+                    android:includeFontPadding="false"
+                    android:typeface="normal"
                     android:textColor="@color/hei_50"
                     android:textSize="12sp"
                     android:layout_toRightOf="@id/tv_morepop_download"

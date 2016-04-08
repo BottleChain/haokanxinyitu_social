@@ -68,6 +68,8 @@
 
         <TextView
             android:id="@+id/tv_upload_imgedit_title"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="2/6"
             android:textColor="@color/bai"
             android:textSize="13sp"

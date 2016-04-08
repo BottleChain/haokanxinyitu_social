@@ -97,6 +97,9 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
     }
 
     public void loadAlbumInfoData(final Context context, final boolean isClearData) {
+        if (context == null || mIsDestory) {
+            return;
+        }
         if (mIsLoading) {
             return;
         }

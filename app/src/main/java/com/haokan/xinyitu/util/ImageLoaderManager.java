@@ -2,6 +2,7 @@ package com.haokan.xinyitu.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -125,6 +126,9 @@ public class ImageLoaderManager {
     }
 
     public void asyncLoadCircleImage(final ImageView img, String imageUrl, int width, int heigh) {
+        if (TextUtils.isEmpty(imageUrl)) {
+            return;
+        }
         if (display_circle_img_options == null) {
             display_circle_img_options = new DisplayImageOptions.Builder()
                     .cacheInMemory(true)

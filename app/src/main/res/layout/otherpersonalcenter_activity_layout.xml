@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fl_content"
+    android:fitsSystemWindows="true">
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/rl_header"-->
+        <!--android:background="@color/main_color_actionbar_item01"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="64dp">-->
+        <!--<ImageButton-->
+            <!--android:id="@+id/ib_person_setting"-->
+            <!--android:background="@null"-->
+            <!--android:paddingLeft="20dp"-->
+            <!--android:paddingBottom="12dp"-->
+            <!--android:paddingRight="20dp"-->
+            <!--android:paddingTop="12dp"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:src="@drawable/icon_back_white_selector"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"/>-->
+    <!--</RelativeLayout>-->
+        <!--android:layout_below="@id/rl_header"-->
+    <!--<FrameLayout-->
+        <!--android:id="@+id/fl_content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+    <!--</FrameLayout>-->
+</FrameLayout>

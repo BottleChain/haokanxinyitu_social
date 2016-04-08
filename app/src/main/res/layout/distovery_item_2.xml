@@ -19,6 +19,8 @@
 
     <TextView
         android:id="@+id/tv_1"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:layout_below="@id/divider_2"
         android:textSize="13sp"
         android:gravity="center_vertical"
@@ -63,6 +65,8 @@
         <TextView
             android:id="@+id/tv_2"
             android:textSize="10sp"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:layout_marginTop="4dp"
             android:layout_marginLeft="8dp"
             android:layout_toRightOf="@id/image_1"
@@ -74,6 +78,8 @@
         <TextView
             android:id="@+id/tv_desc"
             android:textSize="14sp"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:layout_toRightOf="@id/image_1"
             android:layout_below="@id/tv_2"
             android:textColor="@color/click_bai60"

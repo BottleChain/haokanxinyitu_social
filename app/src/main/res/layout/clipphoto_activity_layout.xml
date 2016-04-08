@@ -22,6 +22,8 @@
     <TextView
         android:id="@+id/tv_1"
         android:text="拖动或者缩放图片到合适位置"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:textSize="16sp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="65dp"
@@ -34,6 +36,8 @@
     <TextView
         android:id="@+id/tv_2"
         android:text="重新选择"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:textSize="16sp"
         android:layout_alignParentBottom="true"
         android:textColor="@color/bai"
@@ -46,6 +50,8 @@
 
     <TextView
         android:id="@+id/tv_desc"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:text="确认"
         android:textSize="16sp"
         android:layout_alignParentBottom="true"

@@ -24,6 +24,8 @@
 
         <TextView
             android:id="@+id/tv_upload_pickfolder"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="所在位置"
             android:textSize="14sp"
             android:textColor="@color/click_bai"
@@ -36,6 +38,8 @@
 
     <EditText
         android:id="@+id/et_upload_edit"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:layout_below="@id/rl_header"
         android:layout_marginTop="9dp"
         android:layout_marginLeft="10dp"
@@ -48,6 +52,8 @@
 
     <TextView
         android:id="@+id/tv_edit_bg"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:focusable="false"
         android:layout_below="@id/rl_header"
         android:text="搜索附近位置"

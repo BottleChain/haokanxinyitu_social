@@ -13,6 +13,8 @@
 
         <TextView
             android:id="@+id/tv_1"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="@string/phonenum"
             android:textSize="14sp"
             android:layout_marginLeft="36dp"
@@ -23,6 +25,8 @@
 
         <EditText
             android:id="@+id/et_1"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:hint="请输入您的手机号码"
             android:textSize="14sp"
             android:background="@null"
@@ -48,6 +52,8 @@
 
         <TextView
             android:id="@+id/tv_2"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="@string/indentifycode"
             android:textSize="14sp"
             android:layout_below="@id/devider_1"
@@ -59,6 +65,8 @@
 
         <TextView
             android:id="@+id/tv_desc"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:textColor="@color/anhuang"
             android:textSize="14sp"
             android:layout_alignBaseline="@id/tv_2"
@@ -72,6 +80,8 @@
 
         <EditText
             android:id="@+id/et_2"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:textSize="14sp"
             android:enabled="true"
             android:background="@null"
@@ -107,6 +117,8 @@
 
         <TextView
             android:id="@+id/tv_7"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="@string/invitecode"
             android:textSize="14sp"
             android:layout_marginLeft="36dp"
@@ -118,6 +130,8 @@
 
         <EditText
             android:id="@+id/et_3"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:hint="请输入正确的邀请码"
             android:textSize="14sp"
             android:background="@null"
@@ -143,6 +157,8 @@
 
         <TextView
             android:id="@+id/tv_4"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:layout_below="@id/devider_3"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="22dp"
@@ -156,6 +172,8 @@
     </RelativeLayout>
     <TextView
         android:id="@+id/tv_5"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:text="@string/have_account"
         android:textColor="#7fe7e7e7"
         android:textSize="14sp"
@@ -169,6 +187,8 @@
 
     <TextView
         android:id="@+id/tv_6"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:text="@string/login"
         android:layout_toRightOf="@id/tv_5"
         android:layout_below="@id/rl_item0_1"

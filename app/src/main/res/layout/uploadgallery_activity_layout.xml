@@ -22,6 +22,8 @@
 
         <TextView
             android:id="@+id/tv_upload_pickfolder"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="所有照片"
             android:textSize="14sp"
             android:textColor="@color/click_bai"
@@ -35,6 +37,8 @@
 
         <TextView
             android:id="@+id/tv_confirm"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="完成"
             android:textSize="14sp"
             android:textColor="@color/click_huang_2"

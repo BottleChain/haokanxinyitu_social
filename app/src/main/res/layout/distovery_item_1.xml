@@ -19,6 +19,8 @@
 
     <TextView
         android:id="@+id/tv_1"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:background="@color/main_color_item234"
         android:layout_below="@id/divider_2"
         android:textSize="14sp"
@@ -33,6 +35,8 @@
 
     <TextView
         android:id="@+id/tv_2"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:layout_below="@id/divider_2"
         android:textSize="12sp"
         android:textColor="@color/click_bai40"

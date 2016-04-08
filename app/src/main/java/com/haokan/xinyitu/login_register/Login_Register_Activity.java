@@ -25,7 +25,7 @@ import com.haokan.xinyitu.base.BaseActivity;
 import com.haokan.xinyitu.base.BaseResponseBean;
 import com.haokan.xinyitu.clipphoto.ClipPhotoActivity;
 import com.haokan.xinyitu.clipphoto.ClipPhotoManager;
-import com.haokan.xinyitu.main.mypersonalcenter.ResponseBeanUserInfo;
+import com.haokan.xinyitu.main.mypersonalcenter.ResponseBeanMyUserInfo;
 import com.haokan.xinyitu.util.CommonUtil;
 import com.haokan.xinyitu.util.ConstantValues;
 import com.haokan.xinyitu.util.HttpClientManager;
@@ -719,9 +719,9 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         String myinfoUrl = UrlsUtil.getMyinfoUrl(App.sessionId);
         Log.d("wangzixu", "getMyInfo myinfoUrl = " + myinfoUrl);
 
-        HttpClientManager.getInstance(this).getData(myinfoUrl, new BaseJsonHttpResponseHandler<ResponseBeanUserInfo>() {
+        HttpClientManager.getInstance(this).getData(myinfoUrl, new BaseJsonHttpResponseHandler<ResponseBeanMyUserInfo>() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanUserInfo response) {
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanMyUserInfo response) {
                 if (response.getErr_code() == 0) {
                     String avatarUrl;
                     if (App.sDensity >= 3) {
@@ -737,12 +737,12 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanUserInfo errorResponse) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanMyUserInfo errorResponse) {
             }
 
             @Override
-            protected ResponseBeanUserInfo parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
-                return JsonUtil.fromJson(rawJsonData, ResponseBeanUserInfo.class);
+            protected ResponseBeanMyUserInfo parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return JsonUtil.fromJson(rawJsonData, ResponseBeanMyUserInfo.class);
             }
         });
     }

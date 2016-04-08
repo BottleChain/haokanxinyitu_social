@@ -1,10 +1,8 @@
-package com.haokan.xinyitu.main.mypersonalcenter;
+package com.haokan.xinyitu.main.otherpersonalcenter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +17,13 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseResponseBean;
+import com.haokan.xinyitu.follow.RequestBeanUsersInfo;
+import com.haokan.xinyitu.follow.ResponseBeanOtherUserInfo;
 import com.haokan.xinyitu.main.Base_PTR_LoadMore_Fragment;
 import com.haokan.xinyitu.main.discovery.RequestBeanAlbumInfo;
 import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
-import com.haokan.xinyitu.util.ConstantValues;
+import com.haokan.xinyitu.main.mypersonalcenter.MyPersonnalcenterFragmentAdapter;
+import com.haokan.xinyitu.main.mypersonalcenter.ResponseBeanAlbumListPersonnal;
 import com.haokan.xinyitu.util.HttpClientManager;
 import com.haokan.xinyitu.util.ImageLoaderManager;
 import com.haokan.xinyitu.util.ImgAndTagWallManager;
@@ -35,14 +36,13 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment implements PullToRefreshBase.OnRefreshListener<ListView> {
+public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment implements PullToRefreshBase.OnRefreshListener<ListView> {
 
     private List<ResponseBeanAlbumListPersonnal.DataEntity> mAlbumIdList;
     private ArrayList<ResponseBeanAlbumInfo.DataEntity> mData = new ArrayList<>();
-    private View mIbPersonSetting;
     private View mRlTopbar;
-    private View mIbPersonNotice;
-    private View mIvNoticePoint;
+    private View mIbBack;
+    private View mIbFollow;
     private TextView mTvTitle;
     private TextView mTvHeaderTitle;
     private MyPersonnalcenterFragmentAdapter mAdapter;
@@ -60,14 +60,13 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
     private TextView mTvMyFollowsCount;
     private TextView mTvFollowMeCount;
     private ImageView mIvAvatar;
+    private boolean mIsMyCenterInfo;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.mypersonalcenter_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.otherpersonalcenter_fragment_layout, container, false);
         mRlTopbar = view.findViewById(R.id.rl_header);
-        mIbPersonSetting = view.findViewById(R.id.ib_person_setting);
-        mIbPersonNotice = view.findViewById(R.id.ib_person_notice);
-        mIvNoticePoint = view.findViewById(R.id.iv_notice_point);
+        mIbBack = view.findViewById(R.id.ib_back);
         mTvTitle = (TextView) view.findViewById(R.id.tv_title);
         mPullToRefreshListView = (PullToRefreshListView) view.findViewById(R.id.ptrlv_1);
         mPullToRefreshListView.setOnRefreshListener(this);
@@ -76,10 +75,11 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         mNetErrorLayout = view.findViewById(R.id.net_error_layout);
         mBtnNetError = mNetErrorLayout.findViewById(R.id.iv_net_error);
 
-        mHeader = inflater.inflate(R.layout.mypersonnalcenter_header, container, false);
+        mHeader = inflater.inflate(R.layout.otherpersonnalcenter_header, container, false);
         mTvHeaderTitle = (TextView) mHeader.findViewById(R.id.tv_name);
         mTvHeaderDesc = (TextView) mHeader.findViewById(R.id.tv_desc);
         mIvAvatar = (ImageView) mHeader.findViewById(R.id.iv_avatar);
+        mIbFollow = mHeader.findViewById(R.id.ib_follow);
 
         mRlMyGallery = mHeader.findViewById(R.id.rl_mygallery);
         mTvAblumCount = (TextView) mHeader.findViewById(R.id.tv_mygallery_count);
@@ -93,13 +93,18 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         mHeader.setLayoutParams(lp);
         mListView.addHeaderView(mHeader);
 
-
-        mTvTitle.setText("Effie Riley");
         mRlMyGallery.setClickable(false);
         mRlMyGallery.setSelected(true);
-        mIbPersonSetting.setOnClickListener((View.OnClickListener) getActivity());
+
+        mIbBack.setOnClickListener((View.OnClickListener) getActivity());
         mRlMyFollows.setOnClickListener((View.OnClickListener) getActivity());
         mRlFollowMe.setOnClickListener((View.OnClickListener) getActivity());
+        if (mIsMyCenterInfo) {
+            mIbFollow.setVisibility(View.GONE);
+        } else {
+            mIbFollow.setVisibility(View.VISIBLE);
+            mIbFollow.setOnClickListener((View.OnClickListener) getActivity());
+        }
 
         mRlTopbar.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -119,6 +124,25 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         });
 
         return view;
+    }
+
+    public void setIsMyCenterInfo(boolean isMyCenterInfo) {
+        mIsMyCenterInfo = isMyCenterInfo;
+        if (mIbFollow == null) {
+            return;
+        }
+        if (mIsMyCenterInfo) {
+            mIbFollow.setVisibility(View.GONE);
+        } else {
+            mIbFollow.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public String mUserId;
+
+    public void setUserId(String userId) {
+        mUserId = userId;
+        setIsMyCenterInfo(App.user_Id.equals(userId));
     }
 
     @Override
@@ -145,49 +169,35 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         };
     }
 
-//    @Override
-//    protected String getLoadDataUrl() {
-//        String url = UrlsUtil.getMyAlbumsUrl(App.sessionId);
-////        String url = UrlsUtil.getLastestAblumUrl(App.sessionId);
-//        Log.d("MyPersonalCenter", "loadData url = " + url);
-//        return url;
-//    }
-
     @Override
     protected String getLoadDataUrl() {
-        String url = UrlsUtil.getMyinfoUrl(App.sessionId);
-        Log.d("MyPersonalCenter", "loadData url = " + url);
+        RequestBeanUsersInfo requestBean = new RequestBeanUsersInfo();
+        ArrayList<RequestBeanUsersInfo.UserInfoRequestEntity> beans = new ArrayList<>();
+        RequestBeanUsersInfo.UserInfoRequestEntity bean = new RequestBeanUsersInfo.UserInfoRequestEntity();
+        bean.setId(String.valueOf(mUserId));
+        beans.add(bean);
+        requestBean.setUser(beans);
+        final String data = JsonUtil.toJson(requestBean);
+        String url = UrlsUtil.getUserInfoUrl(App.sessionId, data);
+        Log.d("OtherPersonal", "loadData url = " + url);
         return url;
     }
 
-//    @Override
-//    protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
-//        ResponseBeanAlbumListPersonnal responseBeanAlbumList = (ResponseBeanAlbumListPersonnal) response;
-//        mPullToRefreshListView.setVisibility(View.VISIBLE);
-//        mAlbumIdList = null;
-//        //mData.clear();
-//        mCurrentPage = 0;
-//        mAlbumIdList = responseBeanAlbumList.getData();
-//        mHasMoreData = true;
-//        mTvAblumCount.setText(String.valueOf(mAlbumIdList.size()));
-//        loadAlbumInfoData(context, true);
-//
-//        loadMyInfo(context);
-//    }
-
     @Override
     protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean baseResponseBean) {
-        ResponseBeanMyUserInfo response = (ResponseBeanMyUserInfo) baseResponseBean;
+        ResponseBeanOtherUserInfo response = (ResponseBeanOtherUserInfo) baseResponseBean;
         mPullToRefreshListView.setVisibility(View.VISIBLE);
+
         String avatarUrl;
         if (App.sDensity >= 3) {
-            avatarUrl = response.getData().getAvatar_url().getS150();
+            avatarUrl = response.getData().get(0).getAvatar_url().getS150();
         } else {
-            avatarUrl = response.getData().getAvatar_url().getS100();
+            avatarUrl = response.getData().get(0).getAvatar_url().getS100();
         }
-        String nickname = response.getData().getNickname();
+        String nickname = response.getData().get(0).getNickname();
         mTvTitle.setText(nickname);
         mTvHeaderTitle.setText(nickname);
+
         //开始加载组图
         loadAblumIdList(context);
         //加载头像
@@ -195,12 +205,6 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
             ImageLoaderManager.getInstance().asyncLoadCircleImage(mIvAvatar, avatarUrl
                     , mIvAvatar.getWidth(), mIvAvatar.getHeight());
         }
-
-        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor edit = defaultSharedPreferences.edit();
-        edit.putString(ConstantValues.KEY_SP_AVATAR_URL, avatarUrl);
-        edit.putString(ConstantValues.KEY_SP_NICKNAME, nickname);
-        edit.apply();
     }
 
     private void loadAblumIdList(final Context context) {
@@ -251,7 +255,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
 
     @Override
     protected BaseResponseBean getResponse(String rawJsonData, boolean isFailure) {
-        return JsonUtil.fromJson(rawJsonData, ResponseBeanMyUserInfo.class);
+        return JsonUtil.fromJson(rawJsonData, ResponseBeanOtherUserInfo.class);
     }
 
 

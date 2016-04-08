@@ -11,6 +11,8 @@
 
         <TextView
             android:id="@+id/tv_cancel"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="取消"
             android:textSize="14sp"
             android:textColor="@color/click_bai"
@@ -22,6 +24,8 @@
 
         <TextView
             android:id="@+id/tv_confirm"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="发布"
             android:textSize="14sp"
             android:textColor="@color/click_huang_2"
@@ -41,6 +45,8 @@
             android:layout_height="wrap_content">
             <EditText
                 android:id="@+id/et_upload_edit"
+                android:includeFontPadding="false"
+                android:typeface="normal"
                 android:hint="描述一下您的作品吧"
                 android:paddingTop="10dp"
                 android:paddingLeft="10dp"
@@ -58,6 +64,8 @@
 
             <TextView
                 android:id="@+id/tv_textcount"
+                android:includeFontPadding="false"
+                android:typeface="normal"
                 android:layout_below="@id/et_upload_edit"
                 android:gravity="right"
                 android:paddingBottom="10dp"
@@ -102,6 +110,8 @@
                     android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/tv_add_tag"
+                        android:includeFontPadding="false"
+                        android:typeface="normal"
                         android:text="# 点击添加标签"
                         android:textSize="14sp"
                         android:layout_marginLeft="7dp"
@@ -130,6 +140,8 @@
 
                 <TextView
                     android:text="所在位置"
+                    android:includeFontPadding="false"
+                    android:typeface="normal"
                     android:textSize="14sp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="14dp"
@@ -158,6 +170,8 @@
 
             <TextView
                 android:id="@+id/tv_uploadmain_goonadd"
+                android:includeFontPadding="false"
+                android:typeface="normal"
                 android:layout_below="@id/devider_3"
                 android:background="@color/main_color_bg"
                 android:text="+  继续添加"

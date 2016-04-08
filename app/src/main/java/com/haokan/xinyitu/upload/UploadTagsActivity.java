@@ -1,6 +1,7 @@
 package com.haokan.xinyitu.upload;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -226,6 +227,8 @@ public class UploadTagsActivity extends BaseActivity implements View.OnClickList
         tag.setTagName(string);
 
 //        TextView tv = new TextView(UploadTagsActivity.this);
+//        tv.setIncludeFontPadding(false);
+//        tv.setTypeface(Typeface.DEFAULT);
 //        tv.setText(string);
 //        tv.setTextSize(mTagTextSize);
 //        tv.setTextColor(getResources().getColorStateList(R.color.click_hei60));
@@ -309,6 +312,8 @@ public class UploadTagsActivity extends BaseActivity implements View.OnClickList
                             DemoTagBean bean = mListUsed.get(i);
                             String tag = bean.getName();
                             TextView tv = new TextView(UploadTagsActivity.this);
+                            tv.setIncludeFontPadding(false);
+                            tv.setTypeface(Typeface.DEFAULT);
                             tv.setText(tag);
                             tv.setTextSize(mTagTextSize);
                             tv.setTextColor(getResources().getColorStateList(R.color.click_hei40));
@@ -332,6 +337,8 @@ public class UploadTagsActivity extends BaseActivity implements View.OnClickList
                             DemoTagBean bean = mListHot.get(i);
                             String tag = bean.getName();
                             TextView tv = new TextView(UploadTagsActivity.this);
+                            tv.setIncludeFontPadding(false);
+                            tv.setTypeface(Typeface.DEFAULT);
                             tv.setText(tag);
                             tv.setTextSize(mTagTextSize);
                             tv.setTextColor(getResources().getColorStateList(R.color.click_hei40));

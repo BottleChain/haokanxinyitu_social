@@ -36,6 +36,8 @@
     <TextView
         android:visibility="invisible"
         android:id="@+id/tv_1"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:text="@string/personal_data"
         android:textColor="@color/bai_90"
         android:textSize="15sp"
@@ -47,6 +49,8 @@
     <TextView
         android:visibility="invisible"
         android:id="@+id/tv_4"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:text="@string/skip"
         android:textColor="#7fe7e7e7"
         android:layout_alignParentBottom="true"
@@ -70,6 +74,8 @@
     <TextView
         android:lineSpacingExtra="3dp"
         android:id="@+id/tv_desc"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:layout_below="@id/tv_2"
         android:text="@string/welcome_sub"
         android:textSize="14sp"
@@ -131,6 +137,8 @@
             android:id="@+id/tv_third_login_title"
             android:layout_centerHorizontal="true"
             android:text="第三方登录"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:textSize="12sp"
             android:textColor="@color/bai_50"
             android:layout_width="wrap_content"

@@ -6,6 +6,8 @@
 
     <TextView
         android:id="@+id/tv_title"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:textColor="@color/hei"
         android:textSize="15sp"
         android:text="照片相册"
@@ -16,6 +18,8 @@
 
     <TextView
         android:id="@+id/tv_count"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:layout_below="@id/tv_title"
         android:textColor="@color/hei_60"
         android:textSize="14sp"

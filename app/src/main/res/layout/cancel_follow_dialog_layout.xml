@@ -13,7 +13,7 @@
         android:lineSpacingExtra="3dp"
         android:textColor="@color/bai"
         android:textSize="18sp"
-        android:text="您确定放弃正在编辑的组图吗？"
+        android:text="不再关注该用户了?"
         android:layout_width="match_parent"
         android:layout_height="33dp"/>
 </RelativeLayout>

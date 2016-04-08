@@ -1,10 +1,12 @@
 package com.haokan.xinyitu.main;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
@@ -30,18 +32,26 @@ import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseActivity;
 import com.haokan.xinyitu.base.BaseFragment;
+import com.haokan.xinyitu.base.BaseResponseBean;
 import com.haokan.xinyitu.bigimgbrowse.BigImgBrowseActivity;
+import com.haokan.xinyitu.follow.FollowMeActivity;
+import com.haokan.xinyitu.follow.MyFollowsActivity;
 import com.haokan.xinyitu.login_register.Login_Register_Activity;
 import com.haokan.xinyitu.main.MyFollowsTimeLine.MyFollowFragment;
 import com.haokan.xinyitu.main.discovery.DiscoveryFragment;
 import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
 import com.haokan.xinyitu.main.mypersonalcenter.MyPersonalCenterFragment;
+import com.haokan.xinyitu.main.otherpersonalcenter.OtherPersonalCenterActivity;
 import com.haokan.xinyitu.upload.UpLoadGalleryActivity;
 import com.haokan.xinyitu.upload.UpLoadMainActivity;
 import com.haokan.xinyitu.util.CommonUtil;
+import com.haokan.xinyitu.util.HttpClientManager;
 import com.haokan.xinyitu.util.ImageUtil;
+import com.haokan.xinyitu.util.JsonUtil;
 import com.haokan.xinyitu.util.SystemBarTintManager;
 import com.haokan.xinyitu.util.ToastManager;
+import com.haokan.xinyitu.util.UrlsUtil;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.umeng.socialize.Config;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareAPI;
@@ -51,7 +61,9 @@ import com.umeng.socialize.media.UMImage;
 
 import java.util.ArrayList;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+import cz.msebera.android.httpclient.Header;
+
+public class MainActivity extends BaseMainActivity {
 
     private ImageButton mIvBottomBar1;
     private ImageButton mIvBottomBar2;
@@ -334,7 +346,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     });
                 }
                 break;
+            case R.id.rl_personalcenter_myfollow: //个人中心我关注的人
+                Intent intent = new Intent(this, MyFollowsActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+                break;
+            case R.id.rl_personalcenter_followme:
+                Intent intent1 = new Intent(this, FollowMeActivity.class);
+                startActivity(intent1);
+                overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+                break;
+            case R.id.ib_person_setting:
+                break;
             case R.id.tv_comment_1://条目0的评论
+                break;
+            case R.id.ib_1://首页的关注按钮，关注某人，或者不再关注某人
+                changeFollowState(v);
+                break;
+            case R.id.rl_item0_1://首页的关注按钮，关注某人，或者不再关注某人
+                String userId = (String) v.getTag();
+                if (TextUtils.isEmpty(userId)) {
+                    return;
+                }
+                Intent intent2 = new Intent(this, OtherPersonalCenterActivity.class);
+                intent2.putExtra(OtherPersonalCenterActivity.KEY_INTENT_USERID, userId);
+                startActivity(intent2);
+                overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
                 break;
             case R.id.ib_item0_more://条目0的更多按钮
                 if (mMorePopupWindow == null) {
@@ -417,6 +454,72 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             default:
                 break;
+        }
+    }
+
+    private void changeFollowState(final View view) {
+        final ResponseBeanAlbumInfo.DataEntity bean = (ResponseBeanAlbumInfo.DataEntity) view.getTag();
+        if (TextUtils.isEmpty(bean.getUser_id())) {
+            Log.d("wangzixu", "changeFollowState userId is empty!");
+            return;
+        }
+        if (view.isSelected()) {
+            View v = LayoutInflater.from(this).inflate(R.layout.cancel_follow_dialog_layout, null);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK)
+                    .setTitle("提示")
+                    .setView(v)
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            view.setSelected(false);
+                            bean.setIsFollowed(false);
+                            String url = UrlsUtil.getdelFollowUrl(App.sessionId, bean.getUser_id());
+                            Log.d("wangzixu", "changeFollowState cancel url = " + url);
+                            HttpClientManager.getInstance(MainActivity.this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+                                    Log.d("wangzixu", "changeFollowState cancel onSuccess = " + response.getErr_msg());
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
+
+                                }
+
+                                @Override
+                                protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                                    return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+                                }
+                            });
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        } else {
+            view.setSelected(true);
+            bean.setIsFollowed(true);
+            String url = UrlsUtil.getaddFollowUrl(App.sessionId, bean.getUser_id());
+            Log.d("wangzixu", "changeFollowState add url = " + url);
+            HttpClientManager.getInstance(this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+                    Log.d("wangzixu", "changeFollowState add onSuccess = " + response.getErr_msg());
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
+
+                }
+
+                @Override
+                protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                    return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+                }
+            });
         }
     }
 

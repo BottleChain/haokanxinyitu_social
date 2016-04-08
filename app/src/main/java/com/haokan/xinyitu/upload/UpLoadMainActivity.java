@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -534,6 +535,8 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                     DemoTagBean bean = mTags.get(i);
                     String tag = bean.getName();
                     TextView tv = new TextView(this);
+                    tv.setIncludeFontPadding(false);
+                    tv.setTypeface(Typeface.DEFAULT);
                     tv.setText(tag);
                     tv.setTextSize(mTagTextSize);
                     tv.setTextColor(getResources().getColor(R.color.hei_60));

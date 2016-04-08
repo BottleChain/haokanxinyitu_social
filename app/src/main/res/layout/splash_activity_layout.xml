@@ -8,6 +8,8 @@
 
     <TextView
         android:textSize="18sp"
+        android:includeFontPadding="false"
+        android:typeface="normal"
         android:text="@string/app_name"
         android:textColor="#ff7971"
         android:layout_marginTop="295dp"

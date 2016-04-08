@@ -54,6 +54,8 @@ public class UrlsUtil {
         public static final String URL_delFollow_a = "delFollow"; //取消关注
         public static final String URL_getIlike_a = "getIlike"; //获取我关注的人列表
         public static final String URL_getLikeMe_a = "getLikeMe"; //获取关注我的人列表
+        public static final String URL_GetIlikeNum_a = "GetIlikeNum"; //获取我关注的数量
+        public static final String URL_GetLikeMeNum_a = "GetLikeMeNum"; //获取我粉丝的数量
 
 
 
@@ -110,7 +112,7 @@ public class UrlsUtil {
         return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_MyInfo_a, Urls.URL_apiUser_c, null, Urls.URL_V, sessidonId);
     }
 
-    public static String getUserinfoUrl(String sessidonId, String data) {
+    public static String getUserInfoUrl(String sessidonId, String data) {
         return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_UserInfo_a, Urls.URL_apiUser_c, data, Urls.URL_V, sessidonId);
     }
 
@@ -122,7 +124,7 @@ public class UrlsUtil {
 
     public static String getdelFollowUrl(String sessidonId, String userId) {
         String data = "{\"followid\":" + userId + "}";
-        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_delFollow_a, Urls.URL_apifollow_c, null, Urls.URL_V, sessidonId);
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_delFollow_a, Urls.URL_apifollow_c, data, Urls.URL_V, sessidonId);
     }
 
 
@@ -133,6 +135,15 @@ public class UrlsUtil {
     public static String getLikeMeUrl(String sessidonId) {
         return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_getLikeMe_a, Urls.URL_apifollow_c, null, Urls.URL_V, sessidonId);
     }
+
+    public static String getIlikeNumUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_GetIlikeNum_a, Urls.URL_apifollow_c, null, Urls.URL_V, sessidonId);
+    }
+
+    public static String getLikeMeNumUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_GetLikeMeNum_a, Urls.URL_apifollow_c, null, Urls.URL_V, sessidonId);
+    }
+
 
 
     /**

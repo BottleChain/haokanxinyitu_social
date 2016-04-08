@@ -242,6 +242,9 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
                 }
                 break;
             case R.id.tv_upload_pickfolder: //中间选择按钮，弹出选择文件夹popupwindow
+                if (mImgDirs == null || mImgDirs.size() == 0) {
+                    return;
+                }
                 initPopwindow();
                 if (mPopWindow.isShowing()) {
                     disMissPop();

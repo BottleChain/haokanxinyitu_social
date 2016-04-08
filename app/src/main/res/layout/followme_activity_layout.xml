@@ -21,6 +21,8 @@
 
         <TextView
             android:id="@+id/tv_title"
+            android:includeFontPadding="false"
+            android:typeface="normal"
             android:text="关注我的人"
             android:textSize="15sp"
             android:textColor="@color/click_bai"
@@ -51,4 +53,15 @@
             android:layout_height="wrap_content">
         </ListView>
     </RelativeLayout>
+
+    <include
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/loading_layout" />
+
+    <include
+        android:id="@+id/net_error_layout"
+        layout="@layout/net_error_layout"
+        android:visibility="gone"/>
 </RelativeLayout>

@@ -45,6 +45,15 @@ public class ResponseBeanAlbumInfo extends BaseResponseBean {
         private List<DemoTagBean> tags;
         private AvatarUrlBean avatar_url;
         private int type; //发现页第2,6,12显示不同个type
+        private boolean isFollowed;
+
+        public boolean isFollowed() {
+            return isFollowed;
+        }
+
+        public void setIsFollowed(boolean isFollowed) {
+            this.isFollowed = isFollowed;
+        }
 
         public AvatarUrlBean getAvatar_url() {
             return avatar_url;
