@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +46,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
     private View mIvNoticePoint;
     private TextView mTvTitle;
     private TextView mTvHeaderTitle;
-    private MyPersonnalcenterFragmentAdapter mAdapter;
+    private PersonnalcenterFragmentAdapter mAdapter;
 
     //处理上划显示标题用到的一些数据
     private int mTopBarBottom; //actionbar的底部位置
@@ -188,6 +189,15 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         String nickname = response.getData().getNickname();
         mTvTitle.setText(nickname);
         mTvHeaderTitle.setText(nickname);
+        mTvAblumCount.setText(response.getData().getAlbumnum());
+        mTvMyFollowsCount.setText(response.getData().getIlikenum());
+        mTvFollowMeCount.setText(response.getData().getLikemenum());
+        if (TextUtils.isEmpty(response.getData().getDescription())) {
+            mTvHeaderDesc.setVisibility(View.GONE);
+        } else {
+            mTvHeaderDesc.setVisibility(View.VISIBLE);
+            mTvHeaderDesc.setText(response.getData().getDescription());
+        }
         //开始加载组图
         loadAblumIdList(context);
         //加载头像
@@ -217,7 +227,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
                     mCurrentPage = 0;
                     mAlbumIdList = response.getData();
                     mHasMoreData = true;
-                    mTvAblumCount.setText(String.valueOf(mAlbumIdList.size()));
+                    //mTvAblumCount.setText(String.valueOf(mAlbumIdList.size()));
                     loadAlbumInfoData(context, true);
                 }
             }
@@ -254,6 +264,44 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         return JsonUtil.fromJson(rawJsonData, ResponseBeanMyUserInfo.class);
     }
 
+    public void deleteAblum(final ResponseBeanAlbumInfo.DataEntity bean) {
+        final String ablumId = bean.getAlbum_id();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int tempI = -1;
+                for (int i = 0; i < mAlbumIdList.size(); i++) {
+                    if (ablumId.equals(mAlbumIdList.get(i).getAlbum_id())) {
+                        tempI = i;
+                    }
+                }
+                if (tempI != -1) {
+                    mAlbumIdList.remove(tempI);
+                }
+
+                int index = mData.indexOf(bean);
+                if (index == -1) { //bean 不在data中，按id删除
+                    for (int i = 0; i < mData.size(); i++) {
+                        if (ablumId.equals(mData.get(i).getAlbum_id())) {
+                            index = i;
+                            break;
+                        }
+                    }
+                }
+                if (index == -1) {
+                    return;
+                }
+                mData.remove(index);
+                mRlFollowMe.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+                mLastLoadDataTime = SystemClock.uptimeMillis();
+            }
+        }).start();
+    }
 
     public void loadAlbumInfoData(final Context context, final boolean isClearData) {
         if (mIsLoading) {
@@ -297,7 +345,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
                         mData.addAll(response.getData());
                         mCurrentPage ++;
                         if (mAdapter == null) {
-                            mAdapter = new MyPersonnalcenterFragmentAdapter(context, mData, (View.OnClickListener)getActivity());
+                            mAdapter = new PersonnalcenterFragmentAdapter(context, mData, (View.OnClickListener)getActivity(), true);
                             mListView.setAdapter(mAdapter);
                         } else {
                             mAdapter.notifyDataSetChanged();

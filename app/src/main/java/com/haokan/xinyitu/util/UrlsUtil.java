@@ -24,7 +24,7 @@ public class UrlsUtil {
         public static final String URL_HOST_user = "http://user.demo.levect.com"; //用户部分域名，https://user.levect.com
         public static final String URL_HOST_yitu = "http://1px.demo.levect.com"; //用户部分域名，http://1px.levect.com
         //注册登录
-        public static final String URL_user_c = "apiUserLogin";
+        public static final String URL_apiUserLogin_c = "apiUserLogin";
         public static final String URL_sendsms_a = "SendSms"; //发送短信
         public static final String URL_register_a = "Reg"; //注册
         public static final String URL_loginsms_a = "LoginBySms"; //短信验证码登录
@@ -44,10 +44,13 @@ public class UrlsUtil {
         public static final String URL_NewAlbums_a = "NewAlbums"; //请求最新组图
         public static final String URL_AlbumInfo_a = "AlbumInfo"; //请求组图信息
         public static final String URL_MyAlbums_a = "MyAlbums"; //我发布过的组图
+        public static final String URL_DelAlbum_a = "DelAlbum"; //删除我发布过的组图
 
         public static final String URL_apiUser_c = "apiUser";
         public static final String URL_MyInfo_a = "MyInfo"; //我的个人信息
         public static final String URL_UserInfo_a = "UserInfo"; //获取别的用户的信息
+        public static final String URL_ModilyNickName_a = "ModilyNickName"; //修改用户昵称
+        public static final String URL_LoginByPasswd_a = "LoginByPasswd"; //密码登录
 
         public static final String URL_apifollow_c = "apifollow"; //关注相关
         public static final String URL_addFollow_a = "addFollow"; //添加关注
@@ -62,15 +65,19 @@ public class UrlsUtil {
     }
 
     public static String getSendSmsUrl(Context context, String jsonData) {
-        return getYiTuUrl(Urls.URL_HOST_user, Urls.URL_sendsms_a, Urls.URL_user_c, jsonData, Urls.URL_V, context);
+        return getYiTuUrl(Urls.URL_HOST_user, Urls.URL_sendsms_a, Urls.URL_apiUserLogin_c, jsonData, Urls.URL_V, context);
     }
 
     public static String getRegisterUrl(Context context, String jsonData) {
-        return getYiTuUrl(Urls.URL_HOST_user, Urls.URL_register_a, Urls.URL_user_c, jsonData, Urls.URL_V, context);
+        return getYiTuUrl(Urls.URL_HOST_user, Urls.URL_register_a, Urls.URL_apiUserLogin_c, jsonData, Urls.URL_V, context);
     }
 
     public static String getLoginSmsUrl(Context context, String jsonData) {
-        return getYiTuUrl(Urls.URL_HOST_user, Urls.URL_loginsms_a, Urls.URL_user_c, jsonData, Urls.URL_V, context);
+        return getYiTuUrl(Urls.URL_HOST_user, Urls.URL_loginsms_a, Urls.URL_apiUserLogin_c, jsonData, Urls.URL_V, context);
+    }
+
+    public static String getLoginByPasswdUrl(Context context, String jsonData) {
+        return getYiTuUrl(Urls.URL_HOST_user, Urls.URL_LoginByPasswd_a, Urls.URL_apiUserLogin_c, jsonData, Urls.URL_V, context);
     }
 
     public static String getUploadAvatarUrl(String sessidonId) {
@@ -108,6 +115,11 @@ public class UrlsUtil {
         return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_MyAlbums_a, Urls.URL_apialbum_c, null, Urls.URL_V, sessidonId);
     }
 
+    public static String getDelAlbumUrl(String sessidonId, String ablumId) {
+        String data = "{\"album_id\":" + ablumId + "}";
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_DelAlbum_a, Urls.URL_apialbum_c, data, Urls.URL_V, sessidonId);
+    }
+
     public static String getMyinfoUrl(String sessidonId) {
         return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_MyInfo_a, Urls.URL_apiUser_c, null, Urls.URL_V, sessidonId);
     }
@@ -125,6 +137,11 @@ public class UrlsUtil {
     public static String getdelFollowUrl(String sessidonId, String userId) {
         String data = "{\"followid\":" + userId + "}";
         return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_delFollow_a, Urls.URL_apifollow_c, data, Urls.URL_V, sessidonId);
+    }
+
+    public static String getModilyNickNameUrl(String sessidonId, String nickName) {
+        String data = "{\"nickname\":\"" + nickName + "\"}";
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_user, Urls.URL_ModilyNickName_a, Urls.URL_apiUser_c, data, Urls.URL_V, sessidonId);
     }
 
 

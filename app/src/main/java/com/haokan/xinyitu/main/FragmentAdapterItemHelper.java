@@ -51,7 +51,7 @@ public class FragmentAdapterItemHelper {
         mTagTextColor = context.getResources().getColorStateList(R.color.click_huang_1);
     }
 
-    public View initPersonnalCenterItem0(int position, ResponseBeanAlbumInfo.DataEntity beanDiscovery, View convertView, ViewGroup parent) {
+    public View initPersonnalCenterItem0(int position, ResponseBeanAlbumInfo.DataEntity beanDiscovery, View convertView, ViewGroup parent, boolean isMy) {
         ViewHolderPersonnalCenterItem0 holder;
         boolean isShowFadeIn;
         if (convertView == null) {
@@ -67,7 +67,11 @@ public class FragmentAdapterItemHelper {
             isShowFadeIn = holder.pos != position;
         }
         holder.pos = position;
-
+        if (isMy) {
+            holder.ibitem0more.setTag(beanDiscovery);
+        } else {
+            holder.ibitem0more.setTag(null);
+        }
         //显示图片
         List<DemoImgBean> imgs= beanDiscovery.getImages();
         holder.rlimgcontainer.removeAllViewsInLayout();
@@ -149,10 +153,12 @@ public class FragmentAdapterItemHelper {
 
         if (isHost) { //显示或隐藏关注按钮
             holder.ib1.setVisibility(View.INVISIBLE);
+            holder.ivmore1.setTag(beanDiscovery);
         } else {
             holder.ib1.setVisibility(View.VISIBLE);
             holder.ib1.setTag(beanDiscovery);
             holder.ib1.setSelected(beanDiscovery.isFollowed());
+            holder.ivmore1.setTag(null);
         }
 
         //显示头像，日期，和名称

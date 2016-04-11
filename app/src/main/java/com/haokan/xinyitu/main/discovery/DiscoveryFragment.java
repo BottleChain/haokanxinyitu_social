@@ -75,6 +75,111 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
         loadAlbumInfoData(context, true);
     }
 
+    public void deleteAblum(final ResponseBeanAlbumInfo.DataEntity bean) {
+        final String ablumId = bean.getAlbum_id();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int tempI = -1;
+                for (int i = 0; i < mAlbumIdList.size(); i++) {
+                    if (ablumId.equals(mAlbumIdList.get(i).getAlbum_id())) {
+                        tempI = i;
+                    }
+                }
+                if (tempI != -1) {
+                    mAlbumIdList.remove(tempI);
+                }
+
+                int index = mData.indexOf(bean);
+                if (index == -1) { //bean 不在data中，按id删除
+                    for (int i = 0; i < mData.size(); i++) {
+                        if (ablumId.equals(mData.get(i).getAlbum_id())) {
+                            index = i;
+                            break;
+                        }
+                    }
+                }
+                if (index == -1) {
+                    return;
+                }
+
+                //处理3条特殊的timeline，使其位置不变
+                if (index > 12) {
+                    mData.remove(index);
+                } else if (index > 6) {
+                    if (mData.size() > 12) {
+                        ResponseBeanAlbumInfo.DataEntity remove12 = mData.remove(12);
+                        mData.remove(index);
+                        if (mData.size() > 12) {
+                            mData.add(12, remove12);
+                        }
+                    } else {
+                        mData.remove(index);
+                    }
+                } else if (index > 2) {
+                    if (mData.size() > 12) {
+                        ResponseBeanAlbumInfo.DataEntity remove12 = mData.remove(12);
+                        ResponseBeanAlbumInfo.DataEntity remove6 = mData.remove(6);
+                        mData.remove(index);
+                        if (mData.size() > 12) {
+                            mData.add(12, remove12);
+                            mData.add(6,remove6);
+                        } else if (mData.size() > 6) {
+                            mData.add(6,remove6);
+                        }
+                    } else if (mData.size() > 6) {
+                        ResponseBeanAlbumInfo.DataEntity remove6 = mData.remove(6);
+                        mData.remove(index);
+                        if (mData.size() > 6) {
+                            mData.add(6,remove6);
+                        }
+                        mData.remove(index);
+                    } else {
+                        mData.remove(index);
+                    }
+                } else {
+                    if (mData.size() > 12) {
+                        ResponseBeanAlbumInfo.DataEntity remove12 = mData.remove(12);
+                        ResponseBeanAlbumInfo.DataEntity remove6 = mData.remove(6);
+                        ResponseBeanAlbumInfo.DataEntity remove2 = mData.remove(2);
+                        mData.remove(index);
+                        if (mData.size() > 12) {
+                            mData.add(12, remove12);
+                        }
+                        mData.add(6,remove6);
+                        mData.add(2, remove2);
+                    } else if (mData.size() > 6) {
+                        ResponseBeanAlbumInfo.DataEntity remove6 = mData.remove(6);
+                        ResponseBeanAlbumInfo.DataEntity remove2 = mData.remove(2);
+                        mData.remove(index);
+                        if (mData.size() > 6) {
+                            mData.add(6,remove6);
+                        }
+                        mData.add(2, remove2);
+                    } else if (mData.size() > 2) {
+                        ResponseBeanAlbumInfo.DataEntity remove2 = mData.remove(2);
+                        mData.remove(index);
+                        if (mData.size() > 2) {
+                            mData.add(2, remove2);
+                        }
+                    } else {
+                        mData.remove(index);
+                    }
+                }
+
+                mListView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+                mLastLoadDataTime = SystemClock.uptimeMillis();
+            }
+        }).start();
+
+
+    }
+
     @Override
     protected void loadDataFailed() {
         mLoadingLayout.setVisibility(View.GONE);
@@ -146,6 +251,8 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                         } else {
                             mAdapter.notifyDataSetChanged();
                         }
+                    } else {
+                        loadDataFailed();
                     }
                     mIsLoading = false;
                     mLoadingLayout.setVisibility(View.GONE);

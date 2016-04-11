@@ -60,6 +60,7 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
     private UMShareListener mUMShareListener;
     private Handler mHandler = new Handler();
     private View mMorePopBtn; //点击弹出分享框的按钮，需要改变其select的状态，所以每次点击弹窗是记住点击的按钮，取消时把此按钮select（false）
+    private View mPupDeleteView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,14 +163,14 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
                 }
                 break;
             case R.id.iv_bottom_bar_5:
-//                if (TextUtils.isEmpty(App.sessionId)) {
-//                    Log.d("wangzixu", "App.sessionId = " + App.sessionId);
-//                    Intent i5 = new Intent(MainActivity.this, Login_Register_Activity.class);
-//                    startActivity(i5);
-//                    overridePendingTransition(R.anim.activity_in_bottom2top, R.anim.activity_out_boootom2top);
-//                } else {
-//                }
+                Log.d("wangzixu", "App.sessionId = " + App.sessionId);
+                if (TextUtils.isEmpty(App.sessionId)) {
+                    Intent i5 = new Intent(BaseMainActivity.this, Login_Register_Activity.class);
+                    startActivity(i5);
+                    overridePendingTransition(R.anim.activity_in_bottom2top, R.anim.activity_out_boootom2top);
+                } else {
                     setMyPersonalCenerFragment();
+                }
                 break;
             case R.id.tv_like_1://条目0的喜欢
                 final TextView textView = (TextView)v;
@@ -253,9 +254,14 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
             case R.id.tv_comment_1://条目0的评论
                 break;
             case R.id.ib_1://首页的关注按钮，关注某人，或者不再关注某人
+            case R.id.ib_follow:
                 changeFollowState(v);
                 break;
-            case R.id.rl_item0_1://首页的关注按钮，关注某人，或者不再关注某人
+            case R.id.ib_back:
+                onBackPressed();
+                overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
+                break;
+            case R.id.rl_item0_1://首页条目1的头像位置，可以点击的区域
                 String userId = (String) v.getTag();
                 if (TextUtils.isEmpty(userId)) {
                     return;
@@ -273,16 +279,28 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
                 if (mMorePopupWindow.isShowing()) {
                     return;
                 }
+                Object tag = v.getTag();
+                if (tag == null) { //不是点击的自己的，不能显示删除按钮
+                    mPupDeleteView.setVisibility(View.GONE);
+                } else {
+                    mPupDeleteView.setVisibility(View.VISIBLE);
+                    mPupDeleteView.setTag(tag);
+                }
                 mMorePopupWindow.showAtLocation(getWindow().getDecorView(), Gravity.BOTTOM, 0, 0);
                 mMorePopBg.startAnimation(AnimationUtils.loadAnimation(this, R.anim.popupwindow_bg_in));
                 mMorePopContent.startAnimation(AnimationUtils.loadAnimation(this, R.anim.popupwindow_bottom_in));
                 v.setSelected(true);
                 mMorePopBtn = v;
                 break;
+            case R.id.tv_morepop_delete: //删除当前点击的timeline
+                deleteAblum(v);
+                break;
+            case R.id.tv_morepop_jubao: //举报按钮
+
+                break;
             case R.id.tv_pop_cancel:
             case R.id.pop_shadow:
                 disMissMorePop();
-                mMorePopBtn.setSelected(false);
                 break;
             case R.id.tv_morepop_weixin://微信分享
                 UMImage image = new UMImage(BaseMainActivity.this,
@@ -347,6 +365,70 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
             default:
                 break;
         }
+    }
+
+    private void tipOff() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        };
+        disMissMorePop();
+    }
+
+    protected void deleteAblum(View view) {
+        final ResponseBeanAlbumInfo.DataEntity bean = (ResponseBeanAlbumInfo.DataEntity) view.getTag();
+        if (TextUtils.isEmpty(bean.getAlbum_id())) {
+            return;
+        }
+
+        View v = LayoutInflater.from(this).inflate(R.layout.delete_ablum_dialog_layout, null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK)
+                .setTitle("提示")
+                .setView(v)
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (bean.getAlbum_id().equals("failed")) { //上传失败时给赋的值
+                            //nothing
+                        } else {
+                            String url = UrlsUtil.getDelAlbumUrl(App.sessionId, bean.getAlbum_id());
+                            Log.d("wangzixu", "deleteAblum cancel url = " + url);
+                            HttpClientManager.getInstance(BaseMainActivity.this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+                                    Log.d("wangzixu", "deleteAblum onSuccess = " + response.getErr_msg());
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
+
+                                }
+
+                                @Override
+                                protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                                    return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+                                }
+                            });
+                        }
+                        disMissMorePop();
+                        deleteAblum(bean);
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * 已经想服务器发送了删除图册的请求，需要本地直接处理删除后的结果。
+     */
+    protected void deleteAblum(ResponseBeanAlbumInfo.DataEntity bean) {
+
     }
 
     /**
@@ -429,7 +511,6 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
     public void onBackPressed() {
         if (mMorePopupWindow != null && mMorePopupWindow.isShowing()) {
             disMissMorePop();
-            mMorePopBtn.setSelected(false);
         } else {
             super.onBackPressed();
         }
@@ -452,14 +533,20 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
         v.findViewById(R.id.tv_morepop_weixin).setOnClickListener(this);
         v.findViewById(R.id.tv_morepop_pengyouquan).setOnClickListener(this);
         v.findViewById(R.id.tv_morepop_jubao).setOnClickListener(this);
-        v.findViewById(R.id.tv_morepop_download).setOnClickListener(this);
-        v.findViewById(R.id.tv_morepop_delete).setOnClickListener(this);
+//        v.findViewById(R.id.tv_morepop_download).setOnClickListener(this);
+        mPupDeleteView = v.findViewById(R.id.tv_morepop_delete);
+        mPupDeleteView.setOnClickListener(this);
         mMorePopContent.setOnClickListener(this);
     }
 
     private void disMissMorePop() {
+        disMissMorePop(null);
+    }
+
+    private void disMissMorePop(final Runnable endRunnable) {
+        mMorePopBtn.setSelected(false);
         if (mMorePopupWindow != null && mMorePopupWindow.isShowing()) {
-            Animation outAnim = AnimationUtils.loadAnimation(this, R.anim.popupwindow_bg_out);
+            final Animation outAnim = AnimationUtils.loadAnimation(this, R.anim.popupwindow_bg_out);
             outAnim.setFillAfter(true);
             outAnim.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -472,6 +559,9 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
                         @Override
                         public void run() {
                             mMorePopupWindow.dismiss();
+                            if (endRunnable != null) {
+                                endRunnable.run();
+                            }
                         }
                     });
                 }
@@ -481,11 +571,16 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
                 }
 
             });
-            mMorePopBg.startAnimation(outAnim);
 
-            Animation animation = AnimationUtils.loadAnimation(this, R.anim.popupwindow_bottom_out);
+            final Animation animation = AnimationUtils.loadAnimation(this, R.anim.popupwindow_bottom_out);
             animation.setFillAfter(true);
-            mMorePopContent.startAnimation(animation);
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mMorePopBg.startAnimation(outAnim);
+                    mMorePopContent.startAnimation(animation);
+                }
+            });
         }
     }
 

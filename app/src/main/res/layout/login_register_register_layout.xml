@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <RelativeLayout
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:background="@drawable/login_register_bg"
         android:id="@+id/rl_item0_1"
@@ -116,14 +116,54 @@
             android:layout_height="1dp"/>
 
         <TextView
-            android:id="@+id/tv_7"
+            android:id="@+id/tv_password"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:text="密码"
+            android:textSize="14sp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginTop="25dp"
+            android:layout_below="@id/divider_2"
+            android:textColor="@color/hei_30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/et_password"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:hint="输入密码"
+            android:textSize="14sp"
+            android:background="@null"
+            android:layout_marginLeft="5dp"
+            android:layout_alignBaseline="@id/tv_password"
+            android:layout_toRightOf="@id/tv_password"
+            android:textColor="@color/edittext"
+            android:inputType="none"
+            android:padding="7dp"
+            android:layout_marginRight="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:id="@+id/devider_3"
+            android:layout_below="@id/tv_password"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:background="@color/hei_10"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <TextView
+            android:id="@+id/tv_invitecode"
             android:includeFontPadding="false"
             android:typeface="normal"
             android:text="@string/invitecode"
             android:textSize="14sp"
             android:layout_marginLeft="36dp"
             android:layout_marginTop="25dp"
-            android:layout_below="@id/divider_2"
+            android:layout_below="@id/devider_3"
             android:textColor="@color/hei_30"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -136,8 +176,8 @@
             android:textSize="14sp"
             android:background="@null"
             android:layout_marginLeft="3dp"
-            android:layout_alignBaseline="@id/tv_7"
-            android:layout_toRightOf="@id/tv_7"
+            android:layout_alignBaseline="@id/tv_invitecode"
+            android:layout_toRightOf="@id/tv_invitecode"
             android:textColor="@color/edittext"
             android:inputType="number"
             android:padding="7dp"
@@ -146,8 +186,8 @@
             android:layout_height="wrap_content"/>
 
         <View
-            android:id="@+id/devider_3"
-            android:layout_below="@id/tv_7"
+            android:id="@+id/devider_4"
+            android:layout_below="@id/tv_invitecode"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="35dp"
             android:layout_marginRight="35dp"
@@ -159,7 +199,7 @@
             android:id="@+id/tv_4"
             android:includeFontPadding="false"
             android:typeface="normal"
-            android:layout_below="@id/devider_3"
+            android:layout_below="@id/devider_4"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="22dp"
             android:layout_centerHorizontal="true"
@@ -177,11 +217,10 @@
         android:text="@string/have_account"
         android:textColor="#7fe7e7e7"
         android:textSize="14sp"
-        android:layout_below="@id/rl_item0_1"
-        android:layout_marginLeft="45dp"
-        android:layout_marginTop="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="18dp"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp"
+        android:paddingBottom="18dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -191,14 +230,29 @@
         android:typeface="normal"
         android:text="@string/login"
         android:layout_toRightOf="@id/tv_5"
-        android:layout_below="@id/rl_item0_1"
         android:textColor="@color/shihuang"
+        android:layout_alignParentBottom="true"
         android:textSize="14sp"
-        android:layout_marginTop="10dp"
-        android:paddingTop="10dp"
+        android:paddingTop="18dp"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
+        android:paddingRight="18dp"
+        android:paddingBottom="18dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_7"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:text="注册代表您同意服务条款"
+        android:textColor="#7fe7e7e7"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:textSize="14sp"
+        android:paddingTop="18dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="18dp"
+        android:paddingBottom="18dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </RelativeLayout>

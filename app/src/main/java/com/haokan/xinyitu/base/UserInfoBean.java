@@ -18,8 +18,44 @@ public class UserInfoBean {
     private String nickname;
     private String mobile;
     private String avatar;
+    private String ilikenum;
+    private String likemenum;
+    private String albumnum;
     private String createtime;
+    private String description;
     private AvatarUrlBean avatar_url;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getIlikenum() {
+        return ilikenum;
+    }
+
+    public void setIlikenum(String ilikenum) {
+        this.ilikenum = ilikenum;
+    }
+
+    public String getLikemenum() {
+        return likemenum;
+    }
+
+    public void setLikemenum(String likemenum) {
+        this.likemenum = likemenum;
+    }
+
+    public String getAlbumnum() {
+        return albumnum;
+    }
+
+    public void setAlbumnum(String albumnum) {
+        this.albumnum = albumnum;
+    }
 
     public void setUserid(String userid) {
         this.userid = userid;

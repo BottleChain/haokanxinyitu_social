@@ -34,7 +34,7 @@
     <TextView
         android:id="@+id/tv_desc"
         android:layout_below="@id/tv_name"
-        android:layout_marginTop="6dp"
+        android:paddingTop="6dp"
         android:layout_marginLeft="17dp"
         android:layout_marginRight="17dp"
         android:text="有的鱼是永远都关不住的，因为它们属于天空!"
@@ -54,7 +54,7 @@
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
         android:layout_marginLeft="7dp"
-        android:layout_marginTop="19dp"
+        android:layout_marginTop="17dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -90,7 +90,7 @@
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="19dp"
+        android:layout_marginTop="17dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -126,7 +126,7 @@
         android:paddingBottom="10dp"
         android:paddingTop="5dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="19dp"
+        android:layout_marginTop="17dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -154,6 +154,7 @@
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/tv_followme_notice"
             android:gravity="center"
             android:paddingTop="1dp"

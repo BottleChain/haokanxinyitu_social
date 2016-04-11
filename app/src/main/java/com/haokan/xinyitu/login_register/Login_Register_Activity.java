@@ -52,10 +52,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     private RelativeLayout mRlContent;
     private RelativeLayout mRlThirdLogin;
     private ImageView mIvBg;
-    private ImageButton mClose;
     private ImageButton mBack;
-    private TextView mTvPersonalData;
-    private TextView mTvSkip;
     private ImageView mWelcome;
     private TextView mWelcomeSub;
     private ViewStub mStubRegister;
@@ -73,6 +70,11 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     private String mClipedHpPath;
     private SharedPreferences mDefaultSharedPreferences;
     private int[] mBgIds = {R.drawable.bg_login_1, R.drawable.bg_login_2, R.drawable.bg_login_3};
+    /**
+     * 服务条款
+     */
+    private TextView mTvRegisterTOS;
+    private ImageButton mIbPersondataClose;
 
     private void assignViews() {
         mRlContent = (RelativeLayout) findViewById(R.id.rl_content);
@@ -81,10 +83,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         int i = new Random().nextInt(3);
         mIvBg.setImageResource(mBgIds[i]);
         //mIvBg.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
-        mClose = (ImageButton) findViewById(R.id.close);
         mBack = (ImageButton) findViewById(R.id.back);
-        mTvPersonalData = (TextView) findViewById(R.id.tv_1);
-        mTvSkip = (TextView) findViewById(R.id.tv_4);
         mWelcome = (ImageView) findViewById(R.id.tv_2);
         mWelcomeSub = (TextView) findViewById(R.id.tv_desc);
         mStubRegister = (ViewStub) findViewById(R.id.layout_register);
@@ -93,8 +92,6 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         mStubPersondata = (ViewStub) findViewById(R.id.layout_persondata);
 
         mBack.setOnClickListener(this);
-        mClose.setOnClickListener(this);
-        mTvSkip.setOnClickListener(this);
     }
 
 
@@ -112,6 +109,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     private EditText mEtRegisterPhoneNum;
     private EditText mEtRegisterVerfyCode;
     private EditText mEtRegisterInviteCode;
+    private EditText mEtRegisterPassword;
     private TextView mTvRegisterGetVerfyCode;
     private TextView mTvRegisterRegister;
     private TextView mTvRegisterLogin;
@@ -121,9 +119,11 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             mEtRegisterPhoneNum = (EditText) mLayoutRegister.findViewById(R.id.et_1);
             mEtRegisterVerfyCode = (EditText) mLayoutRegister.findViewById(R.id.et_2);
             mEtRegisterInviteCode = (EditText) mLayoutRegister.findViewById(R.id.et_3);
+            mEtRegisterPassword = (EditText) mLayoutRegister.findViewById(R.id.et_password);
             mTvRegisterGetVerfyCode = (TextView) mLayoutRegister.findViewById(R.id.tv_desc);
             mTvRegisterRegister = (TextView) mLayoutRegister.findViewById(R.id.tv_4);
             mTvRegisterLogin = (TextView) mLayoutRegister.findViewById(R.id.tv_6);
+            mTvRegisterTOS = (TextView) mLayoutRegister.findViewById(R.id.tv_7);
 
             View.OnClickListener listener = new RegisterClickListener();
             mTvRegisterGetVerfyCode.setOnClickListener(listener);
@@ -179,15 +179,18 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     //填写个人资料模块及其用的view
     private ImageView mIvPersonDataPhoto;
     private EditText mEtPersonDataNickName;
-    private EditText mEtPersonDataPassWord;
     private TextView mTvPersonDataConfirm;
+    private TextView mTvPersonDataSkip;
     private void showPersonDataView() {
         if (mLayoutPersondata == null) {
             mLayoutPersondata = mStubPersondata.inflate();
             mIvPersonDataPhoto = (ImageView) mLayoutPersondata.findViewById(R.id.civ_1);
             mEtPersonDataNickName = (EditText) mLayoutPersondata.findViewById(R.id.et_1);
-            mEtPersonDataPassWord = (EditText) mLayoutPersondata.findViewById(R.id.et_2);
             mTvPersonDataConfirm = (TextView) mLayoutPersondata.findViewById(R.id.tv_4);
+            mTvPersonDataSkip = (TextView) mLayoutPersondata.findViewById(R.id.tv_skip);
+            mIbPersondataClose = (ImageButton) findViewById(R.id.ib_close);
+            mIbPersondataClose.setOnClickListener(this);
+            mTvPersonDataSkip.setOnClickListener(this);
             View.OnClickListener listener = new PersonDataClickListener();
             mIvPersonDataPhoto.setOnClickListener(listener);
             mTvPersonDataConfirm.setOnClickListener(listener);
@@ -205,7 +208,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         mLayoutLogin.setTranslationX(mScreenW);
         mBack.setTranslationX(mScreenW);
 
-        final ValueAnimator animout = Login_Register_SwAnim_Manager.rightToLeftOut(mScreenW, mLayoutRegister, mClose);
+        final ValueAnimator animout = Login_Register_SwAnim_Manager.rightToLeftOut(mScreenW, mLayoutRegister);
         final ValueAnimator animin = Login_Register_SwAnim_Manager.rightToLeftIn(mScreenW, mLayoutLogin, mBack);
         mHandler.post(new Runnable() {
             @Override
@@ -226,12 +229,10 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
      */
     private void login2register() {
         showRegisterView();
-        mClose.setVisibility(View.VISIBLE);
         mLayoutRegister.setTranslationX(-mScreenW);
-        mClose.setTranslationX(-mScreenW);
 
         final ValueAnimator animout = Login_Register_SwAnim_Manager.leftToRightOut(mScreenW, mLayoutLogin, mBack);
-        final ValueAnimator animin = Login_Register_SwAnim_Manager.leftToRightIn(mScreenW, mLayoutRegister, mClose);
+        final ValueAnimator animin = Login_Register_SwAnim_Manager.leftToRightIn(mScreenW, mLayoutRegister);
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -298,17 +299,13 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     private void register2persondata() {
         showPersonDataView();
         mLayoutPersondata.setTranslationX(mScreenW);
-        mTvPersonalData.setVisibility(View.VISIBLE);
-        mTvPersonalData.setTranslationX(mScreenW);
-        mTvSkip.setVisibility(View.VISIBLE);
-        mTvSkip.setTranslationX(mScreenW);
 
 //        final ValueAnimator animout = Login_Register_SwAnim_Manager.rightToLeftOut(mScreenW
 //                , mLayoutRegister, mWelcome, mWelcomeSub, mRlThirdLogin);
         final ValueAnimator animout = Login_Register_SwAnim_Manager.rightToLeftOut(mScreenW
                 , mLayoutRegister, mWelcome, mWelcomeSub);
         final ValueAnimator animin = Login_Register_SwAnim_Manager.rightToLeftIn(mScreenW
-                , mLayoutPersondata, mTvPersonalData, mTvSkip);
+                , mLayoutPersondata);
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -330,11 +327,11 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         }
         int id = v.getId();
         switch (id) {
-            case R.id.close:
+            case R.id.ib_close:
             case R.id.back:
                 onBackPressed();
                 break;
-            case R.id.tv_4:
+            case R.id.tv_skip:
                 goHomePageActivity();
                 break;
             default:
@@ -355,6 +352,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                     break;
                 case R.id.tv_4: //注册
 //                    register();
+                    //// TODO: 2016/4/11 为了测试，先直接进入填写个人信息页面
                     register2persondata();
                     break;
                 case R.id.tv_6: //登录，往登录界面切换
@@ -367,6 +365,11 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     }
 
     private void register() {
+        String num = mEtRegisterPhoneNum.getText().toString().trim();
+        boolean isnum = isPhoneNum(num);
+        if (!isnum) {
+            return;
+        }
         String verfycode = mEtRegisterVerfyCode.getText().toString().trim();
         if (TextUtils.isEmpty(verfycode)) {
             ToastManager.showShort(this, "验证码不能为空");
@@ -378,17 +381,16 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             return;
         }
 
-        String num = mEtRegisterPhoneNum.getText().toString().trim();
-        boolean isnum = isPhoneNum(num);
-        if (!isnum) {
-            return;
-        }
-
         showLoadingProgress();
         RequestBeanRegister beanRegister = new RequestBeanRegister();
         beanRegister.setMobile(SecurityUtil.haokanEncode(num));
         beanRegister.setSmscode(SecurityUtil.haokanEncode(verfycode));
         beanRegister.setInvite(SecurityUtil.haokanEncode(invitecode));
+        String pas = mEtRegisterPassword.getText().toString();
+        if (!TextUtils.isEmpty(pas)) {
+            beanRegister.setPasswd(SecurityUtil.haokanEncode(pas));
+        }
+
         String url = UrlsUtil.getRegisterUrl(getApplicationContext(), JsonUtil.toJson(beanRegister));
         Log.d("wangzixu", "register url = " + url);
         HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanRegister>() {
@@ -518,7 +520,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             int id = v.getId();
             switch (id) {
                 case R.id.tv_4: //登录
-                    goHomePageActivity();
+                    loginByPasswd();
                     break;
                 case R.id.tv_6: //短信验证登录
                     login2loginsms();
@@ -527,6 +529,70 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                     break;
             }
         }
+    }
+
+    private void loginByPasswd() {
+        String num = mEtLoginPhoneNum.getText().toString();
+        boolean isnum = isPhoneNum(num);
+        if (!isnum) {
+            return;
+        }
+
+        String passwd = mEtLoginPassword.getText().toString();
+        if (TextUtils.isEmpty(passwd)) {
+            ToastManager.showShort(this, "密码不能为空");
+            return;
+        }
+
+        showLoadingProgress();
+        RequestBeanLogin beanLogin = new RequestBeanLogin();
+        beanLogin.setMobile(num);
+        beanLogin.setPasswd(passwd);
+
+        String url = UrlsUtil.getLoginSmsUrl(getApplicationContext(), JsonUtil.toJson(beanLogin));
+        Log.d("wangzixu", "login url = " + url);
+
+        HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanLogin>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanLogin response) {
+                disMissLoadingProgress();
+                if (response != null) {
+                    if (response.getErr_code() == 0) {
+                        ToastManager.showShort(Login_Register_Activity.this, "登录成功!");
+
+                        String userId = response.getData().getUserId();
+                        String sessionId = response.getData().getSessionId();
+
+                        if (mDefaultSharedPreferences == null) {
+                            mDefaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(Login_Register_Activity.this);
+                        }
+
+                        SharedPreferences.Editor edit = mDefaultSharedPreferences.edit();
+                        edit.putString(ConstantValues.KEY_SP_USERID, userId);
+                        edit.putString(ConstantValues.KEY_SP_SESSIONID, sessionId);
+                        edit.apply();
+                        App.sessionId = sessionId;
+                        App.user_Id = userId;
+
+                        getMyInfo();
+                        goHomePageActivity();
+                    } else {
+                        ToastManager.showShort(Login_Register_Activity.this, response.getErr_msg());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanLogin errorResponse) {
+                disMissLoadingProgress();
+                ToastManager.showShort(Login_Register_Activity.this, "访问服务器失败");
+            }
+
+            @Override
+            protected ResponseBeanLogin parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return JsonUtil.fromJson(rawJsonData, ResponseBeanLogin.class);
+            }
+        });
     }
 
     class PersonDataClickListener implements View.OnClickListener {
@@ -543,26 +609,57 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                     ClipPhotoManager.startPickImg(Login_Register_Activity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
                     break;
                 case R.id.tv_4: //确认
+                    //上传头像
+                    String sessionId = App.sessionId;
+                    if (TextUtils.isEmpty(sessionId)) {
+                        ToastManager.showShort(Login_Register_Activity.this, "sessionId null, return!");
+                        return;
+                    } else {
+                        Log.d("wangzixu", "PersonDataClickListener sessionId = " + sessionId);
+                    }
+
+                    //上传昵称
+                    String nickName = mEtPersonDataNickName.getText().toString().trim();
+                    if (!TextUtils.isEmpty(nickName)) {
+                        String url = UrlsUtil.getModilyNickNameUrl(sessionId, nickName);
+                        Log.d("wangzixu", "PersonDataClickListener ModilyNickNameUrl url = " + url);
+                        HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+                                if (response.getErr_code() != 0) {
+                                    ToastManager.showShort(Login_Register_Activity.this, "昵称修改失败 = " + response.getErr_msg());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
+                                ToastManager.showShort(Login_Register_Activity.this, "昵称修改失败 = onFailure");
+                                Log.d("wangzixu", "PersonDataClickListener 昵称修改失败 = " + rawJsonData);
+                            }
+
+                            @Override
+                            protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                                return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+                            }
+                        });
+                    } else {
+                        ToastManager.showShort(Login_Register_Activity.this, "请输入正确的昵称");
+                        return;
+                    }
+
                     if (!TextUtils.isEmpty(mClipedHpPath)) {
-                        if (mDefaultSharedPreferences == null) {
-                            mDefaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(Login_Register_Activity.this);
-                        }
-                        String sessionId = mDefaultSharedPreferences.getString(ConstantValues.KEY_SP_SESSIONID, "");
-                        if (TextUtils.isEmpty(sessionId)) {
-                            ToastManager.showShort(Login_Register_Activity.this, "sessionId null, return!");
-                            return;
-                        } else {
-                            Log.d("wangzixu", "PersonDataClickListener sessionId = " + sessionId);
-                        }
                         String url = UrlsUtil.getUploadAvatarUrl(sessionId);
-                        Log.d("wangzixu", "PersonDataClickListener url = " + url);
+                        Log.d("wangzixu", "PersonDataClickListener upavatar url = " + url);
                         //HttpClientManager.getInstance(Login_Register_Activity.this).LogCookcie();
                         File file = new File(mClipedHpPath);
                         if (file.exists() && file.length() > 0) {
                             HttpClientManager.getInstance(Login_Register_Activity.this).upLoadAvatarFile(url, file, new BaseJsonHttpResponseHandler<ResponseBeanUploadPh>() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanUploadPh response) {
-                                    ToastManager.showShort(Login_Register_Activity.this, "上传成功 = " + response.getErr_msg());
+                                    //ToastManager.showShort(Login_Register_Activity.this, "上传成功 = " + response.getErr_msg());
+                                    if (response.getErr_code() != 0) {
+                                        ToastManager.showShort(Login_Register_Activity.this, "头像上传失败 = " + response.getErr_msg());
+                                    }
                                     mDefaultSharedPreferences.edit().putString(ConstantValues.KEY_SP_AVATAR_URL
                                             , ImageDownloader.Scheme.FILE.wrap(mClipedHpPath))
                                             .apply(); //保存头像信息
@@ -571,7 +668,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                                 @Override
                                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanUploadPh errorResponse) {
                                     ToastManager.showShort(Login_Register_Activity.this, "失败 ");
-                                    Log.d("wangzixu", "PersonDataClickListener 上传失败 = " + rawJsonData);
+                                    Log.d("wangzixu", "PersonDataClickListener 头像上传失败 = " + rawJsonData);
                                 }
 
                                 @Override
@@ -581,9 +678,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                             });
                         }
                     }
-                    //goHomePageActivity();
-//                    Intent i = new Intent(Login_Register_Activity.this, ClipPhotoActivity.class);
-//                    startActivity(i);
+                    goHomePageActivity();
                     break;
                 default:
                     break;

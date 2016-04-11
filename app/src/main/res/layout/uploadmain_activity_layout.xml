@@ -46,6 +46,7 @@
             <EditText
                 android:id="@+id/et_upload_edit"
                 android:includeFontPadding="false"
+                android:textCursorDrawable="@drawable/text_cursor_holo_light"
                 android:typeface="normal"
                 android:hint="描述一下您的作品吧"
                 android:paddingTop="10dp"

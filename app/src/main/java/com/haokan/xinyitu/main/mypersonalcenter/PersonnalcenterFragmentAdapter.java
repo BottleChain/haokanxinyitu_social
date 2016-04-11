@@ -10,14 +10,15 @@ import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
 
 import java.util.ArrayList;
 
-public class MyPersonnalcenterFragmentAdapter extends BaseAdapter {
-    private Context mContext;
+public class PersonnalcenterFragmentAdapter extends BaseAdapter {
     private FragmentAdapterItemHelper mHelper;
     private ArrayList<ResponseBeanAlbumInfo.DataEntity> mAlbumInfoBeans;
+    private boolean mIsMy; //是否是自己的个人中心界面，如果是需要显示删除，如果不是不能显示删除
 
-    public MyPersonnalcenterFragmentAdapter(Context context, ArrayList<ResponseBeanAlbumInfo.DataEntity> albumInfoBean, View.OnClickListener onClickListener) {
-        mContext = context;
+    public PersonnalcenterFragmentAdapter(Context context, ArrayList<ResponseBeanAlbumInfo.DataEntity> albumInfoBean
+            , View.OnClickListener onClickListener, boolean isMy) {
         mAlbumInfoBeans = albumInfoBean;
+        mIsMy = isMy;
         mHelper = new FragmentAdapterItemHelper(context, onClickListener);
     }
 
@@ -43,7 +44,7 @@ public class MyPersonnalcenterFragmentAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ResponseBeanAlbumInfo.DataEntity dataEntity = mAlbumInfoBeans.get(position);
         //用户timeline
-        convertView = mHelper.initPersonnalCenterItem0(position, dataEntity, convertView, parent);
+        convertView = mHelper.initPersonnalCenterItem0(position, dataEntity, convertView, parent, mIsMy);
         return convertView;
     }
 

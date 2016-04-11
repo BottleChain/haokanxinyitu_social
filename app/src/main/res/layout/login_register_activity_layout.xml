@@ -12,17 +12,6 @@
         android:layout_height="match_parent"/>
 
     <ImageButton
-        android:id="@+id/close"
-        android:scaleType="center"
-        android:background="@null"
-        android:src="@drawable/icon_login_close"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp"
-        android:layout_width="50dp"
-        android:layout_height="50dp"/>
-
-    <ImageButton
         android:id="@+id/back"
         android:scaleType="center"
         android:background="@null"
@@ -32,35 +21,6 @@
         android:layout_width="50dp"
         android:visibility="invisible"
         android:layout_height="50dp"/>
-
-    <TextView
-        android:visibility="invisible"
-        android:id="@+id/tv_1"
-        android:includeFontPadding="false"
-        android:typeface="normal"
-        android:text="@string/personal_data"
-        android:textColor="@color/bai_90"
-        android:textSize="15sp"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:visibility="invisible"
-        android:id="@+id/tv_4"
-        android:includeFontPadding="false"
-        android:typeface="normal"
-        android:text="@string/skip"
-        android:textColor="#7fe7e7e7"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:textSize="12sp"
-        android:padding="15dp"
-        android:layout_marginBottom="30dp"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
     <!-- 注册，登录，短信验证登录三个界面的共同布局-->
     <ImageView
@@ -118,11 +78,9 @@
     <!-- 完善个人资料 -->
     <ViewStub
         android:id="@+id/layout_persondata"
-        android:layout_marginTop="73dp"
         android:inflatedId="@id/layout_persondata"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tv_1"
         android:layout="@layout/login_register_persondata_layout"/>
 
     <RelativeLayout
@@ -193,8 +151,6 @@
             android:padding="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
-
     </RelativeLayout>
 
 </RelativeLayout>

@@ -7,6 +7,15 @@ public class RequestBeanRegister extends BaseRequestBean {
     private String nickname;
     private String invite;
     private String smscode;
+    private String passwd;
+
+    public String getPasswd() {
+        return passwd;
+    }
+
+    public void setPasswd(String passwd) {
+        this.passwd = passwd;
+    }
 
     public String getNickname() {
         return nickname;

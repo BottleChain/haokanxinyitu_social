@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="250dp"
+    android:layout_height="45dp">
+    <TextView
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="12dp"
+        android:lineSpacingExtra="3dp"
+        android:textColor="@color/bai"
+        android:textSize="18sp"
+        android:text="您确定删除该作品吗?"
+        android:layout_width="match_parent"
+        android:layout_height="33dp"/>
+</RelativeLayout>

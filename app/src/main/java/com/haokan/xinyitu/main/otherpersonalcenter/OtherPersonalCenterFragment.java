@@ -3,6 +3,7 @@ package com.haokan.xinyitu.main.otherpersonalcenter;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +18,13 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseResponseBean;
+import com.haokan.xinyitu.base.UserInfoBean;
 import com.haokan.xinyitu.follow.RequestBeanUsersInfo;
 import com.haokan.xinyitu.follow.ResponseBeanOtherUserInfo;
 import com.haokan.xinyitu.main.Base_PTR_LoadMore_Fragment;
 import com.haokan.xinyitu.main.discovery.RequestBeanAlbumInfo;
 import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
-import com.haokan.xinyitu.main.mypersonalcenter.MyPersonnalcenterFragmentAdapter;
+import com.haokan.xinyitu.main.mypersonalcenter.PersonnalcenterFragmentAdapter;
 import com.haokan.xinyitu.main.mypersonalcenter.ResponseBeanAlbumListPersonnal;
 import com.haokan.xinyitu.util.HttpClientManager;
 import com.haokan.xinyitu.util.ImageLoaderManager;
@@ -45,7 +47,7 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
     private View mIbFollow;
     private TextView mTvTitle;
     private TextView mTvHeaderTitle;
-    private MyPersonnalcenterFragmentAdapter mAdapter;
+    private PersonnalcenterFragmentAdapter mAdapter;
 
     //处理上划显示标题用到的一些数据
     private int mTopBarBottom; //actionbar的底部位置
@@ -187,17 +189,25 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
     protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean baseResponseBean) {
         ResponseBeanOtherUserInfo response = (ResponseBeanOtherUserInfo) baseResponseBean;
         mPullToRefreshListView.setVisibility(View.VISIBLE);
-
+        UserInfoBean userInfoBean = response.getData().get(0);
         String avatarUrl;
         if (App.sDensity >= 3) {
-            avatarUrl = response.getData().get(0).getAvatar_url().getS150();
+            avatarUrl = userInfoBean.getAvatar_url().getS150();
         } else {
-            avatarUrl = response.getData().get(0).getAvatar_url().getS100();
+            avatarUrl = userInfoBean.getAvatar_url().getS100();
         }
-        String nickname = response.getData().get(0).getNickname();
+        String nickname = userInfoBean.getNickname();
         mTvTitle.setText(nickname);
         mTvHeaderTitle.setText(nickname);
-
+        mTvAblumCount.setText(userInfoBean.getAlbumnum());
+        mTvMyFollowsCount.setText(userInfoBean.getIlikenum());
+        mTvFollowMeCount.setText(userInfoBean.getLikemenum());
+        if (TextUtils.isEmpty(userInfoBean.getDescription())) {
+            mTvHeaderDesc.setVisibility(View.GONE);
+        } else {
+            mTvHeaderDesc.setVisibility(View.VISIBLE);
+            mTvHeaderDesc.setText(userInfoBean.getDescription());
+        }
         //开始加载组图
         loadAblumIdList(context);
         //加载头像
@@ -221,7 +231,6 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
                     mCurrentPage = 0;
                     mAlbumIdList = response.getData();
                     mHasMoreData = true;
-                    mTvAblumCount.setText(String.valueOf(mAlbumIdList.size()));
                     loadAlbumInfoData(context, true);
                 }
             }
@@ -256,6 +265,14 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
     @Override
     protected BaseResponseBean getResponse(String rawJsonData, boolean isFailure) {
         return JsonUtil.fromJson(rawJsonData, ResponseBeanOtherUserInfo.class);
+    }
+
+    public void deleteAblum(ResponseBeanAlbumInfo.DataEntity bean) {
+        int i = mData.indexOf(bean);
+        mData.remove(bean);
+        mAlbumIdList.remove(i);
+        mAdapter.notifyDataSetChanged();
+        mLastLoadDataTime = SystemClock.uptimeMillis();
     }
 
 
@@ -301,7 +318,7 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
                         mData.addAll(response.getData());
                         mCurrentPage ++;
                         if (mAdapter == null) {
-                            mAdapter = new MyPersonnalcenterFragmentAdapter(context, mData, (View.OnClickListener)getActivity());
+                            mAdapter = new PersonnalcenterFragmentAdapter(context, mData, (View.OnClickListener)getActivity(), mIsMyCenterInfo);
                             mListView.setAdapter(mAdapter);
                         } else {
                             mAdapter.notifyDataSetChanged();

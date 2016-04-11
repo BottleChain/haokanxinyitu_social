@@ -9,8 +9,8 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
+
 import com.haokan.xinyitu.R;
-import com.haokan.xinyitu.util.DisplayUtil;
 
 public class ClipCoveredView extends View {
     private int mRadius = 300;
@@ -29,8 +29,10 @@ public class ClipCoveredView extends View {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ClipCoverView, defStyleAttr, 0);
         mRadius = a.getDimensionPixelSize(R.styleable.ClipCoverView_ccv_radius, 400);
         mBgColor = a.getColor(R.styleable.ClipCoverView_ccv_bg_color, 0x7f000000);
-        mCenterX = a.getDimensionPixelSize(R.styleable.ClipCoverView_ccv_centerX, mScreenW / 2);
-        mCenterY = a.getDimensionPixelSize(R.styleable.ClipCoverView_ccv_centerY, mScreenH / 2 - DisplayUtil.dip2px(context, 30));
+//        mCenterX = a.getDimensionPixelSize(R.styleable.ClipCoverView_ccv_centerX, mScreenW / 2);
+//        mCenterY = a.getDimensionPixelSize(R.styleable.ClipCoverView_ccv_centerY, mScreenH / 2 - DisplayUtil.dip2px(context, 30));        mCenterX = a.getDimensionPixelSize(R.styleable.ClipCoverView_ccv_centerX, mScreenW / 2);
+        mCenterX = mScreenW / 2;
+        mCenterY = mScreenH / 2;
         a.recycle();
 
         init();

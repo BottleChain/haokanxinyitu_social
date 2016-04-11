@@ -148,6 +148,7 @@
 
                 <TextView
                     android:id="@+id/tv_morepop_download"
+                    android:visibility="gone"
                     android:text="保存图片"
                     android:includeFontPadding="false"
                     android:typeface="normal"

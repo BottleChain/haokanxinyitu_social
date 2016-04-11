@@ -27,7 +27,6 @@ import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.AvatarUrlBean;
 import com.haokan.xinyitu.base.BaseActivity;
-import com.haokan.xinyitu.base.BaseResponseBean;
 import com.haokan.xinyitu.bigimgbrowse.BigImgBrowseActivity;
 import com.haokan.xinyitu.main.DemoImgBean;
 import com.haokan.xinyitu.main.DemoTagBean;
@@ -80,6 +79,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
     private int mTagDrawableWidth;
     private int mTagRlWidth;
     public static final String ACTION_UPDATA_LAST_ABLUM = "com.haokan.xinyitu.tryCreateAblum.success";
+    private ResponseBeanAlbumInfo.DataEntity mMyCreatedAblumEntity;
 
     private void assignViews() {
         mRlHeader = (RelativeLayout) findViewById(R.id.rl_header);
@@ -342,27 +342,37 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
             String url = UrlsUtil.getCreateAblumUrl(App.sessionId);
             Log.d("wangzixu", "releaseImgs tryCreateAblum url = " + url);
             HttpClientManager.getInstance(UpLoadMainActivity.this).createAblum(url, "组图标题", mAlbumDes
-                    , mImgData, mTagIds, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+                    , mImgData, mTagIds, new BaseJsonHttpResponseHandler<ResponseBeanCreateAblum>() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanCreateAblum response) {
                     if (response.getErr_code() == 0) {
-                        Log.d("wangzixu", "releaseImgs tryCreateAblum success , errorCode = " + response.getErr_code());
+                        Log.d("wangzixu", "releaseImgs tryCreateAblum success , errorCode，id = "
+                                + response.getErr_code() + ", " + response.getData().getAlbum_id());
                         ToastManager.showShort(UpLoadMainActivity.this, "发布组图成功");
+                        if (mMyCreatedAblumEntity != null) {
+                            mMyCreatedAblumEntity.setAlbum_id(response.getData().getAlbum_id());
+                        }
                     } else {
                         ToastManager.showShort(UpLoadMainActivity.this, "发布组图失败 = " + response.getErr_msg());
+                        if (mMyCreatedAblumEntity != null) {
+                            mMyCreatedAblumEntity.setAlbum_id("failed");
+                        }
                     }
                 }
 
                 @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanCreateAblum errorResponse) {
                     Log.d("wangzixu", "releaseImgs tryCreateAblum onFailure");
                     ToastManager.showShort(UpLoadMainActivity.this, "发布失败, onFail");
+                    if (mMyCreatedAblumEntity != null) {
+                        mMyCreatedAblumEntity.setAlbum_id("failed");
+                    }
                 }
 
                 @Override
-                protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                protected ResponseBeanCreateAblum parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
                     Log.d("wangzixu", "releaseImgs tryCreateAblum rawJsonData = " + rawJsonData);
-                    return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+                    return JsonUtil.fromJson(rawJsonData, ResponseBeanCreateAblum.class);
                 }
             });
         } else { //没有上传成功，需要把失败信息存到某一个地方，在个人中心页中能展示出来这些失败的信息
@@ -375,12 +385,13 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
      */
     private void makeLastestReleaseAlbum() {
         //创建一个组图信息，发给首页，然后通知首页更新一下界面
-        ResponseBeanAlbumInfo.DataEntity entity = new ResponseBeanAlbumInfo.DataEntity();
-        entity.setImages(mImgData);
+        mMyCreatedAblumEntity = new ResponseBeanAlbumInfo.DataEntity();
+        mMyCreatedAblumEntity.setImages(mImgData);
         ImgAndTagWallManager.getInstance(UpLoadMainActivity.this).initTagsWallForItem0(mTags);
-        entity.setTags(mTags);
-        entity.setAlbum_desc(mAlbumDes);
-        entity.setCreatetime(String.valueOf(System.currentTimeMillis() / 1000));
+        mMyCreatedAblumEntity.setTags(mTags);
+        mMyCreatedAblumEntity.setUser_id(App.user_Id);
+        mMyCreatedAblumEntity.setAlbum_desc(mAlbumDes);
+        mMyCreatedAblumEntity.setCreatetime(String.valueOf(System.currentTimeMillis() / 1000));
         // TODO: 2016/3/31 还应该设置头像地址和昵称 应该在登录成功后把头像地址和昵称保存在preference中
         //此处在preference中获取昵称和头像地址赋值给entity
         SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -391,11 +402,11 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
             avatarUrlEntity.setS100(url);
             avatarUrlEntity.setS150(url);
             avatarUrlEntity.setS50(url);
-            entity.setAvatar_url(avatarUrlEntity);
+            mMyCreatedAblumEntity.setAvatar_url(avatarUrlEntity);
         }
-        entity.setNickname(nickname);
+        mMyCreatedAblumEntity.setNickname(nickname);
         App app = (App) getApplication();
-        app.setLastestUploadAlbum(entity);
+        app.setLastestUploadAlbum(mMyCreatedAblumEntity);
         Intent intent = new Intent(ACTION_UPDATA_LAST_ABLUM);
         sendBroadcast(intent);
     }
