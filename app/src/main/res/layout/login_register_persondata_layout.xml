@@ -79,7 +79,7 @@
             android:textColor="@color/edittext"
             android:padding="7dp"
             android:layout_marginRight="30dp"
-            android:inputType="phone"
+            android:inputType="none"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

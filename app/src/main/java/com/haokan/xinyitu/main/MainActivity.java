@@ -7,20 +7,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
 import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
+import com.haokan.xinyitu.albumfailed.FailedAlbumActivity;
 import com.haokan.xinyitu.base.BaseFragment;
-import com.haokan.xinyitu.main.MyFollowsTimeLine.MyFollowFragment;
+import com.haokan.xinyitu.main.MyFollowsTimeLine.MyFollowTimeLineFragment;
+import com.haokan.xinyitu.main.discovery.AlbumInfoBean;
 import com.haokan.xinyitu.main.discovery.DiscoveryFragment;
-import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
+import com.haokan.xinyitu.main.event.EventFragment;
 import com.haokan.xinyitu.main.mypersonalcenter.MyPersonalCenterFragment;
 import com.haokan.xinyitu.upload.UpLoadMainActivity;
+import com.haokan.xinyitu.util.ConstantValues;
+import com.haokan.xinyitu.util.ToastManager;
 
-public class MainActivity extends BaseMainActivity {
+public class MainActivity extends BaseMainActivity implements View.OnLongClickListener {
 
     private ImageButton mIvBottomBar1;
     private ImageButton mIvBottomBar2;
@@ -30,7 +36,8 @@ public class MainActivity extends BaseMainActivity {
     private FragmentManager mFm;
     private DiscoveryFragment mDiscoveryFragment;
     private MyPersonalCenterFragment mMyPersonalCenterFragment;
-    private MyFollowFragment mMyFollowFragment;
+    private EventFragment mEventFragment;
+    private MyFollowTimeLineFragment mMyFollowFragment;
     private View mCurrentSelectTab;
     private BaseFragment mCurrentFragment;
     BroadcastReceiver mReceiver; // 刚发布完组图后，要在应该显示的页面显示出来（发现或者个人中心页），用来接收发完组图的广播
@@ -48,16 +55,21 @@ public class MainActivity extends BaseMainActivity {
         mIvBottomBar4.setOnClickListener(this);
         mIvBottomBar5.setOnClickListener(this);
 
+        mIvBottomBar1.setOnLongClickListener(this);
+        mIvBottomBar2.setOnLongClickListener(this);
+        mIvBottomBar4.setOnLongClickListener(this);
+        mIvBottomBar5.setOnLongClickListener(this);
+
         mFm = getFragmentManager();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.homepage_activity_layout);
+        setContentView(R.layout.main_activity_layout);
         assignViews();
         setDiscoveryFragment();
-        registerCompleteAblumBroadcast();
+        registerMainBroadcast();
     }
 
     /**
@@ -81,10 +93,12 @@ public class MainActivity extends BaseMainActivity {
                 //mDiscoveryFragment.loadData(this);
             } else {
                 transaction.show(mDiscoveryFragment);
-                //mDiscoveryFragment.loadData(this);
+                //mDiscoveryFragment.reLoad();
             }
             mCurrentFragment = mDiscoveryFragment;
             transaction.commitAllowingStateLoss();
+        } else {
+
         }
     }
 
@@ -108,7 +122,6 @@ public class MainActivity extends BaseMainActivity {
                 transaction.add(R.id.fl_content, mMyPersonalCenterFragment);
             } else {
                 transaction.show(mMyPersonalCenterFragment);
-                //mMyPersonalCenterFragment.loadData(this);
             }
             mCurrentFragment = mMyPersonalCenterFragment;
             transaction.commitAllowingStateLoss();
@@ -131,19 +144,45 @@ public class MainActivity extends BaseMainActivity {
                 transaction.hide(mCurrentFragment);
             }
             if (mMyFollowFragment == null) {
-                mMyFollowFragment = new MyFollowFragment();
+                mMyFollowFragment = new MyFollowTimeLineFragment();
                 transaction.add(R.id.fl_content, mMyFollowFragment);
             } else {
                 transaction.show(mMyFollowFragment);
-                //mMyPersonalCenterFragment.loadData(this);
+                mMyFollowFragment.reLoad();
             }
             mCurrentFragment = mMyFollowFragment;
             transaction.commitAllowingStateLoss();
         }
     }
 
+    /**
+     * 切换到活动页
+     */
     @Override
-    protected void deleteAblum(ResponseBeanAlbumInfo.DataEntity bean) {
+    protected void setEventFragment() {
+        if (mCurrentSelectTab != mIvBottomBar4) {
+            if (mCurrentSelectTab != null) {
+                mCurrentSelectTab.setSelected(false);
+            }
+            mIvBottomBar4.setSelected(true);
+            mCurrentSelectTab = mIvBottomBar4;
+            FragmentTransaction transaction = mFm.beginTransaction();
+            if (mCurrentFragment != null) {
+                transaction.hide(mCurrentFragment);
+            }
+            if (mEventFragment == null) {
+                mEventFragment = new EventFragment();
+                transaction.add(R.id.fl_content, mEventFragment);
+            } else {
+                transaction.show(mEventFragment);
+            }
+            mCurrentFragment = mEventFragment;
+            transaction.commitAllowingStateLoss();
+        }
+    }
+
+    @Override
+    protected void deleteAblum(AlbumInfoBean bean) {
         if (mDiscoveryFragment != null) {
             mDiscoveryFragment.deleteAblum(bean);
         }
@@ -164,29 +203,153 @@ public class MainActivity extends BaseMainActivity {
         }
     }
 
-    private void registerCompleteAblumBroadcast() {
+    private void registerMainBroadcast() {
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d("wangzixu", "BroadcastReceiver onReceive ---");
-                App app = (App) getApplication();
-                ResponseBeanAlbumInfo.DataEntity album = app.getLastestUploadAlbum();
-                //app.setLastestUploadAlbum(null);
-                if (mDiscoveryFragment != null) {
-                    mDiscoveryFragment.addFirstAblum(album);
-                }
-                if (mMyPersonalCenterFragment != null) {
-                    mMyPersonalCenterFragment.addFirstAblum(album);
+                Log.d("wangzixu", "registerMainBroadcast onReceive ---");
+                String action = intent.getAction();
+                if (UpLoadMainActivity.ACTION_UPDATA_LAST_ABLUM.equals(action)) {
+                    App app = (App) getApplication();
+                    AlbumInfoBean album = app.getLastestUploadAlbum();
+                    app.setLastestUploadAlbum(null);
+                    if (mDiscoveryFragment != null) {
+                        mDiscoveryFragment.addFirstAblum(album);
+                    }
+                    if (mMyPersonalCenterFragment != null) {
+                        mMyPersonalCenterFragment.addFirstAblum(album);
+                    }
+                } else if (ConstantValues.ACTION_MYFOLLOWS_CHANGE.equals(action)) {
+                    String userId = intent.getStringExtra(ConstantValues.KEY__USERID);
+                    boolean newStatus = intent.getBooleanExtra(ConstantValues.KEY_NEWSTATUS, false);
+                    notifyFragmentsFollowChanged(userId, newStatus);
+                } else if (ConstantValues.ACTION_LIKESTATUS_CHANGE.equals(action)) {
+                    String ablumid = intent.getStringExtra(ConstantValues.KEY_ALBUMID);
+                    int newStatus = intent.getIntExtra(ConstantValues.KEY_NEWSTATUS, 0);
+                    notifyLikeStatusChanged(ablumid, newStatus);
+                } else if(UpLoadMainActivity.ACTION_CREATE_ALBUM_FAILED.equals(action)) {
+                    if (mMyPersonalCenterFragment != null) {
+                        mMyPersonalCenterFragment.addAblumFailedHeader();
+                    }
+                } else if(FailedAlbumActivity.ACTION_RE_CREATE_ALBUM_SUCCESS.equals(action)) {
+                    if (mDiscoveryFragment != null) {
+                        mDiscoveryFragment.reLoad();
+                    }
+                    if (mMyPersonalCenterFragment != null) {
+                        mMyPersonalCenterFragment.reLoad();
+                    }
                 }
             }
         };
-        IntentFilter filter = new IntentFilter(UpLoadMainActivity.ACTION_UPDATA_LAST_ABLUM);
+        IntentFilter filter = new IntentFilter(UpLoadMainActivity.ACTION_UPDATA_LAST_ABLUM); //发布组图的假数据
+        filter.addAction(ConstantValues.ACTION_MYFOLLOWS_CHANGE); //我关注的人改变
+        filter.addAction(ConstantValues.ACTION_LIKESTATUS_CHANGE); //点赞状态改变
+        filter.addAction(UpLoadMainActivity.ACTION_CREATE_ALBUM_FAILED); //发布组图失败
+        filter.addAction(FailedAlbumActivity.ACTION_RE_CREATE_ALBUM_SUCCESS); //发布组图失败
         registerReceiver(mReceiver, filter);
+    }
+
+    @Override
+    protected void notifyFragmentsFollowChanged(String userId, boolean newStatus) {
+        if (mDiscoveryFragment != null) {
+            mDiscoveryFragment.notifyFragmentsFollowChanged(userId, newStatus);
+        }
+        if (mMyFollowFragment != null) {
+            mMyFollowFragment.notifyFragmentsFollowChanged(userId, newStatus);
+        }
+        if (mMyPersonalCenterFragment != null) {
+            mMyPersonalCenterFragment.notifyFragmentsFollowChanged();
+        }
+    }
+
+    @Override
+    protected void notifyLikeStatusChanged(String ablumId, int newStatus) {
+        if (mDiscoveryFragment != null) {
+            mDiscoveryFragment.notifyLikeStatusChanged(ablumId, newStatus);
+        }
+        if (mMyFollowFragment != null) {
+            mMyFollowFragment.notifyLikeStatusChanged(ablumId, newStatus);
+        }
+        if (mMyPersonalCenterFragment != null) {
+            mMyPersonalCenterFragment.notifyLikeStatusChanged(ablumId, newStatus);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("wangzixu", "onActivityResult requestCode, resultCode = " + requestCode + ", " + resultCode);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE_LOGIN) { //登录界面回来de
+                if (mMyPersonalCenterFragment != null && !TextUtils.isEmpty(App.sessionId)) {
+                    mMyPersonalCenterFragment.updataLoginStatus(true);
+                }
+                if (mMyFollowFragment != null && !TextUtils.isEmpty(App.sessionId)) {
+                    mMyFollowFragment.updataLoginStatus(true);
+                }
+            } else if (requestCode == REQUEST_CODE_SETTING) {//设置页退出登录回来的
+                if (mMyPersonalCenterFragment != null && TextUtils.isEmpty(App.sessionId)) {
+                    mMyPersonalCenterFragment.updataLoginStatus(false);
+                }
+                if (mMyFollowFragment != null && !TextUtils.isEmpty(App.sessionId)) {
+                    mMyFollowFragment.updataLoginStatus(false);
+                }
+            }
+        }
+    }
+
+    private long mLastBackTime = 0;
+    @Override
+    public void onBackPressed() {
+        if (mMorePopupWindow != null && mMorePopupWindow.isShowing()) {
+            disMissMorePop();
+        } else {
+            long currentTime = SystemClock.uptimeMillis();
+            if (currentTime - mLastBackTime > 2000) {
+                mLastBackTime = currentTime;
+                ToastManager.showShort(this, "再按一次退出");
+            } else {
+                super.onBackPressed();
+            }
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_bottom_bar_1:
+                if (mCurrentFragment == mDiscoveryFragment) {
+                    mDiscoveryFragment.longClik();
+                    return true;
+                }
+                break;
+            case R.id.iv_bottom_bar_2:
+                if (mCurrentFragment == mMyFollowFragment) {
+                    mMyFollowFragment.longClik();
+                    return true;
+                }
+                break;
+            case R.id.iv_bottom_bar_4:
+                if (mCurrentFragment == mEventFragment) {
+                    mEventFragment.longClik();
+                    return true;
+                }
+                break;
+            case R.id.iv_bottom_bar_5:
+                if (mCurrentFragment == mMyPersonalCenterFragment) {
+                    mMyPersonalCenterFragment.longClik();
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 }

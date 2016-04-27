@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:background="@color/main_color_actionbar_item01"
+        android:id="@+id/rl_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/actionbar_h">
+
+        <ImageButton
+            android:id="@+id/ib_back"
+            android:background="@null"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/icon_back_white_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <!--<TextView-->
+            <!--android:id="@+id/tv_complete"-->
+            <!--android:includeFontPadding="false"-->
+            <!--android:typeface="normal"-->
+            <!--android:singleLine="true"-->
+            <!--android:ellipsize="end"-->
+            <!--android:text="完成"-->
+            <!--android:textSize="14sp"-->
+            <!--android:textColor="@color/click_bai80"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:gravity="center"-->
+            <!--android:paddingRight="15dp"-->
+            <!--android:paddingLeft="15dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"/>-->
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <View
+                android:background="@color/main_color_bg"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_setting_avatar"
+                android:clickable="true"
+                android:background="@drawable/settingitem_bg_selector"
+                android:layout_width="match_parent"
+                android:layout_height="69dp">
+
+                <ImageView
+                    android:id="@+id/iv_avatar"
+                    android:src="@drawable/icon_login_photo"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:layout_width="69dp"
+                    android:layout_height="69dp"/>
+
+                <TextView
+                    android:id="@+id/tv_setting_name"
+                    android:layout_toRightOf="@id/iv_avatar"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:layout_marginRight="110dp"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/bai_30"
+                    android:textSize="14sp"
+                    android:text="编辑头像"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/icon_upload_right_jiantou"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="15dp"
+                    android:textColor="@color/bai_30"
+                    android:textSize="13sp"
+                    android:text=""
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+
+            <View
+                android:background="@color/main_color_bg"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_change_nickname"
+                android:background="@drawable/settingitem_bg_selector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_nickname"
+                    android:textColor="@color/bai_30"
+                    android:textSize="12sp"
+                    android:text="昵称"
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tv_nickname_1"
+                    android:layout_below="@id/tv_nickname"
+                    android:background="@null"
+                    android:text=""
+                    android:textSize="15sp"
+                    android:textColor="@color/bai_50"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/icon_upload_right_jiantou"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="15dp"
+                    android:textColor="@color/bai_30"
+                    android:textSize="13sp"
+                    android:text=""
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <!--<View-->
+                    <!--android:layout_below="@id/tv_nickname_1"-->
+                    <!--android:background="@color/main_color_bg"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_marginLeft="15dp"-->
+                    <!--android:layout_marginRight="15dp"-->
+                    <!--android:layout_height="2dp"/>-->
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_change_desc"
+                android:background="@drawable/settingitem_bg_selector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_desc"
+                    android:textColor="@color/bai_30"
+                    android:textSize="12sp"
+                    android:text="介绍"
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tv_desc_1"
+                    android:layout_below="@id/tv_desc"
+                    android:background="@null"
+                    android:text=""
+                    android:textSize="15sp"
+                    android:textColor="@color/bai_50"
+                    android:lineSpacingExtra="3dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:drawablePadding="6dp"
+                    android:drawableRight="@drawable/icon_upload_right_jiantou"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="15dp"
+                    android:textColor="@color/bai_30"
+                    android:textSize="13sp"
+                    android:text=""
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <!--<View-->
+                    <!--android:layout_below="@id/tv_desc_1"-->
+                    <!--android:background="@color/main_color_bg"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_marginLeft="15dp"-->
+                    <!--android:layout_marginRight="15dp"-->
+                    <!--android:layout_height="2dp"/>-->
+            </RelativeLayout>
+
+            <View
+                android:background="@color/main_color_bg"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_change_getlocation"
+                android:background="@drawable/settingitem_bg_selector"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/bai_50"
+                    android:textSize="15sp"
+                    android:text="获取地理位置"
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <Switch
+                    android:id="@+id/st_location"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignParentRight="true"
+                    android:padding="6dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+
+            <View
+                android:background="@color/main_color_bg"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"/>
+
+            <RelativeLayout
+                android:id="@+id/rl_change_psw"
+                android:background="@drawable/settingitem_bg_selector"
+                android:clickable="true"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/bai_50"
+                    android:textSize="15sp"
+                    android:text="密码设置"
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/icon_upload_right_jiantou"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <!--<View-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:background="@color/main_color_bg"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_marginLeft="15dp"-->
+                <!--android:layout_marginRight="15dp"-->
+                <!--android:layout_height="2dp"/>-->
+            </RelativeLayout>
+
+            <View
+                android:background="@color/main_color_bg"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"/>
+
+            <TextView
+                android:textColor="@color/bai_30"
+                android:background="@color/main_color_actionbar_item01"
+                android:textSize="12sp"
+                android:text="社交账号绑定"
+                android:typeface="normal"
+                android:includeFontPadding="false"
+                android:paddingTop="20dp"
+                android:paddingLeft="15dp"
+                android:paddingBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+                <!--android:background="@drawable/settingitem_bg_selector"-->
+            <RelativeLayout
+                android:id="@+id/rl_bind_phone"
+                android:background="@drawable/settingitem_bg_selector"
+                android:layout_width="match_parent"
+                android:layout_height="45dp">
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/bai_50"
+                    android:textSize="15sp"
+                    android:text="手机"
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:gravity="center"
+                    android:drawablePadding="9dp"
+                    android:drawableLeft="@drawable/icon_home_hot"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tv_bind_phone"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/bai_50"
+                    android:textSize="15sp"
+                    android:text="18516891181"
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:gravity="center"
+                    android:drawablePadding="9dp"
+                    android:drawableRight="@drawable/setting_account_bind_selector"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:layout_height="wrap_content"/>
+
+
+                <!--<View-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:background="@color/main_color_bg"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_marginLeft="15dp"-->
+                <!--android:layout_marginRight="15dp"-->
+                <!--android:layout_height="2dp"/>-->
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rl_bind_weixin"
+                android:background="@drawable/settingitem_bg_selector"
+                android:layout_width="match_parent"
+                android:layout_height="45dp">
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/bai_50"
+                    android:textSize="15sp"
+                    android:text="微信"
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:gravity="center"
+                    android:drawablePadding="9dp"
+                    android:drawableLeft="@drawable/icon_home_hot"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tv_bind_weixin"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/bai_50"
+                    android:textSize="15sp"
+                    android:text=""
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:gravity="center"
+                    android:drawablePadding="9dp"
+                    android:drawableRight="@drawable/setting_account_bind_selector"
+                    android:layout_marginRight="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+                <!--<View-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:background="@color/main_color_bg"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_marginLeft="15dp"-->
+                <!--android:layout_marginRight="15dp"-->
+                <!--android:layout_height="2dp"/>-->
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_bind_weibo"
+                android:background="@drawable/settingitem_bg_selector"
+                android:layout_width="match_parent"
+                android:layout_height="45dp">
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/bai_50"
+                    android:textSize="15sp"
+                    android:text="微博"
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:gravity="center"
+                    android:drawablePadding="9dp"
+                    android:drawableLeft="@drawable/icon_home_hot"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tv_bind_weibo"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/bai_50"
+                    android:textSize="15sp"
+                    android:text=""
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:gravity="center"
+                    android:layout_marginRight="15dp"
+                    android:drawablePadding="9dp"
+                    android:drawableRight="@drawable/setting_account_bind_selector"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+                <!--<View-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:background="@color/main_color_bg"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_marginLeft="15dp"-->
+                <!--android:layout_marginRight="15dp"-->
+                <!--android:layout_height="2dp"/>-->
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rl_bind_qq"
+                android:background="@drawable/settingitem_bg_selector"
+                android:layout_width="match_parent"
+                android:layout_height="45dp">
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/bai_50"
+                    android:textSize="15sp"
+                    android:text="QQ"
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:gravity="center"
+                    android:drawablePadding="9dp"
+                    android:drawableLeft="@drawable/icon_home_hot"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tv_bind_qq"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/bai_50"
+                    android:textSize="15sp"
+                    android:text=""
+                    android:typeface="normal"
+                    android:includeFontPadding="false"
+                    android:gravity="center"
+                    android:layout_marginRight="15dp"
+                    android:drawablePadding="9dp"
+                    android:drawableRight="@drawable/setting_account_bind_selector"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+                <!--<View-->
+                <!--android:layout_alignParentBottom="true"-->
+                <!--android:background="@color/main_color_bg"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_marginLeft="15dp"-->
+                <!--android:layout_marginRight="15dp"-->
+                <!--android:layout_height="2dp"/>-->
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

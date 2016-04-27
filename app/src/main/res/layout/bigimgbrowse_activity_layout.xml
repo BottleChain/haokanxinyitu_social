@@ -11,7 +11,7 @@
 
     <ImageButton
         android:visibility="gone"
-        android:id="@+id/ib_bigimg_close"
+        android:id="@+id/ib_close"
         android:background="@null"
         android:src="@drawable/icon_bigimg_picclose"
         android:layout_marginTop="20dp"

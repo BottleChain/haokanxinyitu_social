@@ -6,8 +6,10 @@
     <dimen name="pickimg_grid_img_width">118dp</dimen>
 
     <dimen name="discoveryitem0_tv1_margintop">11dp</dimen>
-    <dimen name="discoveryitem0_tv2_margintop">5dp</dimen>
+    <dimen name="discoveryitem0_tv2_margintop">6dp</dimen>
 
     <dimen name="followsitem_tv1_margintop">14dp</dimen>
     <dimen name="followsitem_tv2_margintop">6dp</dimen>
+
+    <dimen name="actionbar_h">42dp</dimen>
 </resources>

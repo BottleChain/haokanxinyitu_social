@@ -1,6 +1,7 @@
 package com.haokan.xinyitu.util;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.haokan.xinyitu.main.DemoImgBean;
@@ -15,7 +16,7 @@ public class ImgAndTagWallManager {
     private int mDividerW; //分割线的宽度
     private int mMinItemH; //特别扁的图片的最小高度
     private int mMinItemImgW; //特别长的图片的最小宽度
-    private int mMaxCountInItem = 5; //每个条目最多容许几张图片
+    private int mMaxCountInItem = 4; //每个条目最多容许几张图片
 
     private int mTagTextSize; //tag的字体大小
     private int mTagTextPadding; //左右上下各有5dp的padding，好点击
@@ -75,7 +76,9 @@ public class ImgAndTagWallManager {
     public void initTagsWall(List<DemoTagBean> tags, int textPaddingW, int textPaddingH
             , int rlWidth, int baseW, int currentTop, int textSize, int textHeight, int drawablePadding, int drawableWidth
             , int textMarginW, int textMarginH) {
-
+        if (tags == null) {
+            return;
+        }
         int currentLineCount = 0; //当前行有几个标签了，每行至少有一个标签，长过一行，后面省略
         for (int i = 0; i < tags.size(); i++) {
             DemoTagBean bean = tags.get(i);
@@ -120,15 +123,27 @@ public class ImgAndTagWallManager {
         int currentTop = 0; //当前行的marginTop
         boolean newline = true; //是否是新起一行
 
+        List<DemoImgBean> tempList = new ArrayList<>(); //过滤掉宽高为null的或者为0的图片
         ArrayList<DemoImgBean> item = new ArrayList<>(); //数据结构上每行为一个单位，每行为一个item
+        if (data == null) {
+            return;
+        }
         for (int i = 0; i < data.size(); i++) {
+            DemoImgBean bean = data.get(i);
+            if (TextUtils.isEmpty(bean.getWidth())) {
+                tempList.add(bean);
+                continue;
+            }
+            if (TextUtils.isEmpty(bean.getHeight())) {
+                tempList.add(bean);
+                continue;
+            }
             if (newline) { //新的一行开始，初始化一些数据
                 newline = false;
                 item.clear();
                 baseW = 0;
             }
-            DemoImgBean bean = data.get(i);
-            int imgW = (int)(mBaseHeigh * ((float)bean.getWidth() / bean.getHeight()) + 0.5f);
+            int imgW = (int)(mBaseHeigh * (Float.valueOf(bean.getWidth()) / Float.valueOf(bean.getHeight())) + 0.5f);
             int delta = mScreenW - (imgW + baseW); //当前行加上当前图片后，条目右边还剩下多少空间
             if (item.size() > 0) {
                 delta -= mDividerW; //第一张图片开始，中间有间隙
@@ -156,7 +171,7 @@ public class ImgAndTagWallManager {
                      */
                     item.add(bean);
                     int itemW = mScreenW; //这行只有这一张图，行宽就确定了
-                    int itemH = (int) (bean.getHeight() * (itemW /(float)bean.getWidth()));
+                    int itemH = (int) (Float.valueOf(bean.getHeight()) * (itemW /Float.valueOf(bean.getWidth())));
                     if (itemH < mMinItemH) {
                         itemH = mMinItemH;
                     }
@@ -177,6 +192,9 @@ public class ImgAndTagWallManager {
                 newline = true;
             }
         }
+
+        data.removeAll(tempList);
+        tempList.clear();
 
         if (newline) {
             item.clear();
@@ -205,7 +223,7 @@ public class ImgAndTagWallManager {
         int marginLeft = 0;
         for (int i = 0; i < item.size(); i++) {
             DemoImgBean bean = item.get(i);
-            int acturlImgW = (int) (acturlItemH * ((float)bean.getWidth() / bean.getHeight()) + 0.5f);
+            int acturlImgW = (int) (acturlItemH * (Float.valueOf(bean.getWidth()) / Float.valueOf(bean.getHeight())) + 0.5f);
             if (acturlImgW < mMinItemImgW) {
                 //有张图太窄了，最小宽度有限制
                 overflowW = overflowW + (mMinItemImgW - acturlImgW);

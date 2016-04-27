@@ -2,12 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/hei">
+    android:fitsSystemWindows="true"
+    android:background="@color/main_color_bg"
+    >
     <RelativeLayout
         android:id="@+id/rl_header"
         android:background="@color/main_color_actionbar_item01"
         android:layout_width="match_parent"
-        android:layout_height="72dp">
+        android:layout_height="@dimen/actionbar_h">
 
         <TextView
             android:id="@+id/tv_cancel"
@@ -16,11 +18,13 @@
             android:text="取消"
             android:textSize="14sp"
             android:textColor="@color/click_bai"
-            android:padding="17dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:gravity="center"
             android:layout_marginLeft="2dp"
             android:layout_alignParentBottom="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
 
         <TextView
             android:id="@+id/tv_confirm"
@@ -29,12 +33,14 @@
             android:text="发布"
             android:textSize="14sp"
             android:textColor="@color/click_huang_2"
-            android:padding="17dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:gravity="center"
             android:layout_marginRight="2dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
     </RelativeLayout>
     <ScrollView
         android:layout_below="@id/rl_header"
@@ -44,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
-                android:id="@+id/et_upload_edit"
+                android:id="@+id/et_edit"
                 android:includeFontPadding="false"
                 android:textCursorDrawable="@drawable/text_cursor_holo_light"
                 android:typeface="normal"
@@ -67,7 +73,7 @@
                 android:id="@+id/tv_textcount"
                 android:includeFontPadding="false"
                 android:typeface="normal"
-                android:layout_below="@id/et_upload_edit"
+                android:layout_below="@id/et_edit"
                 android:gravity="right"
                 android:paddingBottom="10dp"
                 android:paddingRight="15dp"

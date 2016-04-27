@@ -3,7 +3,11 @@ package com.haokan.xinyitu.main.otherpersonalcenter;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,8 +17,10 @@ import android.view.View;
 import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseResponseBean;
+import com.haokan.xinyitu.follow.ResponseBeanFollwsUsers;
 import com.haokan.xinyitu.main.BaseMainActivity;
-import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
+import com.haokan.xinyitu.main.discovery.AlbumInfoBean;
+import com.haokan.xinyitu.util.ConstantValues;
 import com.haokan.xinyitu.util.HttpClientManager;
 import com.haokan.xinyitu.util.JsonUtil;
 import com.haokan.xinyitu.util.UrlsUtil;
@@ -26,6 +32,7 @@ public class OtherPersonalCenterActivity extends BaseMainActivity{
     public static final String KEY_INTENT_USERID = "userId";
     private String mUserId;
     private OtherPersonalCenterFragment mOtherPersonalCenterFragment;
+    private BroadcastReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,8 @@ public class OtherPersonalCenterActivity extends BaseMainActivity{
         mOtherPersonalCenterFragment.setUserId(mUserId);
         transaction.replace(R.id.fl_content, mOtherPersonalCenterFragment);
         transaction.commitAllowingStateLoss();
+
+        registerMainBroadcast();
     }
 
     @Override
@@ -53,10 +62,37 @@ public class OtherPersonalCenterActivity extends BaseMainActivity{
     }
 
     @Override
-    protected void deleteAblum(ResponseBeanAlbumInfo.DataEntity bean) {
+    protected void deleteAblum(AlbumInfoBean bean) {
         if (mOtherPersonalCenterFragment != null) {
             mOtherPersonalCenterFragment.deleteAblum(bean);
         }
+    }
+
+    private void registerMainBroadcast() {
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("wangzixu", "tagtimeline registerMainBroadcast onReceive ---");
+                String action = intent.getAction();
+                if (ConstantValues.ACTION_LIKESTATUS_CHANGE.equals(action)) {
+                    String ablumid = intent.getStringExtra(ConstantValues.KEY_ALBUMID);
+                    int newStatus = intent.getIntExtra(ConstantValues.KEY_NEWSTATUS, 0);
+                    if (mOtherPersonalCenterFragment != null) {
+                        mOtherPersonalCenterFragment.notifyLikeStatusChanged(ablumid, newStatus);
+                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(ConstantValues.ACTION_LIKESTATUS_CHANGE);
+        registerReceiver(mReceiver, filter);
+    }
+
+    @Override
+    protected void notifyLikeStatusChanged(String ablumId, int newStatus) {
+        Intent intent = new Intent(ConstantValues.ACTION_LIKESTATUS_CHANGE);
+        intent.putExtra(ConstantValues.KEY_ALBUMID, ablumId);
+        intent.putExtra(ConstantValues.KEY_NEWSTATUS, newStatus);
+        sendBroadcast(intent);
     }
 
     @Override
@@ -67,7 +103,7 @@ public class OtherPersonalCenterActivity extends BaseMainActivity{
         }
         if (view.isSelected()) {
             View v = LayoutInflater.from(this).inflate(R.layout.cancel_follow_dialog_layout, null);
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK)
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setTitle("提示")
                     .setView(v)
                     .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -78,6 +114,18 @@ public class OtherPersonalCenterActivity extends BaseMainActivity{
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             view.setSelected(false);
+                            ResponseBeanFollwsUsers.FollowUserIdBean idEntity = null;
+                            for (int i = 0; i < App.sMyFollowsUser.size(); i++) {
+                                if(App.sMyFollowsUser.get(i).getUserid().equals(mUserId)) {
+                                    idEntity = App.sMyFollowsUser.get(i);
+                                }
+                            }
+                            App.sMyFollowsUser.remove(idEntity);
+                            Intent intent = new Intent(ConstantValues.ACTION_MYFOLLOWS_CHANGE);
+                            intent.putExtra(ConstantValues.KEY__USERID, mUserId);
+                            intent.putExtra(ConstantValues.KEY_NEWSTATUS, false);
+                            sendBroadcast(intent); //通知关注的人改变了，主页要刷新其下面的关注按钮
+
                             String url = UrlsUtil.getdelFollowUrl(App.sessionId, mUserId);
                             Log.d("wangzixu", "changeFollowState cancel url = " + url);
                             HttpClientManager.getInstance(OtherPersonalCenterActivity.this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
@@ -102,6 +150,14 @@ public class OtherPersonalCenterActivity extends BaseMainActivity{
             alertDialog.show();
         } else {
             view.setSelected(true);
+            ResponseBeanFollwsUsers.FollowUserIdBean idEntity = new ResponseBeanFollwsUsers.FollowUserIdBean();
+            idEntity.setUserid(mUserId);
+            App.sMyFollowsUser.add(idEntity);
+            Intent intent = new Intent(ConstantValues.ACTION_MYFOLLOWS_CHANGE);
+            intent.putExtra(ConstantValues.KEY__USERID, mUserId);
+            intent.putExtra(ConstantValues.KEY_NEWSTATUS, true);
+            sendBroadcast(intent); //通知关注的人改变了，主页要刷新其下面的关注按钮
+
             String url = UrlsUtil.getaddFollowUrl(App.sessionId, mUserId);
             Log.d("wangzixu", "changeFollowState add url = " + url);
             HttpClientManager.getInstance(this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
@@ -121,5 +177,11 @@ public class OtherPersonalCenterActivity extends BaseMainActivity{
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
     }
 }

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rl_header"
+        android:background="@color/main_color_actionbar_item01"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/actionbar_h">
+
+        <ImageButton
+            android:id="@+id/ib_close"
+            android:background="@null"
+            android:layout_alignParentBottom="true"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:src="@drawable/icon_bigimg_picclose"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:text="评论"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:textSize="15sp"
+            android:textColor="@color/click_bai"
+            android:padding="11dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_edit_container"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="@color/hei"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="49dp">
+        <TextView
+            android:id="@+id/tv_click_add"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:text="添加"
+            android:textColor="@color/click_huang_2"
+            android:textSize="14sp"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+            <!--android:singleLine="true"-->
+        <EditText
+            android:id="@+id/et_edit"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:hint="请输入评论内容"
+            android:inputType="none"
+            android:background="@drawable/addcomment_edittext_bg"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:layout_toLeftOf="@id/tv_click_add"
+            android:layout_centerVertical="true"
+            android:textColorHint="@color/hei_40"
+            android:textSize="14sp"
+            android:textColor="@color/bai"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"/>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider_2"
+        android:layout_above="@id/rl_edit_container"
+        android:background="@color/main_color_devider_2"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
+    <RelativeLayout
+        android:layout_below="@id/rl_header"
+        android:layout_above="@id/rl_edit_container"
+        android:background="@color/main_color_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+            <!--android:listSelector="@color/hei"-->
+        <ListView
+            android:visibility="gone"
+            android:id="@+id/lv_comment"
+            android:divider="@null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </ListView>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/ll_no_comment"
+        android:orientation="vertical"
+        android:layout_below="@id/rl_header"
+        android:layout_above="@id/rl_edit_container"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:src="@drawable/img_comment_no"
+            android:layout_marginTop="65dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:text="暂无评论"
+            android:layout_marginTop="25dp"
+            android:textSize="14sp"
+            android:textColor="@color/bai_40"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+        <!--android:visibility="gone"-->
+    <include
+        android:layout_below="@id/rl_header"
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/loading_layout" />
+
+    <include
+        android:id="@+id/net_error_layout"
+        layout="@layout/net_error_layout"
+        android:visibility="gone"/>
+
+</RelativeLayout>

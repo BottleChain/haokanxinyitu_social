@@ -104,7 +104,7 @@ public class RotateLoadingLayout extends LoadingLayout {
 
 	@Override
 	protected int getDefaultDrawableResId() {
-		return R.drawable.loading_small;
+		return R.drawable.loading;
 	}
 
 }

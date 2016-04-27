@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+  android:orientation="vertical"
+  android:fitsSystemWindows="true"
+    android:background="@color/main_color_actionbar_item01"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rl_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/actionbar_h">
+
+        <ImageButton
+            android:id="@+id/ib_back"
+            android:background="@null"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/icon_back_white_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <!--<TextView-->
+            <!--android:id="@+id/tv_title"-->
+            <!--android:includeFontPadding="false"-->
+            <!--android:typeface="normal"-->
+            <!--android:singleLine="true"-->
+            <!--android:ellipsize="end"-->
+            <!--android:text=""-->
+            <!--android:textSize="15sp"-->
+            <!--android:textColor="@color/click_bai80"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:gravity="center"-->
+            <!--android:layout_marginRight="15dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"/>-->
+    </RelativeLayout>
+
+        <!--android:background="@color/main_color_bg"-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="170dp">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/icon_launcher"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_below="@id/iv_avatar"
+            android:layout_marginTop="15dp"
+            android:textSize="12sp"
+            android:textColor="@color/bai_40"
+            android:layout_centerHorizontal="true"
+            android:text="V1.0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_about_terms"
+        android:background="@drawable/settingitem_bg_selector"
+        android:clickable="true"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:textColor="@color/bai_50"
+            android:textSize="14sp"
+            android:text="服务条款"
+            android:layout_marginLeft="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:layout_centerVertical="true"
+            android:src="@drawable/icon_upload_right_jiantou"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <View
+        android:background="@color/main_color_bg"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_height="2dp"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_about_visitweb"
+        android:clickable="true"
+        android:background="@drawable/settingitem_bg_selector"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:textColor="@color/bai_50"
+            android:textSize="14sp"
+            android:text="访问官网"
+            android:layout_marginLeft="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:layout_centerVertical="true"
+            android:src="@drawable/icon_upload_right_jiantou"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <View
+        android:background="@color/main_color_bg"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_height="2dp"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_about_about"
+        android:clickable="true"
+        android:background="@drawable/settingitem_bg_selector"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:textColor="@color/bai_50"
+            android:textSize="14sp"
+            android:text="关于我们"
+            android:layout_marginLeft="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_clear_cache"
+            android:textColor="@color/bai_30"
+            android:textSize="13sp"
+            android:text=""
+            android:layout_centerVertical="true"
+            android:drawablePadding="8dp"
+            android:drawableRight="@drawable/icon_upload_right_jiantou"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <!--<View-->
+        <!--android:background="@color/main_color_bg"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="6dp"/>-->
+</LinearLayout>

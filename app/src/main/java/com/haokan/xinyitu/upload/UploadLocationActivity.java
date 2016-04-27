@@ -25,7 +25,7 @@ public class UploadLocationActivity extends BaseActivity implements View.OnClick
         mRlHeader = (RelativeLayout) findViewById(R.id.rl_header);
         mIbBack = (ImageButton) findViewById(R.id.ib_back);
         mTvUploadPickfolder = (TextView) findViewById(R.id.tv_upload_pickfolder);
-        mEtUploadEdit = (EditText) findViewById(R.id.et_upload_edit);
+        mEtUploadEdit = (EditText) findViewById(R.id.et_edit);
         mTvEditBg = (TextView) findViewById(R.id.tv_edit_bg);
         mLvLocation = (ListView) findViewById(R.id.lv_location);
 
@@ -62,6 +62,18 @@ public class UploadLocationActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ib_back:
+                onBackPressed();
+                break;
+            default:
+                break;
+        }
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
     }
 }

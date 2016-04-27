@@ -1,10 +1,16 @@
 package com.haokan.xinyitu.follow;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -12,8 +18,11 @@ import android.widget.TextView;
 import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseActivity;
-import com.haokan.xinyitu.base.UserInfoBean;
+import com.haokan.xinyitu.base.BaseResponseBean;
+import com.haokan.xinyitu.main.otherpersonalcenter.OtherPersonalCenterActivity;
+import com.haokan.xinyitu.util.ConstantValues;
 import com.haokan.xinyitu.util.HttpClientManager;
+import com.haokan.xinyitu.util.ImageUtil;
 import com.haokan.xinyitu.util.JsonUtil;
 import com.haokan.xinyitu.util.UrlsUtil;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
@@ -32,12 +41,14 @@ public class MyFollowsActivity extends BaseActivity implements View.OnClickListe
     private View mDivider1;
     private View mLoadingLayout;
     private View mNetErrorLayout;
+    private View mNoFollowedLayout;
     private ListView mLvFollows;
     protected int mCurrentPage; //分页加载，当前第几页
     protected static final int COUNT_ONE_PAGE = 20; //每页多少个数据
     protected boolean mHasMoreData;
     protected boolean mIsLoading = false;
-    private ArrayList<UserInfoBean> mData = new ArrayList<>();
+    private String mUserId;
+    private ArrayList<ResponseBeanOtherUserInfo.FollowUserInfoBean> mData = new ArrayList<>();
     private MyFollowsAdapter mAdapter;
 
 
@@ -46,10 +57,12 @@ public class MyFollowsActivity extends BaseActivity implements View.OnClickListe
         mIbBack = (ImageButton) findViewById(R.id.ib_back);
         mTvTitle = (TextView) findViewById(R.id.tv_title);
         mDivider1 = findViewById(R.id.divider_1);
-        mLvFollows = (ListView) findViewById(R.id.lv_follows);
+        mLvFollows = (ListView) findViewById(R.id.lv_listview);
         mLoadingLayout = findViewById(R.id.loading_layout);
         mNetErrorLayout = findViewById(R.id.net_error_layout);
+        mNoFollowedLayout = findViewById(R.id.ll_no_followed);
 
+        mLvFollows.setOnScrollListener(new PauseLoadImgOnScrollListener());
         mIbBack.setOnClickListener(this);
 //        mAdapter = new MyFollowsAdapter(this, mData);
 //        mLvFollows.setAdapter(adapter);
@@ -68,31 +81,40 @@ public class MyFollowsActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private List<ResponseBeanFollwsUsersId.UserIdEntity> mUserIdEntities;
+    private List<ResponseBeanFollwsUsers.FollowUserIdBean> mMyFollowsUser;
     private void loadData() {
-        String url = UrlsUtil.getIlikeUrl(App.sessionId);
-        Log.d("wangzixu", "MyFollows loadData url = " + url);
-        HttpClientManager.getInstance(this).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanFollwsUsersId>() {
+        String url;
+        if (TextUtils.isEmpty(getIntent().getStringExtra(ConstantValues.KEY__USERID))) {
+            url = UrlsUtil.getIlikeUrl(App.sessionId);
+        } else {
+            mUserId = getIntent().getStringExtra(ConstantValues.KEY__USERID);
+            mTvTitle.setText("他关注的人");
+            url = UrlsUtil.getUserFollowsUrl(App.sessionId, mUserId);
+        }
+        Log.d("wangzixu", "myfollows loadData url = " + url);
+        HttpClientManager.getInstance(this).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanFollwsUsers>() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanFollwsUsersId response) {
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanFollwsUsers response) {
                 if (response.getErr_code() == 0) {
-                    mUserIdEntities = response.getData();
+                    mMyFollowsUser = response.getData();
+                    App.sMyFollowsUser = mMyFollowsUser;
                     loadUsersInfo();
                 } else {
-                    mLoadingLayout.setVisibility(View.GONE);
-                    //todo 没有关注的人，应该有一个ui提示
+                    mNoFollowedLayout.setVisibility(View.VISIBLE);
+                    mLvFollows.setVisibility(View.GONE);
                 }
+                mLoadingLayout.setVisibility(View.GONE);
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanFollwsUsersId errorResponse) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanFollwsUsers errorResponse) {
                 mLoadingLayout.setVisibility(View.GONE);
                 //解析错误
             }
 
             @Override
-            protected ResponseBeanFollwsUsersId parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
-                return JsonUtil.fromJson(rawJsonData, ResponseBeanFollwsUsersId.class);
+            protected ResponseBeanFollwsUsers parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return JsonUtil.fromJson(rawJsonData, ResponseBeanFollwsUsers.class);
             }
         });
     }
@@ -106,8 +128,8 @@ public class MyFollowsActivity extends BaseActivity implements View.OnClickListe
         }
 
         int begin = mCurrentPage * COUNT_ONE_PAGE;
-        int end = Math.min((mCurrentPage + 1) * COUNT_ONE_PAGE, mUserIdEntities.size());
-        if (end >= mUserIdEntities.size()) {
+        int end = Math.min((mCurrentPage + 1) * COUNT_ONE_PAGE, mMyFollowsUser.size());
+        if (end >= mMyFollowsUser.size()) {
             mHasMoreData = false;
         }
 
@@ -115,12 +137,18 @@ public class MyFollowsActivity extends BaseActivity implements View.OnClickListe
             mIsLoading = true;
             RequestBeanUsersInfo requestBean = new RequestBeanUsersInfo();
             ArrayList<RequestBeanUsersInfo.UserInfoRequestEntity> beans = new ArrayList<>();
+//            String eachFollowStr = "";
             for (int i = begin; i < end; i++) {
-                ResponseBeanFollwsUsersId.UserIdEntity idEntity = mUserIdEntities.get(i);
+                ResponseBeanFollwsUsers.FollowUserIdBean idEntity = mMyFollowsUser.get(i);
                 RequestBeanUsersInfo.UserInfoRequestEntity bean = new RequestBeanUsersInfo.UserInfoRequestEntity();
                 bean.setId(String.valueOf(idEntity.getUserid()));
                 beans.add(bean);
+//                if ("3".equals(idEntity.getRelation())) { //互粉
+//                    eachFollowStr = eachFollowStr + idEntity.getUserid() + "-";
+//                }
             }
+//            final String eachFollowStrFinal = eachFollowStr;
+//            eachFollowStr = null;
             requestBean.setUser(beans);
             final String data = JsonUtil.toJson(requestBean);
             String url = UrlsUtil.getUserInfoUrl(App.sessionId, data);
@@ -129,7 +157,13 @@ public class MyFollowsActivity extends BaseActivity implements View.OnClickListe
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanOtherUserInfo response) {
                     if (response.getErr_code() == 0) {
-                        ArrayList<UserInfoBean> data1 = response.getData();
+                        final ArrayList<ResponseBeanOtherUserInfo.FollowUserInfoBean> data1 = response.getData();
+//                        for (int i = 0; i < data1.size(); i++) { //设置正确的互粉关系
+//                            ResponseBeanOtherUserInfo.FollowUserInfoBean bean = data1.get(i);
+//                            if (eachFollowStrFinal.contains(bean.getUserid())) {
+//                                bean.setEachFollow(true);
+//                            }
+//                        }
                         mData.addAll(data1);
                         mCurrentPage++;
                         if (mAdapter == null) {
@@ -159,7 +193,124 @@ public class MyFollowsActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        onBackPressed();
+        switch (v.getId()) {
+            case R.id.iv_avatar:
+                String userId = (String) v.getTag();
+                if (TextUtils.isEmpty(userId)) {
+                    return;
+                }
+                ImageUtil.changeLight((ImageView) v, true);
+                Intent intent= new Intent(MyFollowsActivity.this, OtherPersonalCenterActivity.class);
+                intent.putExtra(OtherPersonalCenterActivity.KEY_INTENT_USERID, userId);
+                startActivity(intent);
+                overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+                break;
+            case R.id.ib_follow: //点击取消关注
+                final ResponseBeanOtherUserInfo.FollowUserInfoBean bean = (ResponseBeanOtherUserInfo.FollowUserInfoBean) v.getTag();
+                final String relation = bean.getRelation();
+                //关系:0.没关系,1.我的关注,2.我的粉丝,3.互粉
+                switch (relation) {
+                    case "1":
+                    case "3":
+                        View costomView = LayoutInflater.from(this).inflate(R.layout.cancel_follow_dialog_layout, null);
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                                .setTitle("提示")
+                                .setView(costomView)
+                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ResponseBeanFollwsUsers.FollowUserIdBean idEntity = null;
+                                        for (int i = 0; i < App.sMyFollowsUser.size(); i++) {
+                                            if(App.sMyFollowsUser.get(i).getUserid().equals(bean.getUserid())) {
+                                                idEntity = App.sMyFollowsUser.get(i);
+                                            }
+                                        }
+                                        App.sMyFollowsUser.remove(idEntity);
+                                        notifyFragmentsFollowChanged(bean.getUserid(), false);
+                                        if (TextUtils.isEmpty(mUserId)) { //说明是我关注的人页面
+                                            mData.remove(bean);
+                                        } else { //说明是他关注的人界面
+                                            if (relation.equals("1")) {
+                                                bean.setRelation("0");
+                                            } else {
+                                                bean.setRelation("2");
+                                            }
+                                        }
+                                        mAdapter.notifyDataSetChanged();
+                                        String url = UrlsUtil.getdelFollowUrl(App.sessionId, bean.getUserid());
+                                        Log.d("wangzixu", "myfollows cancel url = " + url);
+                                        HttpClientManager.getInstance(MyFollowsActivity.this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+                                            @Override
+                                            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+                                                Log.d("wangzixu", "changeFollowState cancel onSuccess = " + response.getErr_msg());
+                                            }
+
+                                            @Override
+                                            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
+
+                                            }
+
+                                            @Override
+                                            protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                                                return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+                                            }
+                                        });
+                                    }
+                                });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                        break;
+                    case "0":
+                    case "2":
+                        if (relation.equals("0")) {
+                            bean.setRelation("1");
+                        } else {
+                            bean.setRelation("3");
+                        }
+                        ResponseBeanFollwsUsers.FollowUserIdBean idEntity = new ResponseBeanFollwsUsers.FollowUserIdBean();
+                        idEntity.setUserid(bean.getUserid());
+                        idEntity.setRelation(bean.getRelation());
+                        App.sMyFollowsUser.add(idEntity);
+                        notifyFragmentsFollowChanged(bean.getUserid(), true);
+                        mAdapter.notifyDataSetChanged();
+                        String url = UrlsUtil.getaddFollowUrl(App.sessionId, bean.getUserid());
+                        Log.d("wangzixu", "changeFollowState add url = " + url);
+                        HttpClientManager.getInstance(this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+                                Log.d("wangzixu", "changeFollowState add onSuccess = " + response.getErr_msg());
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
+
+                            }
+
+                            @Override
+                            protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                                return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+                            }
+                        });
+                        break;
+                }
+                break;
+            case R.id.ib_back:
+                onBackPressed();
+                break;
+            default:
+                break;
+        }
+    }
+
+    protected void notifyFragmentsFollowChanged(String userId, boolean newStatus) {
+        Intent intent = new Intent(ConstantValues.ACTION_MYFOLLOWS_CHANGE);
+        intent.putExtra(ConstantValues.KEY__USERID, userId);
+        intent.putExtra(ConstantValues.KEY_NEWSTATUS, newStatus);
+        sendBroadcast(intent); //通知关注的人改变了，主页要刷新其它界面的关注按钮
     }
 
     @Override

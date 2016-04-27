@@ -76,6 +76,10 @@ public class ClipPhotoActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
+    @Override
+    protected boolean hasStatusBar() {
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

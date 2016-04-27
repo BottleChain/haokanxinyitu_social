@@ -10,18 +10,31 @@
         android:id="@+id/iv_avatar"
         android:src="@drawable/icon_login_photo"
         android:layout_marginLeft="17dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="5dp"
         android:layout_width="50dp"
         android:layout_height="50dp"/>
+
+    <TextView
+        android:id="@+id/tv_change_personnaldata"
+        android:background="@drawable/change_personnaldata_btn_bg"
+        android:text="编辑个人资料"
+        android:textColor="@color/click_bai50"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:layout_toRightOf="@id/iv_avatar"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="18dp"
+        android:layout_width="95dp"
+        android:layout_height="22dp"/>
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_below="@id/iv_avatar"
         android:layout_marginLeft="17dp"
         android:layout_marginRight="17dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="15dp"
         android:textColor="@color/bai"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:includeFontPadding="false"
         android:typeface="normal"
         android:singleLine="true"
@@ -34,7 +47,7 @@
     <TextView
         android:id="@+id/tv_desc"
         android:layout_below="@id/tv_name"
-        android:paddingTop="6dp"
+        android:paddingTop="10dp"
         android:layout_marginLeft="17dp"
         android:layout_marginRight="17dp"
         android:text="有的鱼是永远都关不住的，因为它们属于天空!"

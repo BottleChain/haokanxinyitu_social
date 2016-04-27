@@ -10,7 +10,7 @@
         android:background="@color/hei_50" />
 
     <LinearLayout
-        android:id="@+id/ll_morepop_content"
+        android:id="@+id/ll_morepop_sharecontent"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="6dp"

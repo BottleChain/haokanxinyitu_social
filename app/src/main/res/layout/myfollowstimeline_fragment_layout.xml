@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/rl_header"
+        android:background="@color/main_color_actionbar_item01"
+        android:layout_width="match_parent"
+        android:layout_height="44dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:singleLine="true"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:ellipsize="end"
+            android:text="我关注的人"
+            android:textSize="15sp"
+            android:textColor="@color/bai"
+            android:maxWidth="160dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:layout_marginLeft="17dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
+
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:layout_below="@id/rl_header"
+        android:id="@+id/ptrlv_1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/touming"
+        android:listSelector="@color/touming"
+        android:divider="@null"
+
+        ptr:ptrAnimationStyle = "rotate"
+        ptr:ptrHeaderBackground="@color/main_color_actionbar_item01"
+        ptr:ptrMode="pullDownFromTop"
+        />
+        <!--android:visibility="invisible"-->
+
+    <!--<LinearLayout-->
+        <!--android:visibility="gone"-->
+        <!--android:background="@color/main_color_actionbar_item01"-->
+        <!--android:focusableInTouchMode="false"-->
+        <!--android:focusable="false"-->
+        <!--android:id="@+id/ll_no_followed"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_below="@id/rl_header"-->
+        <!--android:gravity="center_horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <!--<ImageView-->
+            <!--android:src="@drawable/icon_fllow_no"-->
+            <!--android:layout_marginTop="65dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/tv_no_item"-->
+            <!--android:text="暂时没有您关注的人发布的组图"-->
+            <!--android:layout_marginTop="25dp"-->
+            <!--android:textSize="14sp"-->
+            <!--android:textColor="@color/bai_40"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"/>-->
+    <!--</LinearLayout>-->
+
+    <include
+        android:layout_below="@id/rl_header"
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/loading_layout" />
+
+    <include
+        android:id="@+id/net_error_layout"
+        layout="@layout/net_error_layout"
+        android:visibility="gone"/>
+</RelativeLayout>

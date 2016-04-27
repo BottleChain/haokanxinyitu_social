@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:padding="12dp"
+        android:src="@drawable/icon_login_photo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
+
+    <TextView
+        android:id="@+id/tv_author"
+        android:text="发布者"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:textSize="12sp"
+        android:textColor="@color/bai_50"
+        android:layout_toRightOf="@id/iv_avatar"
+        android:singleLine="true"
+        android:maxWidth="120dp"
+        android:ellipsize="end"
+        android:paddingTop="12dp"
+        android:paddingBottom="4dp"
+        android:lineSpacingExtra="0dp"
+        android:paddingRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_replay"
+        android:text="回复了"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:textSize="12sp"
+        android:textColor="@color/bai_30"
+        android:layout_toRightOf="@id/tv_author"
+        android:paddingTop="12dp"
+        android:paddingBottom="5dp"
+        android:lineSpacingExtra="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_author_to"
+        android:text="被回复者"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:textSize="12sp"
+        android:textColor="@color/bai_50"
+        android:layout_toRightOf="@id/tv_replay"
+        android:singleLine="true"
+        android:maxWidth="120dp"
+        android:ellipsize="end"
+        android:paddingTop="12dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="5dp"
+        android:lineSpacingExtra="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_desc"
+        android:text="当清晨的第一缕阳光洒进窗子,我开始怀疑，漫长的记忆是否只是一场发生在梦里的幻境."
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:textSize="13sp"
+        android:ellipsize="end"
+        android:layout_marginRight="15dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="9dp"
+        android:lineSpacingExtra="3dp"
+        android:textColor="@color/bai_80"
+        android:layout_toRightOf="@id/iv_avatar"
+        android:layout_below="@id/tv_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_below="@id/tv_desc"
+        android:textSize="12sp"
+        android:textColor="@color/bai_30"
+        android:text="1分钟前"
+        android:layout_toRightOf="@id/iv_avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:layout_toRightOf="@id/iv_avatar"
+        android:layout_below="@id/tv_time"
+        android:layout_marginTop="12dp"
+        android:background="@color/hei"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
+</RelativeLayout>

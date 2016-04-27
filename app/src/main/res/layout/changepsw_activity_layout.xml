@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+  android:orientation="vertical"
+  android:fitsSystemWindows="true"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:background="@color/main_color_actionbar_item01"
+        android:id="@+id/rl_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/actionbar_h">
+
+        <ImageButton
+            android:id="@+id/ib_back"
+            android:background="@null"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/icon_back_white_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:text="密码设置"
+            android:textSize="15sp"
+            android:textColor="@color/click_bai80"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:layout_marginRight="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/tv_save"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:text="保存"
+            android:textSize="14sp"
+            android:textColor="@color/click_huang_2"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:paddingRight="15dp"
+            android:paddingLeft="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
+
+    <View
+        android:background="@color/main_color_bg"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"/>
+
+    <RelativeLayout
+        android:background="@drawable/settingitem_bg_selector"
+        android:layout_width="match_parent"
+        android:layout_height="65dp">
+
+        <TextView
+            android:id="@+id/tv_ori_psw"
+            android:layout_centerVertical="true"
+            android:textColor="@color/bai_30"
+            android:textSize="15sp"
+            android:layout_marginLeft="15dp"
+            android:text="原密码"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/et_ori_psw"
+            android:layout_toRightOf="@id/tv_ori_psw"
+            android:gravity="center_vertical"
+            android:background="@color/touming"
+            android:paddingLeft="10dp"
+            android:textSize="15sp"
+            android:singleLine="true"
+            android:inputType="textPassword"
+            android:textColor="@color/bai_80"
+            android:textColorHint="@color/bai_30"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <View
+            android:layout_alignParentBottom="true"
+            android:background="@color/main_color_bg"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_height="2dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:background="@drawable/settingitem_bg_selector"
+        android:layout_width="match_parent"
+        android:layout_height="65dp">
+
+        <TextView
+            android:id="@+id/tv_new_psw"
+            android:layout_centerVertical="true"
+            android:textColor="@color/bai_30"
+            android:textSize="15sp"
+            android:layout_marginLeft="15dp"
+            android:text="新密码"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/et_new_psw"
+            android:layout_toRightOf="@id/tv_new_psw"
+            android:gravity="center_vertical"
+            android:background="@color/touming"
+            android:paddingLeft="10dp"
+            android:textSize="15sp"
+            android:singleLine="true"
+            android:inputType="textPassword"
+            android:textColor="@color/bai_80"
+            android:textColorHint="@color/bai_30"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <View
+            android:layout_alignParentBottom="true"
+            android:background="@color/main_color_bg"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_height="2dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:background="@drawable/settingitem_bg_selector"
+        android:layout_width="match_parent"
+        android:layout_height="65dp">
+
+        <TextView
+            android:id="@+id/tv_confirm_psw"
+            android:layout_centerVertical="true"
+            android:textColor="@color/bai_30"
+            android:textSize="15sp"
+            android:layout_marginLeft="15dp"
+            android:text="确认新密码"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/et_confirm_psw"
+            android:layout_toRightOf="@id/tv_confirm_psw"
+            android:gravity="center_vertical"
+            android:background="@color/touming"
+            android:paddingLeft="10dp"
+            android:textSize="15sp"
+            android:singleLine="true"
+            android:inputType="textPassword"
+            android:textColor="@color/bai_80"
+            android:textColorHint="@color/bai_30"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
+
+    <View
+        android:background="@color/main_color_bg"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"/>
+
+    <TextView
+        android:layout_centerVertical="true"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:textColor="@color/bai_30"
+        android:textSize="12sp"
+        android:lineSpacingExtra="3dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:drawableLeft="@drawable/icon_mimashezhi__tishi"
+        android:drawablePadding="4dp"
+        android:text="设置密码至少六个字符，方便您下次登录，防止个人信息丢失"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!--<View-->
+        <!--android:background="@color/main_color_bg"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
+
+</LinearLayout>

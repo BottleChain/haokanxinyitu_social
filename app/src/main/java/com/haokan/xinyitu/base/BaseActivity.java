@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.haokan.xinyitu.R;
+import com.haokan.xinyitu.util.SystemBarTintManager;
 import com.umeng.analytics.MobclickAgent;
 
 /**
@@ -18,7 +20,7 @@ public class BaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (hasStatusBar() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             // Translucent status bar
             window.setFlags(
@@ -27,9 +29,21 @@ public class BaseActivity extends Activity {
 //            window.setFlags(
 //                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
 //                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            SystemBarTintManager systemBarTintManager = new SystemBarTintManager(this);
+            // 设置状态栏状态
+            systemBarTintManager.setStatusBarTintEnabled(true);
+            // 设置状态栏颜色
+            systemBarTintManager.setStatusBarTintColor(getResources().getColor(R.color.main_color_actionbar_item01));
         }
     }
 
+    protected void onStatusBarClick() {
+
+    }
+
+    protected boolean hasStatusBar() {
+        return true;
+    }
 
     protected void onResume() {
         super.onResume();

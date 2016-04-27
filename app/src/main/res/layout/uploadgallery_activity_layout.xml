@@ -2,23 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bai">
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:id="@+id/rl_header"
         android:background="@color/main_color_actionbar_item01"
         android:layout_width="match_parent"
-        android:layout_height="70dp">
+        android:layout_height="@dimen/actionbar_h">
 
         <ImageButton
-            android:id="@+id/ib_bigimg_close"
+            android:id="@+id/ib_close"
             android:background="@null"
             android:layout_alignParentBottom="true"
-            android:padding="12dp"
-            android:layout_marginLeft="5dp"
+            android:paddingLeft="17dp"
+            android:paddingRight="17dp"
             android:src="@drawable/icon_bigimg_picclose"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
 
         <TextView
             android:id="@+id/tv_upload_pickfolder"
@@ -27,27 +27,31 @@
             android:text="所有照片"
             android:textSize="14sp"
             android:textColor="@color/click_bai"
-            android:padding="15dp"
+            android:paddingLeft="17dp"
+            android:paddingRight="17dp"
+            android:gravity="center"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:drawablePadding="4dp"
             android:drawableRight="@drawable/icon_upload_allpics_jiantou"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
 
         <TextView
             android:id="@+id/tv_confirm"
             android:includeFontPadding="false"
             android:typeface="normal"
             android:text="完成"
+            android:gravity="center"
             android:textSize="14sp"
             android:textColor="@color/click_huang_2"
-            android:padding="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
             android:layout_marginRight="5dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
     </RelativeLayout>
 
     <GridView

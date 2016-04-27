@@ -20,6 +20,24 @@ public class ResponseBeanCreateAblum extends BaseResponseBean{
 
     public static class DataBean {
         private String 	album_id;
+        private String 	share_url;
+        private String 	createtime;
+
+        public String getShare_url() {
+            return share_url;
+        }
+
+        public void setShare_url(String share_url) {
+            this.share_url = share_url;
+        }
+
+        public String getCreatetime() {
+            return createtime;
+        }
+
+        public void setCreatetime(String createtime) {
+            this.createtime = createtime;
+        }
 
         public String getAlbum_id() {
             return album_id;

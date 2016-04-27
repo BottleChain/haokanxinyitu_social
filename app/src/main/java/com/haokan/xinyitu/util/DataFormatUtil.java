@@ -19,4 +19,9 @@ public class DataFormatUtil {
         return formatter.format(new Date(time));
     }
 
+	public static String getCustomFormatTime(long time) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.ENGLISH);
+		return formatter.format(new Date(time));
+	}
+
 }

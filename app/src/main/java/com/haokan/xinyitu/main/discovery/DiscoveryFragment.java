@@ -1,14 +1,17 @@
 package com.haokan.xinyitu.main.discovery;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -34,8 +37,10 @@ import cz.msebera.android.httpclient.Header;
 public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements PullToRefreshBase.OnRefreshListener<ListView>{
 
     private List<ResponseBeanAlbumList.DataBean.AlbumListBean> mAlbumIdList;
-    private ArrayList<ResponseBeanAlbumInfo.DataEntity> mData = new ArrayList<>();
+    private ArrayList<AlbumInfoBean> mData = new ArrayList<>();
     private DiscoveryFragmentAdapter mAdapter;
+    private BroadcastReceiver mMyFollowsChangeReceiver;
+    private Handler mHandler = new Handler();
 
     //制造假数据用的
     private static int[] sW = {1440, 599, 1024, 640, 1200, 400, 900};
@@ -53,6 +58,7 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
         mLoadingLayout = view.findViewById(R.id.loading_layout);
         mNetErrorLayout = view.findViewById(R.id.net_error_layout);
         mBtnNetError = mNetErrorLayout.findViewById(R.id.iv_net_error);
+        //registerChangeMyFollowBroadcast();
         return view;
     }
 
@@ -63,19 +69,131 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
         return url;
     }
 
+//    private void registerChangeMyFollowBroadcast() {
+//        mMyFollowsChangeReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, final Intent intent) {
+//                if (ConstantValues.ACTION_MYFOLLOWS_CHANGE.equals(intent.getAction())) {
+//                    final String userId = intent.getStringExtra(ConstantValues.KEY__USERID);
+//                    final boolean newStatus = intent.getBooleanExtra(ConstantValues.KEY_NEWSTATUS, false);
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Log.d("wangzixu", "registerChangeMyFollowBroadcast onReceive ---");
+//                            if (mIsDestory) {
+//                                return;
+//                            }
+//                            for (int i = 0; i < mData.size(); i++) {
+//                                ResponseBeanAlbumInfo.AlbumInfoBean entity = mData.get(i);
+//                                if (entity.getUser_id().equals(userId)) {
+//                                    entity.setIsFollowed(newStatus);
+//                                    final View viewWithTag = mListView.findViewWithTag(entity);
+//                                    if (viewWithTag != null) {
+//                                        mHandler.post(new Runnable() {
+//                                            @Override
+//                                            public void run() {
+//                                                viewWithTag.setSelected(newStatus);
+//                                            }
+//                                        });
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }).start();
+//                }
+//            }
+//        };
+//        IntentFilter filter = new IntentFilter(ConstantValues.ACTION_MYFOLLOWS_CHANGE);
+//        getActivity().registerReceiver(mMyFollowsChangeReceiver, filter);
+//    }
+
+    public void reLoad() {
+        //mPullToRefreshListView.setRefreshing(true);
+        loadData(getActivity());
+    }
+
+    public void notifyFragmentsFollowChanged(final String userId, final boolean newStatus) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("wangzixu", "notifyFragmentsFollowChanged ---");
+                if (mIsDestory) {
+                    return;
+                }
+                for (int i = 0; i < mData.size(); i++) {
+                    AlbumInfoBean entity = mData.get(i);
+                    if (userId.equals(entity.getUser_id())) {
+                        entity.setIsFollowed(newStatus);
+                        final View viewWithTag = mListView.findViewWithTag(entity);
+                        if (viewWithTag != null && viewWithTag instanceof ImageButton) {
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    viewWithTag.setSelected(newStatus);
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void notifyLikeStatusChanged(final String ablumId, final int newStatus) {
+        Log.d("wangzixu", "notifyLikeStatusChanged isVisible = ---" + isVisible());
+        if (!isVisible() || !isResumed()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mIsDestory) {
+                        return;
+                    }
+                    boolean hasChange = false;
+                    for (int i = 0; i < mData.size(); i++) {
+                        AlbumInfoBean entity = mData.get(i);
+                        if (ablumId.equals(entity.getAlbum_id())) {
+                            hasChange = true;
+                            entity.setIs_liked(newStatus);
+                            if (newStatus == 1) {
+                                entity.setLike_num(entity.getLike_num() + 1);
+                            } else {
+                                entity.setLike_num(entity.getLike_num() - 1);
+                            }
+                        }
+                    }
+                    mLastLoadDataTime = SystemClock.uptimeMillis();
+                    if (hasChange) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                }
+            }).start();
+        } else {
+            mLastLoadDataTime = SystemClock.uptimeMillis();
+        }
+    }
+
     @Override
     protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
         ResponseBeanAlbumList responseBeanAlbumList = (ResponseBeanAlbumList) response;
         mPullToRefreshListView.setVisibility(View.VISIBLE);
+        mLoadingLayout.setVisibility(View.GONE);
         mAlbumIdList = null;
         //mData.clear();
         mCurrentPage = 0;
         mAlbumIdList = responseBeanAlbumList.getData().getAlbumList();
         mHasMoreData = true;
+        if (mHasFootView) {
+            removeFootView();
+        }
         loadAlbumInfoData(context, true);
     }
 
-    public void deleteAblum(final ResponseBeanAlbumInfo.DataEntity bean) {
+    public void deleteAblum(final AlbumInfoBean bean) {
         final String ablumId = bean.getAlbum_id();
         new Thread(new Runnable() {
             @Override
@@ -108,7 +226,7 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                     mData.remove(index);
                 } else if (index > 6) {
                     if (mData.size() > 12) {
-                        ResponseBeanAlbumInfo.DataEntity remove12 = mData.remove(12);
+                        AlbumInfoBean remove12 = mData.remove(12);
                         mData.remove(index);
                         if (mData.size() > 12) {
                             mData.add(12, remove12);
@@ -118,8 +236,8 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                     }
                 } else if (index > 2) {
                     if (mData.size() > 12) {
-                        ResponseBeanAlbumInfo.DataEntity remove12 = mData.remove(12);
-                        ResponseBeanAlbumInfo.DataEntity remove6 = mData.remove(6);
+                        AlbumInfoBean remove12 = mData.remove(12);
+                        AlbumInfoBean remove6 = mData.remove(6);
                         mData.remove(index);
                         if (mData.size() > 12) {
                             mData.add(12, remove12);
@@ -128,7 +246,7 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                             mData.add(6,remove6);
                         }
                     } else if (mData.size() > 6) {
-                        ResponseBeanAlbumInfo.DataEntity remove6 = mData.remove(6);
+                        AlbumInfoBean remove6 = mData.remove(6);
                         mData.remove(index);
                         if (mData.size() > 6) {
                             mData.add(6,remove6);
@@ -139,9 +257,9 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                     }
                 } else {
                     if (mData.size() > 12) {
-                        ResponseBeanAlbumInfo.DataEntity remove12 = mData.remove(12);
-                        ResponseBeanAlbumInfo.DataEntity remove6 = mData.remove(6);
-                        ResponseBeanAlbumInfo.DataEntity remove2 = mData.remove(2);
+                        AlbumInfoBean remove12 = mData.remove(12);
+                        AlbumInfoBean remove6 = mData.remove(6);
+                        AlbumInfoBean remove2 = mData.remove(2);
                         mData.remove(index);
                         if (mData.size() > 12) {
                             mData.add(12, remove12);
@@ -149,15 +267,15 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                         mData.add(6,remove6);
                         mData.add(2, remove2);
                     } else if (mData.size() > 6) {
-                        ResponseBeanAlbumInfo.DataEntity remove6 = mData.remove(6);
-                        ResponseBeanAlbumInfo.DataEntity remove2 = mData.remove(2);
+                        AlbumInfoBean remove6 = mData.remove(6);
+                        AlbumInfoBean remove2 = mData.remove(2);
                         mData.remove(index);
                         if (mData.size() > 6) {
                             mData.add(6,remove6);
                         }
                         mData.add(2, remove2);
                     } else if (mData.size() > 2) {
-                        ResponseBeanAlbumInfo.DataEntity remove2 = mData.remove(2);
+                        AlbumInfoBean remove2 = mData.remove(2);
                         mData.remove(index);
                         if (mData.size() > 2) {
                             mData.add(2, remove2);
@@ -209,9 +327,14 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
             return;
         }
         int begin = mCurrentPage * COUNT_ONE_PAGE;
-        int end = Math.min((mCurrentPage + 1) * COUNT_ONE_PAGE, mAlbumIdList.size());
+        final int end = Math.min((mCurrentPage + 1) * COUNT_ONE_PAGE, mAlbumIdList.size());
         if (end >= mAlbumIdList.size()) {
             mHasMoreData = false;
+            if (mAlbumIdList.size() <= 1) {
+                mListView.setBackgroundColor(context.getResources().getColor(R.color.main_color_actionbar_item01));
+            } else if (!mHasFootView) {
+                addFootView();
+            }
         }
         if (begin < end) {
             mIsLoading = true;
@@ -232,30 +355,66 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanAlbumInfo response) {
                     if (response.getErr_code() == 0) {
-                        List<ResponseBeanAlbumInfo.DataEntity> data1 = response.getData();
-                        for (int i = 0; i < data1.size(); i++) {
-                            ImgAndTagWallManager.getInstance(context).initImgsWall(data1.get(i).getImages());
-                            ImgAndTagWallManager.getInstance(context).initTagsWallForItem0(data1.get(i).getTags());
-                        }
-                        if (isClearData) {
-                            mData.clear();
-                        }
-                        mData.addAll(response.getData());
-                        if (mCurrentPage == 0) { //造假数据
-                            createItem_2_6_12(context);
-                        }
-                        mCurrentPage++;
-                        if (mAdapter == null) {
-                            mAdapter = new DiscoveryFragmentAdapter(context, mData, (View.OnClickListener) getActivity());
-                            mListView.setAdapter(mAdapter);
-                        } else {
-                            mAdapter.notifyDataSetChanged();
-                        }
+                        final List<AlbumInfoBean> data1 = response.getData();
+                        new Thread(new Runnable() { //因为有不少处理数据的逻辑，所以应该放在子线程中去完成
+                            @Override
+                            public void run() {
+                                for (int i = 0; i < data1.size(); i++) {
+                                    ImgAndTagWallManager.getInstance(context).initImgsWall(data1.get(i).getImages());
+                                    ImgAndTagWallManager.getInstance(context).initTagsWallForItem0(data1.get(i).getTags());
+                                }
+
+                                //过滤数据，正确的给关注关系赋值
+                                String myFollowsStr = "";
+                                for (int j = 0; j < data1.size(); j++) {
+                                    AlbumInfoBean entity = data1.get(j);
+                                    entity.setIsFollowed(false);
+                                    String userId = entity.getUser_id();
+                                    if (myFollowsStr.contains(userId)) { //如果连续多个userId相同，不用每个都去遍历MyFollowsId集合
+                                        entity.setIsFollowed(true);
+                                        continue;
+                                    }
+                                    for (int i = 0; i < App.sMyFollowsUser.size(); i++) {
+                                        String myFollowId = App.sMyFollowsUser.get(i).getUserid();
+                                        if (userId.equals(myFollowId)) {
+                                            entity.setIsFollowed(true);
+                                            myFollowsStr = myFollowsStr + "-" + userId;
+                                            break;
+                                        }
+                                    }
+                                }
+                                myFollowsStr = null;
+
+                                if (isClearData) {
+                                    mData.clear();
+                                }
+
+                                mData.addAll(data1);
+                                if (mCurrentPage == 0) { //造假数据
+                                    createItem_2_6_12(context);
+                                }
+
+                                mCurrentPage++;
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mAdapter == null) {
+                                            mAdapter = new DiscoveryFragmentAdapter(context, mData, (View.OnClickListener) getActivity());
+                                            mListView.setAdapter(mAdapter);
+                                        } else {
+                                            mAdapter.notifyDataSetChanged();
+                                        }
+                                        mIsLoading = false;
+                                        mLoadingLayout.setVisibility(View.GONE);
+                                    }
+                                });
+                            }
+                        }).start();
                     } else {
-                        loadDataFailed();
+                        //loadDataFailed();
+                        mIsLoading = false;
+                        mLoadingLayout.setVisibility(View.GONE);
                     }
-                    mIsLoading = false;
-                    mLoadingLayout.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -266,7 +425,6 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
 
                 @Override
                 protected ResponseBeanAlbumInfo parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
-                    Log.d("DiscoveryFragment", "loadAlbumInfoData rawJsonData = " + rawJsonData);
                     return JsonUtil.fromJson(rawJsonData, ResponseBeanAlbumInfo.class);
                 }
             });
@@ -277,7 +435,7 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
         Random random = new Random();
         if (mData.size() > 2) {
             //第二块内容固定为今日最佳图片模块，造个假数据
-            ResponseBeanAlbumInfo.DataEntity bean1 = new ResponseBeanAlbumInfo.DataEntity();
+            AlbumInfoBean bean1 = new AlbumInfoBean();
             bean1.setType(1);
             ArrayList<DemoImgBean> list = new ArrayList<>();
             int imgCount = random.nextInt(10) + 1;
@@ -287,8 +445,8 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                 int id = sIds[index];
                 int w = sW[index];
                 int h = sH[index];
-                imgBean.setHeight(h);
-                imgBean.setWidth(w);
+                imgBean.setHeight(String.valueOf(h));
+                imgBean.setWidth(String.valueOf(w));
                 imgBean.setUrl(ImageDownloader.Scheme.DRAWABLE.wrap(String.valueOf(id)));
                 list.add(imgBean);
             }
@@ -300,7 +458,7 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
 
         if (mData.size() > 6) {
             //第6块内容固定为优秀摄影师推荐，造个假数据
-            ResponseBeanAlbumInfo.DataEntity bean2 = new ResponseBeanAlbumInfo.DataEntity();
+            AlbumInfoBean bean2 = new AlbumInfoBean();
             bean2.setType(2);
             ArrayList<DemoImgBean> list2 = new ArrayList<>();
             int imgCount2 = random.nextInt(10) + 1;
@@ -310,8 +468,8 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                 int id = sIds[index];
                 int w = sW[index];
                 int h = sH[index];
-                imgBean.setHeight(h);
-                imgBean.setWidth(w);
+                imgBean.setHeight(String.valueOf(h));
+                imgBean.setWidth(String.valueOf(w));
                 imgBean.setUrl(ImageDownloader.Scheme.DRAWABLE.wrap(String.valueOf(id)));
                 list2.add(imgBean);
             }
@@ -322,7 +480,7 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
 
         if (mData.size() > 12) {
             //第12块内容固定为用户推荐，造个假数据
-            ResponseBeanAlbumInfo.DataEntity bean3 = new ResponseBeanAlbumInfo.DataEntity();
+            AlbumInfoBean bean3 = new AlbumInfoBean();
             bean3.setType(3);
             mData.add(12, bean3);
         }
@@ -332,12 +490,12 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
      * 在发完组图后，发现页和个人页需要立马添加一条刚刚发布的信息（自己模拟的数据）
      */
     @Override
-    public void addFirstAblum(ResponseBeanAlbumInfo.DataEntity album) {
+    public void addFirstAblum(AlbumInfoBean album) {
         if (mAdapter != null) {
             //固定位置的条目，不能变了位置，所以需要处理下
-            ResponseBeanAlbumInfo.DataEntity remove2 = null;
-            ResponseBeanAlbumInfo.DataEntity remove6 = null;
-            ResponseBeanAlbumInfo.DataEntity remove12 = null;
+            AlbumInfoBean remove2 = null;
+            AlbumInfoBean remove6 = null;
+            AlbumInfoBean remove12 = null;
             if (mData.size() > 12) {
                 remove2 = mData.remove(12);
             }
@@ -357,8 +515,18 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
             if (remove12 != null) {
                 mData.add(12, remove12);
             }
+            int firstVisiblePosition = mListView.getFirstVisiblePosition();
+            int nextPostion;
+            if (firstVisiblePosition == 3 ||
+                    firstVisiblePosition == 7 ||
+                    firstVisiblePosition == 13) {
+                nextPostion = firstVisiblePosition;
+            } else {
+                nextPostion = firstVisiblePosition + 1;
+            }
             mAdapter.notifyDataSetChanged();
-            mListView.setSelection(0);
+            mListView.smoothScrollToPosition(nextPostion);
+//            mListView.setSelection(nextPostion);
             mLastLoadDataTime = SystemClock.uptimeMillis();
         }
     }
@@ -420,6 +588,7 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        //getActivity().unregisterReceiver(mMyFollowsChangeReceiver);
         Log.d("DiscoveryFragment", "onDestroyView --");
     }
 

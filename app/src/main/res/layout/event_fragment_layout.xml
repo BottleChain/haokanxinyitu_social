@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/rl_header"
+        android:background="@color/main_color_actionbar_item01"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/actionbar_h">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:singleLine="true"
+            android:includeFontPadding="false"
+            android:typeface="normal"
+            android:ellipsize="end"
+            android:text="活动"
+            android:textSize="15sp"
+            android:textColor="@color/bai"
+            android:maxWidth="160dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="17dp"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
+
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:layout_below="@id/rl_header"
+        android:id="@+id/ptrlv_1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/touming"
+        android:listSelector="@color/touming"
+        android:divider="@null"
+
+        ptr:ptrAnimationStyle = "rotate"
+        ptr:ptrHeaderBackground="@color/main_color_actionbar_item01"
+        ptr:ptrMode="pullDownFromTop"
+        />
+        <!--android:visibility="invisible"-->
+    <include
+        android:layout_below="@id/rl_header"
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/loading_layout" />
+
+    <include
+        android:id="@+id/net_error_layout"
+        layout="@layout/net_error_layout"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:layout_below="@id/rl_header"
+        android:background="@color/main_color_actionbar_item01"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_bg"
+            android:src="@drawable/img_activity_no"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="75dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:gravity="center"
+            android:textColor="@color/bai_30"
+            android:layout_below="@id/iv_bg"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:textSize="14sp"
+            android:text="活动版块紧张筹建中..."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+</RelativeLayout>

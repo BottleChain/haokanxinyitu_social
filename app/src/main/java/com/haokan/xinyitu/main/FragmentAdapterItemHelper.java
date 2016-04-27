@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
-import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
+import com.haokan.xinyitu.main.discovery.AlbumInfoBean;
 import com.haokan.xinyitu.main.discovery.ViewHolderDiscoveryItem0;
 import com.haokan.xinyitu.main.discovery.ViewHolderDiscoveryItem1;
 import com.haokan.xinyitu.main.discovery.ViewHolderDiscoveryItem2;
@@ -51,7 +51,86 @@ public class FragmentAdapterItemHelper {
         mTagTextColor = context.getResources().getColorStateList(R.color.click_huang_1);
     }
 
-    public View initPersonnalCenterItem0(int position, ResponseBeanAlbumInfo.DataEntity beanDiscovery, View convertView, ViewGroup parent, boolean isMy) {
+    public View initPersonnalCenterNoItem(ViewGroup parent) {
+        return mInflater.inflate(R.layout.mypersonalcenter_noitem_layout, parent, false);
+//        return new View(mContext);
+    }
+
+    public View initFailedAlbumItem(int position, AlbumInfoBean albumInfoBean, View convertView, ViewGroup parent) {
+        ViewHolderPersonnalCenterItem0 holder;
+        boolean isShowFadeIn;
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.failedalbum_activity_item, parent, false);
+            holder = new ViewHolderPersonnalCenterItem0(convertView);
+            convertView.setTag(holder);
+            isShowFadeIn = true;
+        } else {
+            holder = (ViewHolderPersonnalCenterItem0) convertView.getTag();
+            isShowFadeIn = holder.pos != position;
+        }
+        holder.pos = position;
+
+        if (TextUtils.isEmpty(albumInfoBean.getAlbum_desc())) {
+            holder.tvdesc.setVisibility(View.GONE);
+        } else {
+            holder.tvdesc.setVisibility(View.VISIBLE);
+            holder.tvdesc.setText(albumInfoBean.getAlbum_desc());
+        }
+
+        //显示图片
+        List<DemoImgBean> imgs= albumInfoBean.getImages();
+        holder.rlimgcontainer.removeAllViews();
+        for (int i = 0; i < imgs.size(); i++) {
+            DemoImgBean bean = imgs.get(i);
+            ImageView img = new ImageView(mContext);
+            img.setScaleType(ImageView.ScaleType.CENTER);
+//            img.setBackgroundColor(sBgColors[i % 4]);
+            img.setImageResource(R.drawable.icon_nopic);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(bean.getItemWidth(), bean.getItemHeigh());
+            lp.leftMargin = bean.getMarginLeft();
+            lp.topMargin = bean.getMarginTop();
+            Log.d("wangzixu", "initDiscoveryItem0 pos, i,l,t,w,h = " + position + ", " + i + ", " + bean.getMarginLeft() + ", " + bean.getMarginTop()
+                    + ", " + bean.getItemWidth() + ", " + bean.getItemHeigh());
+            //Log.d("wangzixu", "getView pos acturlItemW,H = " + position + ", " + bean.getItemWidth() + ", " + bean.getItemHeigh());
+            img.setLayoutParams(lp);
+            holder.rlimgcontainer.addView(img);
+            img.setTag(R.string.TAG_KEY_IS_FADEIN, isShowFadeIn);
+            img.setTag(R.string.TAG_KEY_POSITION, i);
+            ImageLoaderManager.getInstance().asyncLoadImage(img, bean.getUrl()
+                    , bean.getItemWidth(), bean.getItemHeigh());
+        }
+
+        //显示标签
+        List<DemoTagBean> tags = albumInfoBean.getTags();
+        holder.rltagcontainer.removeAllViews();
+        int textPadding = ImgAndTagWallManager.getInstance(mContext).getTagTextPadding();
+        if (tags != null) {
+            for (int i = 0; i < tags.size(); i++) {
+                DemoTagBean bean = tags.get(i);
+                String tag = bean.getName();
+                TextView tv = new TextView(mContext);
+                tv.setIncludeFontPadding(false);
+                tv.setTypeface(Typeface.DEFAULT);
+                tv.setText(tag);
+                tv.setTextColor(mTagTextColor);
+                tv.setSingleLine();
+                tv.setEllipsize(TextUtils.TruncateAt.END);
+                tv.setGravity(Gravity.CENTER);
+                tv.setPadding(textPadding, textPadding, textPadding, textPadding);
+                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT
+                        , ViewGroup.LayoutParams.WRAP_CONTENT);
+                lp.leftMargin = bean.getMarginLeft();
+                lp.topMargin = bean.getMarginTop();
+    //            Log.d("wangzixu", "initDiscoveryItem0 i,l,t,w,h = " + i + ", " + bean.getMarginLeft() + ", " + bean.getMarginTop()
+    //                    + ", " + bean.getItemWidth() + ", " + bean.getItemHeigh());
+                tv.setLayoutParams(lp);
+                holder.rltagcontainer.addView(tv);
+            }
+        }
+        return convertView;
+    }
+
+    public View initPersonnalCenterItem0(int position, AlbumInfoBean beanDiscovery, View convertView, ViewGroup parent, boolean isMy) {
         ViewHolderPersonnalCenterItem0 holder;
         boolean isShowFadeIn;
         if (convertView == null) {
@@ -67,14 +146,32 @@ public class FragmentAdapterItemHelper {
             isShowFadeIn = holder.pos != position;
         }
         holder.pos = position;
+
+        holder.tvcomment1.setTag(beanDiscovery.getAlbum_id());
+        holder.tvcomment1.setText(String.valueOf(beanDiscovery.getComment_num()));
+        holder.tvlike1.setText(String.valueOf(beanDiscovery.getLike_num()));
+        holder.tvlike1.setTag(beanDiscovery);
+        if (beanDiscovery.getIs_liked() == 1) {
+            holder.tvlike1.setSelected(true);
+        } else {
+            holder.tvlike1.setSelected(false);
+        }
+
+        if (TextUtils.isEmpty(beanDiscovery.getAlbum_desc())) {
+            holder.tvdesc.setVisibility(View.GONE);
+        } else {
+            holder.tvdesc.setVisibility(View.VISIBLE);
+            holder.tvdesc.setText(beanDiscovery.getAlbum_desc());
+        }
+
         if (isMy) {
             holder.ibitem0more.setTag(beanDiscovery);
         } else {
-            holder.ibitem0more.setTag(null);
+            holder.ibitem0more.setTag(beanDiscovery.getShare_url());
         }
         //显示图片
         List<DemoImgBean> imgs= beanDiscovery.getImages();
-        holder.rlimgcontainer.removeAllViewsInLayout();
+        holder.rlimgcontainer.removeAllViews();
         for (int i = 0; i < imgs.size(); i++) {
             DemoImgBean bean = imgs.get(i);
             ImageView img = new ImageView(mContext);
@@ -100,38 +197,46 @@ public class FragmentAdapterItemHelper {
 
         //显示标签
         List<DemoTagBean> tags = beanDiscovery.getTags();
-        holder.rltagcontainer.removeAllViewsInLayout();
+        holder.rltagcontainer.removeAllViews();
         int textPadding = ImgAndTagWallManager.getInstance(mContext).getTagTextPadding();
-        for (int i = 0; i < tags.size(); i++) {
-            DemoTagBean bean = tags.get(i);
-            String tag = bean.getName();
-            TextView tv = new TextView(mContext);
-            tv.setIncludeFontPadding(false);
-            tv.setTypeface(Typeface.DEFAULT);
-            tv.setText(tag);
-            tv.setTextColor(mTagTextColor);
-            tv.setSingleLine();
-            tv.setEllipsize(TextUtils.TruncateAt.END);
-            tv.setGravity(Gravity.CENTER);
-            tv.setPadding(textPadding, textPadding, textPadding, textPadding);
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT
-                    , ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.leftMargin = bean.getMarginLeft();
-            lp.topMargin = bean.getMarginTop();
-//            Log.d("wangzixu", "initDiscoveryItem0 i,l,t,w,h = " + i + ", " + bean.getMarginLeft() + ", " + bean.getMarginTop()
-//                    + ", " + bean.getItemWidth() + ", " + bean.getItemHeigh());
-            tv.setLayoutParams(lp);
-            holder.rltagcontainer.addView(tv);
-            tv.setId(R.id.tv_tag);
-            tv.setOnClickListener(mOnClickListener);
+        if (tags != null) {
+            for (int i = 0; i < tags.size(); i++) {
+                DemoTagBean bean = tags.get(i);
+                String tag = bean.getName();
+                TextView tv = new TextView(mContext);
+                tv.setIncludeFontPadding(false);
+                tv.setTypeface(Typeface.DEFAULT);
+                tv.setText(tag);
+                tv.setTextColor(mTagTextColor);
+                tv.setSingleLine();
+                tv.setEllipsize(TextUtils.TruncateAt.END);
+                tv.setGravity(Gravity.CENTER);
+                tv.setPadding(textPadding, textPadding, textPadding, textPadding);
+                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT
+                        , ViewGroup.LayoutParams.WRAP_CONTENT);
+                lp.leftMargin = bean.getMarginLeft();
+                lp.topMargin = bean.getMarginTop();
+    //            Log.d("wangzixu", "initDiscoveryItem0 i,l,t,w,h = " + i + ", " + bean.getMarginLeft() + ", " + bean.getMarginTop()
+    //                    + ", " + bean.getItemWidth() + ", " + bean.getItemHeigh());
+                tv.setLayoutParams(lp);
+                holder.rltagcontainer.addView(tv);
+                tv.setId(R.id.tv_tag);
+                tv.setTag(bean);
+                tv.setOnClickListener(mOnClickListener);
+            }
         }
         return convertView;
     }
 
+    public View initDiscoveryItem0(int position, AlbumInfoBean beanDiscovery, View convertView
+            , ViewGroup parent, boolean shouldDisplayDelBtn) {
+        return initDiscoveryItem0(position, beanDiscovery, convertView, parent, shouldDisplayDelBtn, true);
+    }
     /**
      * 用户timeline
      */
-    public View initDiscoveryItem0(int position, ResponseBeanAlbumInfo.DataEntity beanDiscovery, View convertView, ViewGroup parent) {
+    public View initDiscoveryItem0(int position, AlbumInfoBean beanDiscovery, View convertView
+            , ViewGroup parent, boolean shouldDisplayDelBtn, boolean shouldDidplayFollowBtn) {
         ViewHolderDiscoveryItem0 holder;
         boolean isShowFadeIn;
         boolean isHost = App.user_Id.equals(beanDiscovery.getUser_id());// 判断是否是自己发的
@@ -148,20 +253,36 @@ public class FragmentAdapterItemHelper {
         } else {
             holder = (ViewHolderDiscoveryItem0) convertView.getTag();
             isShowFadeIn = holder.pos != position;
+//            isShowFadeIn = false;
         }
         holder.pos = position;
 
-        if (isHost) { //显示或隐藏关注按钮
+        holder.tvcomment1.setTag(beanDiscovery.getAlbum_id());
+        holder.tvcomment1.setText(String.valueOf(beanDiscovery.getComment_num()));
+        holder.tvlike1.setText(String.valueOf(beanDiscovery.getLike_num()));
+        holder.tvlike1.setTag(beanDiscovery);
+        if (beanDiscovery.getIs_liked() == 1) {
+            holder.tvlike1.setSelected(true);
+        } else {
+            holder.tvlike1.setSelected(false);
+        }
+
+        if (isHost || !shouldDidplayFollowBtn) { //显示或隐藏关注按钮
             holder.ib1.setVisibility(View.INVISIBLE);
-            holder.ivmore1.setTag(beanDiscovery);
         } else {
             holder.ib1.setVisibility(View.VISIBLE);
             holder.ib1.setTag(beanDiscovery);
             holder.ib1.setSelected(beanDiscovery.isFollowed());
-            holder.ivmore1.setTag(null);
+        }
+
+        if (isHost && shouldDisplayDelBtn) {
+            holder.ivmore1.setTag(beanDiscovery);
+        } else {
+            holder.ivmore1.setTag(beanDiscovery.getShare_url());
         }
 
         //显示头像，日期，和名称
+        holder.imagePh.setImageResource(R.drawable.icon_login_photo);
         if (beanDiscovery.getAvatar_url() != null && !TextUtils.isEmpty(beanDiscovery.getAvatar_url().getS150())) {
             String path;
             if (App.sDensity >= 3) {
@@ -171,8 +292,6 @@ public class FragmentAdapterItemHelper {
             }
             ImageLoaderManager.getInstance().asyncLoadCircleImage(holder.imagePh, path
                     , mAvatarW, mAvatarH);
-        } else {
-            holder.imagePh.setImageResource(R.drawable.icon_login_photo);
         }
         holder.rl1.setTag(beanDiscovery.getUser_id());
 
@@ -187,7 +306,7 @@ public class FragmentAdapterItemHelper {
 
         //显示图片
         List<DemoImgBean> imgs= beanDiscovery.getImages();
-        holder.rl2.removeAllViewsInLayout();
+        holder.rl2.removeAllViews();
         //Log.d("wangzixu", "initDiscoveryItem0 ----pos, imgCount = " + position + ", " + imgs.size());
         for (int i = 0; i < imgs.size(); i++) {
             DemoImgBean bean = imgs.get(i);
@@ -214,30 +333,38 @@ public class FragmentAdapterItemHelper {
 
         //显示标签
         List<DemoTagBean> tags = beanDiscovery.getTags();
-        holder.rl3.removeAllViewsInLayout();
+        holder.rl3.removeAllViews();
         int textPadding = ImgAndTagWallManager.getInstance(mContext).getTagTextPadding();
-        for (int i = 0; i < tags.size(); i++) {
-            DemoTagBean bean = tags.get(i);
-            String tag = bean.getName();
-            TextView tv = new TextView(mContext);
-            tv.setIncludeFontPadding(false);
-            tv.setTypeface(Typeface.DEFAULT);
-            tv.setText(tag);
-            tv.setTextColor(mTagTextColor);
-            tv.setSingleLine();
-            tv.setEllipsize(TextUtils.TruncateAt.END);
-            tv.setGravity(Gravity.CENTER);
-            tv.setPadding(textPadding, textPadding, textPadding, textPadding);
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT
-                    , ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.leftMargin = bean.getMarginLeft();
-            lp.topMargin = bean.getMarginTop();
-//            Log.d("wangzixu", "initDiscoveryItem0 i,l,t,w,h = " + i + ", " + bean.getMarginLeft() + ", " + bean.getMarginTop()
-//                    + ", " + bean.getItemWidth() + ", " + bean.getItemHeigh());
-            tv.setLayoutParams(lp);
-            holder.rl3.addView(tv);
-            tv.setId(R.id.tv_tag);
-            tv.setOnClickListener(mOnClickListener);
+        if (tags != null) {
+            for (int i = 0; i < tags.size(); i++) {
+                DemoTagBean bean = tags.get(i);
+                String tag = bean.getName();
+                TextView tv = new TextView(mContext);
+                tv.setIncludeFontPadding(false);
+                tv.setTypeface(Typeface.DEFAULT);
+                tv.setText(tag);
+                tv.setSingleLine();
+                tv.setEllipsize(TextUtils.TruncateAt.END);
+                tv.setGravity(Gravity.CENTER);
+                tv.setPadding(textPadding, textPadding, textPadding, textPadding);
+                RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT
+                        , ViewGroup.LayoutParams.WRAP_CONTENT);
+                lp.leftMargin = bean.getMarginLeft();
+                lp.topMargin = bean.getMarginTop();
+    //            Log.d("wangzixu", "initDiscoveryItem0 i,l,t,w,h = " + i + ", " + bean.getMarginLeft() + ", " + bean.getMarginTop()
+    //                    + ", " + bean.getItemWidth() + ", " + bean.getItemHeigh());
+                tv.setLayoutParams(lp);
+                holder.rl3.addView(tv);
+                tv.setId(R.id.tv_tag);
+                tv.setTag(bean);
+                if (App.sTagString.contains(tag)) {
+                    tv.setTextColor(0x4cF8E076);
+                    tv.setOnLongClickListener(null);
+                } else {
+                    tv.setTextColor(mTagTextColor);
+                    tv.setOnClickListener(mOnClickListener);
+                }
+            }
         }
         return convertView;
     }
@@ -245,7 +372,7 @@ public class FragmentAdapterItemHelper {
     /**
      * 今日最佳图片
      */
-    public View initDiscoveryItem1(int position, ResponseBeanAlbumInfo.DataEntity beanDiscovery, View convertView, ViewGroup parent) {
+    public View initDiscoveryItem1(int position, AlbumInfoBean beanDiscovery, View convertView, ViewGroup parent) {
         ViewHolderDiscoveryItem1 holder;
         boolean isShowFadeIn;
         if (convertView == null) {
@@ -262,7 +389,7 @@ public class FragmentAdapterItemHelper {
 
         //显示图片
         List<DemoImgBean> imgs= beanDiscovery.getImages();
-        holder.rl2.removeAllViewsInLayout();
+        holder.rl2.removeAllViews();
         //Log.d("wangzixu", "initDiscoveryItem0 ----pos, imgCount = " + position + ", " + imgs.size());
         for (int i = 0; i < imgs.size(); i++) {
             DemoImgBean bean = imgs.get(i);
@@ -293,7 +420,7 @@ public class FragmentAdapterItemHelper {
     /**
      * 优秀摄影师推荐
      */
-    public View initDiscoveryItem2(int position, ResponseBeanAlbumInfo.DataEntity beanDiscovery, View convertView, ViewGroup parent) {
+    public View initDiscoveryItem2(int position, AlbumInfoBean beanDiscovery, View convertView, ViewGroup parent) {
         ViewHolderDiscoveryItem2 holder;
         boolean isShowFadeIn;
         if (convertView == null) {
@@ -314,7 +441,7 @@ public class FragmentAdapterItemHelper {
 
         //显示图片
         List<DemoImgBean> imgs= beanDiscovery.getImages();
-        holder.rl2.removeAllViewsInLayout();
+        holder.rl2.removeAllViews();
         //Log.d("wangzixu", "initDiscoveryItem0 ----pos, imgCount = " + position + ", " + imgs.size());
         for (int i = 0; i < imgs.size(); i++) {
             DemoImgBean bean = imgs.get(i);

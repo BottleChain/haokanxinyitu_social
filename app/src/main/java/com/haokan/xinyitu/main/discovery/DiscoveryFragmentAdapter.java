@@ -12,9 +12,9 @@ import java.util.ArrayList;
 public class DiscoveryFragmentAdapter extends BaseAdapter {
     private Context mContext;
     private FragmentAdapterItemHelper mHelper;
-    private ArrayList<ResponseBeanAlbumInfo.DataEntity> mAlbumInfoBeans;
+    private ArrayList<AlbumInfoBean> mAlbumInfoBeans;
 
-    public DiscoveryFragmentAdapter(Context context, ArrayList<ResponseBeanAlbumInfo.DataEntity> albumInfoBean, View.OnClickListener onClickListener) {
+    public DiscoveryFragmentAdapter(Context context, ArrayList<AlbumInfoBean> albumInfoBean, View.OnClickListener onClickListener) {
         mContext = context;
         mAlbumInfoBeans = albumInfoBean;
         mHelper = new FragmentAdapterItemHelper(context, onClickListener);
@@ -50,17 +50,17 @@ public class DiscoveryFragmentAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ResponseBeanAlbumInfo.DataEntity dataEntity = mAlbumInfoBeans.get(position);
-        int type = dataEntity.getType();
+        AlbumInfoBean albumInfoBean = mAlbumInfoBeans.get(position);
+        int type = albumInfoBean.getType();
         switch (type) {
             case 0: //用户timeline
-                convertView = mHelper.initDiscoveryItem0(position, dataEntity, convertView, parent);
+                convertView = mHelper.initDiscoveryItem0(position, albumInfoBean, convertView, parent, true);
                 break;
             case 1: //今天最热图片
-                convertView = mHelper.initDiscoveryItem1(position, dataEntity, convertView, parent);
+                convertView = mHelper.initDiscoveryItem1(position, albumInfoBean, convertView, parent);
                 break;
             case 2: //摄影师推荐
-                convertView = mHelper.initDiscoveryItem2(position, dataEntity, convertView, parent);
+                convertView = mHelper.initDiscoveryItem2(position, albumInfoBean, convertView, parent);
                 break;
             case 3: //这些家伙很牛B，推荐6个用户头像
                 convertView = mHelper.initDiscoveryItem3(position, convertView, parent);

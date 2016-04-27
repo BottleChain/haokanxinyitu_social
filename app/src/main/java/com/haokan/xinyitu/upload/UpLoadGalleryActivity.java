@@ -1,6 +1,6 @@
 package com.haokan.xinyitu.upload;
 
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -47,7 +47,7 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
     private TextView mTvUploadPickfolder;
     private TextView mTvConfirm;
     private GridView mGvUploadGridview;
-    private ProgressDialog mProgressDialog;
+    private Dialog mProgressDialog;
     private ArrayList<ArrayList<DemoImgBean>> mImgDirs = new ArrayList<>();
     private ArrayList<DemoImgBean> mData = new ArrayList<>();
     private ArrayList<DemoImgBean> mCheckedImgs = new ArrayList<>();
@@ -66,7 +66,7 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
 
     private void assignViews() {
         mIsFirstLoad = true;
-        ImageButton ibClose = (ImageButton) findViewById(R.id.ib_bigimg_close);
+        ImageButton ibClose = (ImageButton) findViewById(R.id.ib_close);
         ibClose.setOnClickListener(this);
         mTvUploadPickfolder = (TextView) findViewById(R.id.tv_upload_pickfolder);
         mTvUploadPickfolder.setOnClickListener(this);
@@ -128,7 +128,10 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
      * 加载手机中所有的图片，并按文件夹形式分好结构
      */
     private void loadData() {
-        mProgressDialog = ProgressDialog.show(this, null, "读取图片中...");
+        mProgressDialog = new Dialog(this, R.style.loading_progress);
+        mProgressDialog.setContentView(R.layout.loading_layout_progressdialog_titleloading);
+        mProgressDialog.show();
+        //mProgressDialog = ProgressDialog.show(this, null, "读取图片中...");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -156,8 +159,8 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
                             continue;
                         }
                         Log.d("wangzixu", "loadData w,h = " + w + ", " + h);
-                        bean.setWidth(Integer.valueOf(w));
-                        bean.setHeight(Integer.valueOf(h));
+                        bean.setWidth(w);
+                        bean.setHeight(h);
                         bean.setUrl(ImageDownloader.Scheme.FILE.wrap(path));
                         mData.add(bean);
 
@@ -207,7 +210,7 @@ public class UpLoadGalleryActivity extends BaseActivity implements View.OnClickL
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
-            case R.id.ib_bigimg_close: //关闭按钮
+            case R.id.ib_close: //关闭按钮
                 if (mPopWindow != null && mPopWindow.isShowing()) {
                     disMissPop();
                 } else {

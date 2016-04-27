@@ -2,6 +2,7 @@ package com.haokan.xinyitu.main.otherpersonalcenter;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,6 +23,7 @@ import com.haokan.xinyitu.base.UserInfoBean;
 import com.haokan.xinyitu.follow.RequestBeanUsersInfo;
 import com.haokan.xinyitu.follow.ResponseBeanOtherUserInfo;
 import com.haokan.xinyitu.main.Base_PTR_LoadMore_Fragment;
+import com.haokan.xinyitu.main.discovery.AlbumInfoBean;
 import com.haokan.xinyitu.main.discovery.RequestBeanAlbumInfo;
 import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
 import com.haokan.xinyitu.main.mypersonalcenter.PersonnalcenterFragmentAdapter;
@@ -41,7 +43,7 @@ import cz.msebera.android.httpclient.Header;
 public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment implements PullToRefreshBase.OnRefreshListener<ListView> {
 
     private List<ResponseBeanAlbumListPersonnal.DataEntity> mAlbumIdList;
-    private ArrayList<ResponseBeanAlbumInfo.DataEntity> mData = new ArrayList<>();
+    private ArrayList<AlbumInfoBean> mData = new ArrayList<>();
     private View mRlTopbar;
     private View mIbBack;
     private View mIbFollow;
@@ -63,6 +65,7 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
     private TextView mTvFollowMeCount;
     private ImageView mIvAvatar;
     private boolean mIsMyCenterInfo;
+    private Handler mHandler = new Handler();
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -101,11 +104,31 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
         mIbBack.setOnClickListener((View.OnClickListener) getActivity());
         mRlMyFollows.setOnClickListener((View.OnClickListener) getActivity());
         mRlFollowMe.setOnClickListener((View.OnClickListener) getActivity());
-        if (mIsMyCenterInfo) {
-            mIbFollow.setVisibility(View.GONE);
-        } else {
-            mIbFollow.setVisibility(View.VISIBLE);
+        mRlMyFollows.setTag(mUserId);
+        mRlFollowMe.setTag(mUserId);
+        mIbFollow.setVisibility(View.INVISIBLE);
+        if (!mIsMyCenterInfo) {
             mIbFollow.setOnClickListener((View.OnClickListener) getActivity());
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean isFollow = false;
+                    for (int i = 0; i < App.sMyFollowsUser.size(); i++) {
+                        if (mUserId.equals(App.sMyFollowsUser.get(i).getUserid())) {
+                            isFollow = true;
+                            break;
+                        }
+                    }
+                    final boolean f = isFollow;
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mIbFollow.setSelected(f);
+                            mIbFollow.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+            }).start();
         }
 
         mRlTopbar.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -126,6 +149,44 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
         });
 
         return view;
+    }
+
+    public void notifyLikeStatusChanged(final String ablumId, final int newStatus) {
+        Log.d("wangzixu", "notifyLikeStatusChanged isVisible = ---" + isVisible());
+        if (!isVisible() || !isResumed()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mIsDestory) {
+                        return;
+                    }
+                    boolean hasChange = false;
+                    for (int i = 0; i < mData.size(); i++) {
+                        AlbumInfoBean entity = mData.get(i);
+                        if (ablumId.equals(entity.getAlbum_id())) {
+                            hasChange = true;
+                            entity.setIs_liked(newStatus);
+                            if (newStatus == 1) {
+                                entity.setLike_num(entity.getLike_num() + 1);
+                            } else {
+                                entity.setLike_num(entity.getLike_num() - 1);
+                            }
+                        }
+                    }
+                    mLastLoadDataTime = SystemClock.uptimeMillis();
+                    if (hasChange) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                }
+            }).start();
+        } else {
+            mLastLoadDataTime = SystemClock.uptimeMillis();
+        }
     }
 
     public void setIsMyCenterInfo(boolean isMyCenterInfo) {
@@ -181,7 +242,7 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
         requestBean.setUser(beans);
         final String data = JsonUtil.toJson(requestBean);
         String url = UrlsUtil.getUserInfoUrl(App.sessionId, data);
-        Log.d("OtherPersonal", "loadData url = " + url);
+        Log.d("wangzixu", "OtherPersonal loadData url = " + url);
         return url;
     }
 
@@ -189,6 +250,7 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
     protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean baseResponseBean) {
         ResponseBeanOtherUserInfo response = (ResponseBeanOtherUserInfo) baseResponseBean;
         mPullToRefreshListView.setVisibility(View.VISIBLE);
+        mLoadingLayout.setVisibility(View.GONE);
         UserInfoBean userInfoBean = response.getData().get(0);
         String avatarUrl;
         if (App.sDensity >= 3) {
@@ -197,7 +259,7 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
             avatarUrl = userInfoBean.getAvatar_url().getS100();
         }
         String nickname = userInfoBean.getNickname();
-        mTvTitle.setText(nickname);
+        mTvTitle.setText(nickname + "的主页");
         mTvHeaderTitle.setText(nickname);
         mTvAblumCount.setText(userInfoBean.getAlbumnum());
         mTvMyFollowsCount.setText(userInfoBean.getIlikenum());
@@ -218,9 +280,9 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
     }
 
     private void loadAblumIdList(final Context context) {
-
-        //获取个人信息存下来
-        String url = UrlsUtil.getMyAlbumsUrl(App.sessionId);
+        RequestBeanUserAlbums bean = new RequestBeanUserAlbums();
+        bean.setUser_id(mUserId);
+        String url = UrlsUtil.getUserAlbumsUrl(App.sessionId, JsonUtil.toJson(bean));
         Log.d("wangzixu", "loadAblumIdList url = " + url);
 
         HttpClientManager.getInstance(context).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanAlbumListPersonnal>() {
@@ -231,7 +293,19 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
                     mCurrentPage = 0;
                     mAlbumIdList = response.getData();
                     mHasMoreData = true;
+                    mTvAblumCount.setText(mAlbumIdList.size() + "");
+                    if (mHasFootView) {
+                        removeFootView();
+                    }
                     loadAlbumInfoData(context, true);
+                } else {
+                    mAlbumIdList = null;
+                    mCurrentPage = 0;
+                    mHasMoreData = false;
+                    mAdapter = new PersonnalcenterFragmentAdapter(context, null, (View.OnClickListener)getActivity(), true);
+                    mListView.setAdapter(mAdapter);
+                    mListView.setBackgroundColor(getActivity().getResources().getColor(R.color.main_color_actionbar_item01));
+                    mLoadingLayout.setVisibility(View.GONE);
                 }
             }
 
@@ -267,7 +341,7 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
         return JsonUtil.fromJson(rawJsonData, ResponseBeanOtherUserInfo.class);
     }
 
-    public void deleteAblum(ResponseBeanAlbumInfo.DataEntity bean) {
+    public void deleteAblum(AlbumInfoBean bean) {
         int i = mData.indexOf(bean);
         mData.remove(bean);
         mAlbumIdList.remove(i);
@@ -285,6 +359,11 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
         int end = Math.min((mCurrentPage + 1) * COUNT_ONE_PAGE, mAlbumIdList.size());
         if (end >= mAlbumIdList.size()) {
             mHasMoreData = false;
+            if (mAlbumIdList.size() <= 1) {
+                mListView.setBackgroundColor(context.getResources().getColor(R.color.main_color_actionbar_item01));
+            } else if (!mHasFootView) {
+                addFootView();
+            }
         }
 
         if (begin < end) {
@@ -302,31 +381,51 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
             requestBean.setSize(App.sPreviewImgSize);
             final String data = JsonUtil.toJson(requestBean);
             String url = UrlsUtil.getAblumInfoUrl(App.sessionId, data);
-            Log.d("MyPersonalCenter", "loadAlbumInfoData url = " + url);
+            Log.d("wangzixu", "loadAlbumInfoData url = " + url);
             HttpClientManager.getInstance(context).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanAlbumInfo>() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanAlbumInfo response) {
+                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, final ResponseBeanAlbumInfo response) {
                     if (response.getErr_code() == 0) {
-                        List<ResponseBeanAlbumInfo.DataEntity> data1 = response.getData();
-                        for (int i = 0; i < data1.size(); i++) {
-                            ImgAndTagWallManager.getInstance(context).initImgsWall(data1.get(i).getImages());
-                            ImgAndTagWallManager.getInstance(context).initTagsWallForItem0(data1.get(i).getTags());
+                        final List<AlbumInfoBean> data1 = response.getData();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (int i = 0; i < data1.size(); i++) {
+                                    ImgAndTagWallManager.getInstance(context).initImgsWall(data1.get(i).getImages());
+                                    ImgAndTagWallManager.getInstance(context).initTagsWallForItem0(data1.get(i).getTags());
+                                }
+                                if (isClearData) {
+                                    mData.clear();
+                                }
+                                mData.addAll(response.getData());
+                                mCurrentPage ++;
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mAdapter == null) {
+                                            mAdapter = new PersonnalcenterFragmentAdapter(context, mData, (View.OnClickListener)getActivity(), false); //不显示删除，所以false
+                                            mListView.setAdapter(mAdapter);
+                                        } else {
+                                            mAdapter.notifyDataSetChanged();
+                                        }
+                                        mIsLoading = false;
+                                        mLoadingLayout.setVisibility(View.GONE);
+                                    }
+                                });
+                            }
+                        }).start();
+                    } else {
+                        mIsLoading = false;
+                        mLoadingLayout.setVisibility(View.GONE);
+                        if (mData.size() == 0) {
+                            if (mAdapter == null || mAdapter.getData() != null) {
+                                mHasMoreData = false;
+                                mAdapter = new PersonnalcenterFragmentAdapter(context, null, (View.OnClickListener)getActivity(), true);
+                                mListView.setAdapter(mAdapter);
+                                mListView.setBackgroundColor(getActivity().getResources().getColor(R.color.main_color_actionbar_item01));
+                            }
                         }
-                        if (isClearData) {
-                            mData.clear();
-                        }
-                        mData.addAll(response.getData());
-                        mCurrentPage ++;
-                        if (mAdapter == null) {
-                            mAdapter = new PersonnalcenterFragmentAdapter(context, mData, (View.OnClickListener)getActivity(), mIsMyCenterInfo);
-                            mListView.setAdapter(mAdapter);
-                        } else {
-                            mAdapter.notifyDataSetChanged();
-                        }
-//                        mAdapter.notifyDataSetChanged();
                     }
-                    mIsLoading = false;
-                    mLoadingLayout.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -337,7 +436,7 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
 
                 @Override
                 protected ResponseBeanAlbumInfo parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
-                    Log.d("MyPersonalCenter", "loadAlbumInfoData rawJsonData = " + rawJsonData);
+                    Log.d("wangzixu", "loadAlbumInfoData rawJsonData = " + rawJsonData);
                     return JsonUtil.fromJson(rawJsonData, ResponseBeanAlbumInfo.class);
                 }
             });
@@ -348,7 +447,7 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
      * 在发完组图后，发现页和个人页需要立马添加一条刚刚发布的信息（自己模拟的数据）
      */
     @Override
-    public void addFirstAblum(ResponseBeanAlbumInfo.DataEntity album) {
+    public void addFirstAblum(AlbumInfoBean album) {
         if (mAdapter != null) {
             mData.add(0, album);
             mAdapter.notifyDataSetChanged();

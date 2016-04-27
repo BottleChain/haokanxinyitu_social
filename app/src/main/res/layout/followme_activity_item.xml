@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="3dp"
+        android:padding="12dp"
+        android:src="@drawable/icon_login_photo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
+    <!-- 15 6-->
+    <TextView
+        android:id="@+id/tv_name"
+        android:text="Effie Riley"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:textSize="15sp"
+        android:textColor="@color/bai_80"
+        android:layout_toRightOf="@id/iv_avatar"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_marginRight="55dp"
+        android:paddingTop="@dimen/followsitem_tv1_margintop"
+        android:paddingBottom="@dimen/followsitem_tv2_margintop"
+        android:lineSpacingExtra="0dp"
+        android:paddingRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_desc"
+        android:text="有的鱼是永远都关不住的!"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:textSize="12sp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:layout_marginRight="60dp"
+        android:lineSpacingExtra="4dp"
+        android:textColor="@color/bai_50"
+        android:layout_toRightOf="@id/iv_avatar"
+        android:layout_below="@id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageButton
+        android:id="@+id/ib_follow"
+        android:background="@null"
+        android:src="@drawable/icon_followme_relation_selector"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="3dp"
+        android:padding="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:layout_toRightOf="@id/iv_avatar"
+        android:layout_below="@id/tv_desc"
+        android:layout_marginTop="15dp"
+        android:background="@color/hei"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
+</RelativeLayout>

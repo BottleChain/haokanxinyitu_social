@@ -25,12 +25,14 @@ import android.widget.TextView;
 
 import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
+import com.haokan.xinyitu.albumfailed.FailedAlbumInfoBean;
 import com.haokan.xinyitu.base.AvatarUrlBean;
 import com.haokan.xinyitu.base.BaseActivity;
 import com.haokan.xinyitu.bigimgbrowse.BigImgBrowseActivity;
+import com.haokan.xinyitu.database.MyDatabaseHelper;
 import com.haokan.xinyitu.main.DemoImgBean;
 import com.haokan.xinyitu.main.DemoTagBean;
-import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
+import com.haokan.xinyitu.main.discovery.AlbumInfoBean;
 import com.haokan.xinyitu.util.CommonUtil;
 import com.haokan.xinyitu.util.ConstantValues;
 import com.haokan.xinyitu.util.DisplayUtil;
@@ -42,11 +44,13 @@ import com.haokan.xinyitu.util.JsonUtil;
 import com.haokan.xinyitu.util.SecurityUtil;
 import com.haokan.xinyitu.util.ToastManager;
 import com.haokan.xinyitu.util.UrlsUtil;
+import com.j256.ormlite.dao.Dao;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,13 +83,22 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
     private int mTagDrawableWidth;
     private int mTagRlWidth;
     public static final String ACTION_UPDATA_LAST_ABLUM = "com.haokan.xinyitu.tryCreateAblum.success";
-    private ResponseBeanAlbumInfo.DataEntity mMyCreatedAblumEntity;
+    public static final String ACTION_CREATE_ALBUM_FAILED = "com.haokan.xinyitu.album.failed";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.uploadmain_activity_layout);
+        assignViews();
+
+        loadData();
+    }
 
     private void assignViews() {
         mRlHeader = (RelativeLayout) findViewById(R.id.rl_header);
         mTvCancel = (TextView) findViewById(R.id.tv_cancel);
         mTvConfirm = (TextView) findViewById(R.id.tv_confirm);
-        mEtUploadmainEdit = (EditText) findViewById(R.id.et_upload_edit);
+        mEtUploadmainEdit = (EditText) findViewById(R.id.et_edit);
         mTvTextcount = (TextView) findViewById(R.id.tv_textcount);
         mTvAddTag = (TextView) findViewById(R.id.tv_add_tag);
         mRlUploadmianAddtag = (RelativeLayout) findViewById(R.id.rl_uploadmian_addtag);
@@ -162,16 +175,6 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
         }).start();
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.uploadmain_activity_layout);
-        assignViews();
-
-        loadData();
-    }
-
-
     private boolean mHasFillTagIds;
     private ArrayList<String> mTagIds;
     private String mAlbumDes; //组图的配字
@@ -187,11 +190,11 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
             return;
         }
 
-        if (mTags == null || mTags.size() == 0) {
-            ToastManager.showShort(UpLoadMainActivity.this, "标签不能为空");
-            mProgressDialog.dismiss();
-            return;
-        }
+//        if (mTags == null || mTags.size() == 0) {
+//            ToastManager.showShort(UpLoadMainActivity.this, "标签不能为空");
+//            mProgressDialog.dismiss();
+//            return;
+//        }
 
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -199,34 +202,35 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                 mProgressDialog.dismiss();
                 UpLoadMainActivity.super.onBackPressed();
             }
-        }, 700);
+        }, 800);
 
         mAlbumDes = mEtUploadmainEdit.getText().toString();
-        makeLastestReleaseAlbum();
+
+        //makeLastestReleaseAlbum(); 造假数据展示在首页，去掉
 
         //1,检测图片是否支持秒传
         String scecondUploadCheckUrl = UrlsUtil.getSecondUploadCheckUrl(App.sessionId);
         Log.d("wangzixu", "releaseImgs scecondUploadCheckUrl = " + scecondUploadCheckUrl);
         for (int i = 0; i < mImgData.size(); i++) {
-            final int finalI = i;
-            final String md5 = mImgData.get(finalI).getMd5();
+            final DemoImgBean imgBean = mImgData.get(i);
+            final String md5 = imgBean.getMd5();
             HttpClientManager.getInstance(UpLoadMainActivity.this).scondUploadCheck(scecondUploadCheckUrl, md5
                     , new BaseJsonHttpResponseHandler<ResponseBeanSecondUploadCheck>() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanSecondUploadCheck response) {
                     if (response != null && response.getErr_code() == 0) { //成功支持秒传
-                        Log.d("wangzixu", "releaseImgs scecondUploadCheck 支持 = " + finalI);
-                        secondUpload(finalI, App.sessionId, mTags, response.getData().getUnique_id(), response.getData().getFile_name());
+                        Log.d("wangzixu", "releaseImgs scecondUploadCheck 支持");
+                        secondUpload(imgBean, App.sessionId, mTags, response.getData().getUnique_id(), response.getData().getFile_name());
                     } else { //不支持秒传
-                        Log.d("wangzixu", "releaseImgs scecondUploadCheck 不支持 = " + finalI);
-                        uploadImgFile(finalI, App.sessionId, mTags, mImgData.get(finalI));
+                        Log.d("wangzixu", "releaseImgs scecondUploadCheck 不支持");
+                        uploadImgFile(imgBean, App.sessionId, mTags);
                     }
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanSecondUploadCheck errorResponse) {
                     //访问服务器失败
-                    Log.d("wangzixu", "releaseImgs scecondUploadCheck onFailure i = " + finalI);
+                    Log.d("wangzixu", "releaseImgs scecondUploadCheck onFailure i");
                 }
 
                 @Override
@@ -238,7 +242,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    private void secondUpload(final int index, String sessonId, ArrayList<DemoTagBean> tags, String unique_id, String fileName) {
+    private void secondUpload(final DemoImgBean imgBean, String sessonId, ArrayList<DemoTagBean> tags, String unique_id, String fileName) {
         String url = UrlsUtil.getSecondUploadUrl(sessonId);
         Log.d("wangzixu", "releaseImgs secondUpload url = " + url);
 
@@ -248,13 +252,13 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanImgUpload response) {
                 if (response.getErr_code() == 0) {
                     Log.d("wangzixu", "releaseImgs secondUpload onSuccess");
-                    mImgData.get(index).setId(response.getData().getImage().getImage_id());
+                    imgBean.setId(response.getData().getImage().getImage_id());
                     if (!mHasFillTagIds) {
                         fillTagIds(response.getData().getTags());
                     }
                 } else { //上传失败 赋值一个true
                     Log.d("wangzixu", "releaseImgs secondUpload onSuccess 返回了1，失败原因 = " + response.getErr_msg());
-                    mImgData.get(index).setId("true");
+                    imgBean.setId("true");
                 }
                 tryCreateAblum();
             }
@@ -263,7 +267,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanImgUpload errorResponse) {
                 //上传失败
                 Log.d("wangzixu", "releaseImgs secondUpload onFailure");
-                mImgData.get(index).setId("true");
+                imgBean.setId("true");
                 tryCreateAblum();
             }
 
@@ -278,10 +282,10 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
     /**
      * 上传单张图片
      */
-    private void uploadImgFile(final int index, String sessonId, ArrayList<DemoTagBean> tags, DemoImgBean bean) {
+    private void uploadImgFile(final DemoImgBean imgBean, String sessonId, ArrayList<DemoTagBean> tags) {
         String upfileUrl = UrlsUtil.getImageUploadUrl(sessonId);
         Log.d("wangzixu", "releaseImgs uploadImgFile upfileUrl = " + upfileUrl);
-        String filePath = ImageDownloader.Scheme.FILE.crop(bean.getUrl());
+        String filePath = ImageDownloader.Scheme.FILE.crop(imgBean.getUrl());
         File file = new File(filePath);
         Log.d("wangzixu", "releaseImgs uploadImgFile filePath = " + filePath);
         HttpClientManager.getInstance(UpLoadMainActivity.this).upLoadImgFile(upfileUrl, file, null, tags
@@ -290,14 +294,14 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanImgUpload response) {
                 if (response.getErr_code() == 0) {
                     Log.d("wangzixu", "releaseImgs uploadImgFile onSuccess");
-                    mImgData.get(index).setId(response.getData().getImage().getImage_id());
+                    imgBean.setId(response.getData().getImage().getImage_id());
                     if (!mHasFillTagIds) {
                         fillTagIds(response.getData().getTags());
                     }
                     tryCreateAblum();
                 } else { //上传失败 赋值一个-100
                     Log.d("wangzixu", "releaseImgs uploadImgFile onSuccess 返回了1，失败原因 = " + response.getErr_msg());
-                    mImgData.get(index).setId("true");
+                    imgBean.setId("true");
                     tryCreateAblum();
                 }
             }
@@ -306,7 +310,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanImgUpload errorResponse) {
                 //上传失败
                 Log.d("wangzixu", "releaseImgs uploadImgFile onFailure");
-                mImgData.get(index).setId("true");
+                imgBean.setId("true");
                 tryCreateAblum();
             }
 
@@ -336,7 +340,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                 isSuccess = false;
             }
         }
-        Log.d("wangzixu", "releaseImgs tryCreateAblum 所有组图已经上传完成，标题, 描述 = " + "组图标题" + ", " + mAlbumDes);
+        Log.d("wangzixu", "releaseImgs tryCreateAblum 所有组图已经上传完成，isSuccess = " + mAlbumDes + ", " + isSuccess);
         //每个图片的imageid都不为null了，说明全部传完了-----
         if (isSuccess) { //全部上传成功了，发组图
             String url = UrlsUtil.getCreateAblumUrl(App.sessionId);
@@ -349,24 +353,16 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                         Log.d("wangzixu", "releaseImgs tryCreateAblum success , errorCode，id = "
                                 + response.getErr_code() + ", " + response.getData().getAlbum_id());
                         ToastManager.showShort(UpLoadMainActivity.this, "发布组图成功");
-                        if (mMyCreatedAblumEntity != null) {
-                            mMyCreatedAblumEntity.setAlbum_id(response.getData().getAlbum_id());
-                        }
+                        makeLastestReleaseAlbum(response);
                     } else {
-                        ToastManager.showShort(UpLoadMainActivity.this, "发布组图失败 = " + response.getErr_msg());
-                        if (mMyCreatedAblumEntity != null) {
-                            mMyCreatedAblumEntity.setAlbum_id("failed");
-                        }
+                        createAlbumFailed();
                     }
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanCreateAblum errorResponse) {
                     Log.d("wangzixu", "releaseImgs tryCreateAblum onFailure");
-                    ToastManager.showShort(UpLoadMainActivity.this, "发布失败, onFail");
-                    if (mMyCreatedAblumEntity != null) {
-                        mMyCreatedAblumEntity.setAlbum_id("failed");
-                    }
+                    createAlbumFailed();
                 }
 
                 @Override
@@ -376,37 +372,63 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                 }
             });
         } else { //没有上传成功，需要把失败信息存到某一个地方，在个人中心页中能展示出来这些失败的信息
-            ToastManager.showShort(UpLoadMainActivity.this, "发布失败,有某张图片失败了");
+            createAlbumFailed();
         }
+    }
+
+    private void createAlbumFailed() {
+        FailedAlbumInfoBean bean = new FailedAlbumInfoBean();
+        bean.setDesc(mAlbumDes);
+        bean.setUserId(App.user_Id);
+        String tags="";
+        if (mTags.size() > 0) {
+            tags = JsonUtil.toJson(mTags);
+        }
+        bean.setTags(tags);
+
+        String imgUrls = JsonUtil.toJson(mImgData);
+        bean.setImg_urls(imgUrls);
+//            Log.d("wangzixu", "releaseImgs tryCreateAblum tags, imgUrls = " + tags  + ", " +imgUrls);
+        try {
+            Dao dao = MyDatabaseHelper.getInstance(this).getDaoQuickly(FailedAlbumInfoBean.class);
+            dao.create(bean);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        ToastManager.showShort(UpLoadMainActivity.this, "您有组图发布失败");
+        Intent intent = new Intent(ACTION_CREATE_ALBUM_FAILED);
+        sendBroadcast(intent);
     }
 
     /**
      * 发送组图后，立马回主页，此时要显示刚发送的东西在第一条，所以需要手工制作这一条数据
      */
-    private void makeLastestReleaseAlbum() {
+    private void makeLastestReleaseAlbum(ResponseBeanCreateAblum response) {
         //创建一个组图信息，发给首页，然后通知首页更新一下界面
-        mMyCreatedAblumEntity = new ResponseBeanAlbumInfo.DataEntity();
-        mMyCreatedAblumEntity.setImages(mImgData);
+        AlbumInfoBean myCreatedAblumEntity = new AlbumInfoBean();
+        myCreatedAblumEntity.setImages(mImgData);
         ImgAndTagWallManager.getInstance(UpLoadMainActivity.this).initTagsWallForItem0(mTags);
-        mMyCreatedAblumEntity.setTags(mTags);
-        mMyCreatedAblumEntity.setUser_id(App.user_Id);
-        mMyCreatedAblumEntity.setAlbum_desc(mAlbumDes);
-        mMyCreatedAblumEntity.setCreatetime(String.valueOf(System.currentTimeMillis() / 1000));
-        // TODO: 2016/3/31 还应该设置头像地址和昵称 应该在登录成功后把头像地址和昵称保存在preference中
+        myCreatedAblumEntity.setTags(mTags);
+        myCreatedAblumEntity.setUser_id(App.user_Id);
+        myCreatedAblumEntity.setAlbum_desc(mAlbumDes);
+        myCreatedAblumEntity.setCreatetime(response.getData().getCreatetime());
+        myCreatedAblumEntity.setAlbum_id(response.getData().getAlbum_id());
         //此处在preference中获取昵称和头像地址赋值给entity
         SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String url = defaultSharedPreferences.getString(ConstantValues.KEY_SP_AVATAR_URL, "");
-        String nickname = defaultSharedPreferences.getString(ConstantValues.KEY_SP_NICKNAME, "应该从服务器获取的昵称");
+        String nickname = defaultSharedPreferences.getString(ConstantValues.KEY_SP_NICKNAME, "");
         if (!TextUtils.isEmpty(url)) {
             AvatarUrlBean avatarUrlEntity = new AvatarUrlBean();
             avatarUrlEntity.setS100(url);
             avatarUrlEntity.setS150(url);
             avatarUrlEntity.setS50(url);
-            mMyCreatedAblumEntity.setAvatar_url(avatarUrlEntity);
+            myCreatedAblumEntity.setAvatar_url(avatarUrlEntity);
         }
-        mMyCreatedAblumEntity.setNickname(nickname);
+        myCreatedAblumEntity.setNickname(nickname);
+
         App app = (App) getApplication();
-        app.setLastestUploadAlbum(mMyCreatedAblumEntity);
+        app.setLastestUploadAlbum(myCreatedAblumEntity);
         Intent intent = new Intent(ACTION_UPDATA_LAST_ABLUM);
         sendBroadcast(intent);
     }
@@ -424,7 +446,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         View v = LayoutInflater.from(this).inflate(R.layout.exitupload_dialog_layout, null);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_DARK)
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("提示")
                 .setView(v)
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -451,6 +473,10 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
             case R.id.tv_confirm://发布
                 if (!HttpClientManager.checkNetWorkStatus(UpLoadMainActivity.this)) {
                     ToastManager.showShort(this, "网络连接不可用!");
+                    return;
+                }
+                if (mImgData == null || mImgData.size() == 0) {
+                    ToastManager.showShort(this, "您还没有选择图片");
                     return;
                 }
                 mProgressDialog = ProgressDialog.show(this, null, "图片载入中...");
@@ -521,7 +547,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    private ArrayList<DemoTagBean> mTags;
+    private ArrayList<DemoTagBean> mTags = new ArrayList<>();
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

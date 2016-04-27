@@ -17,4 +17,8 @@ public class ToastManager {
         }
         Toast.makeText(c, id, Toast.LENGTH_SHORT).show();
     }
+
+    public static void showCustomToast(Context c) {
+
+    }
 }

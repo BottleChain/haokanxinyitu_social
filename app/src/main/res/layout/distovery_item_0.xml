@@ -43,7 +43,9 @@
                 android:layout_toRightOf="@id/image_1"
                 android:layout_below="@id/tv_1"
                 android:textColor="@color/click_bai60"
-                android:text="名字名字"
+                android:text=""
+                android:singleLine="true"
+                android:ellipsize="end"
                 android:layout_marginTop="@dimen/discoveryitem0_tv2_margintop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -107,7 +109,7 @@
             android:layout_below="@id/tv_desc"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="7dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </RelativeLayout>

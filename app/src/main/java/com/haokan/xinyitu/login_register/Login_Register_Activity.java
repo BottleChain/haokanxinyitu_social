@@ -25,6 +25,7 @@ import com.haokan.xinyitu.base.BaseActivity;
 import com.haokan.xinyitu.base.BaseResponseBean;
 import com.haokan.xinyitu.clipphoto.ClipPhotoActivity;
 import com.haokan.xinyitu.clipphoto.ClipPhotoManager;
+import com.haokan.xinyitu.follow.ResponseBeanFollwsUsers;
 import com.haokan.xinyitu.main.mypersonalcenter.ResponseBeanMyUserInfo;
 import com.haokan.xinyitu.util.CommonUtil;
 import com.haokan.xinyitu.util.ConstantValues;
@@ -36,6 +37,7 @@ import com.haokan.xinyitu.util.SecurityUtil;
 import com.haokan.xinyitu.util.ToastManager;
 import com.haokan.xinyitu.util.UrlsUtil;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -53,6 +55,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     private RelativeLayout mRlThirdLogin;
     private ImageView mIvBg;
     private ImageButton mBack;
+    private ImageButton mClose;
     private ImageView mWelcome;
     private TextView mWelcomeSub;
     private ViewStub mStubRegister;
@@ -70,6 +73,8 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     private String mClipedHpPath;
     private SharedPreferences mDefaultSharedPreferences;
     private int[] mBgIds = {R.drawable.bg_login_1, R.drawable.bg_login_2, R.drawable.bg_login_3};
+    public static final int RESULT_CODE_LOGIN_SUCCESS = 1;
+    public static final int RESULT_CODE_LOGIN_FAILED = 2;
     /**
      * 服务条款
      */
@@ -83,7 +88,8 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         int i = new Random().nextInt(3);
         mIvBg.setImageResource(mBgIds[i]);
         //mIvBg.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
-        mBack = (ImageButton) findViewById(R.id.back);
+        mBack = (ImageButton) findViewById(R.id.ib_back);
+        mClose = (ImageButton) findViewById(R.id.ib_close);
         mWelcome = (ImageView) findViewById(R.id.tv_2);
         mWelcomeSub = (TextView) findViewById(R.id.tv_desc);
         mStubRegister = (ViewStub) findViewById(R.id.layout_register);
@@ -92,8 +98,13 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         mStubPersondata = (ViewStub) findViewById(R.id.layout_persondata);
 
         mBack.setOnClickListener(this);
+        mClose.setOnClickListener(this);
     }
 
+    @Override
+    protected boolean hasStatusBar() {
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,7 +219,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         mLayoutLogin.setTranslationX(mScreenW);
         mBack.setTranslationX(mScreenW);
 
-        final ValueAnimator animout = Login_Register_SwAnim_Manager.rightToLeftOut(mScreenW, mLayoutRegister);
+        final ValueAnimator animout = Login_Register_SwAnim_Manager.rightToLeftOut(mScreenW, mLayoutRegister, mClose);
         final ValueAnimator animin = Login_Register_SwAnim_Manager.rightToLeftIn(mScreenW, mLayoutLogin, mBack);
         mHandler.post(new Runnable() {
             @Override
@@ -230,9 +241,11 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     private void login2register() {
         showRegisterView();
         mLayoutRegister.setTranslationX(-mScreenW);
+        mClose.setTranslationX(-mScreenW);
+        mClose.setVisibility(View.VISIBLE);
 
         final ValueAnimator animout = Login_Register_SwAnim_Manager.leftToRightOut(mScreenW, mLayoutLogin, mBack);
-        final ValueAnimator animin = Login_Register_SwAnim_Manager.leftToRightIn(mScreenW, mLayoutRegister);
+        final ValueAnimator animin = Login_Register_SwAnim_Manager.leftToRightIn(mScreenW, mLayoutRegister, mClose);
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -303,7 +316,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
 //        final ValueAnimator animout = Login_Register_SwAnim_Manager.rightToLeftOut(mScreenW
 //                , mLayoutRegister, mWelcome, mWelcomeSub, mRlThirdLogin);
         final ValueAnimator animout = Login_Register_SwAnim_Manager.rightToLeftOut(mScreenW
-                , mLayoutRegister, mWelcome, mWelcomeSub);
+                , mLayoutRegister, mWelcome, mWelcomeSub, mClose);
         final ValueAnimator animin = Login_Register_SwAnim_Manager.rightToLeftIn(mScreenW
                 , mLayoutPersondata);
         mHandler.post(new Runnable() {
@@ -328,7 +341,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         int id = v.getId();
         switch (id) {
             case R.id.ib_close:
-            case R.id.back:
+            case R.id.ib_back:
                 onBackPressed();
                 break;
             case R.id.tv_skip:
@@ -351,9 +364,9 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                     getVerfyCodeToRegister();
                     break;
                 case R.id.tv_4: //注册
-//                    register();
+                    register();
                     //// TODO: 2016/4/11 为了测试，先直接进入填写个人信息页面
-                    register2persondata();
+//                    register2persondata();
                     break;
                 case R.id.tv_6: //登录，往登录界面切换
                     register2login();
@@ -365,7 +378,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     }
 
     private void register() {
-        String num = mEtRegisterPhoneNum.getText().toString().trim();
+        final String num = mEtRegisterPhoneNum.getText().toString().trim();
         boolean isnum = isPhoneNum(num);
         if (!isnum) {
             return;
@@ -373,6 +386,11 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         String verfycode = mEtRegisterVerfyCode.getText().toString().trim();
         if (TextUtils.isEmpty(verfycode)) {
             ToastManager.showShort(this, "验证码不能为空");
+            return;
+        }
+        String pas = mEtRegisterPassword.getText().toString();
+        if (TextUtils.isEmpty(pas)) {
+            ToastManager.showShort(this, "密码不能为空");
             return;
         }
         String invitecode = mEtRegisterInviteCode.getText().toString().trim();
@@ -385,11 +403,8 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         RequestBeanRegister beanRegister = new RequestBeanRegister();
         beanRegister.setMobile(SecurityUtil.haokanEncode(num));
         beanRegister.setSmscode(SecurityUtil.haokanEncode(verfycode));
+        beanRegister.setPasswd(pas);
         beanRegister.setInvite(SecurityUtil.haokanEncode(invitecode));
-        String pas = mEtRegisterPassword.getText().toString();
-        if (!TextUtils.isEmpty(pas)) {
-            beanRegister.setPasswd(SecurityUtil.haokanEncode(pas));
-        }
 
         String url = UrlsUtil.getRegisterUrl(getApplicationContext(), JsonUtil.toJson(beanRegister));
         Log.d("wangzixu", "register url = " + url);
@@ -399,6 +414,20 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                 disMissLoadingProgress();
                 if (response != null) {
                     if (response.getErr_code() == 0) {
+                        String userId = response.getData().getUserId();
+                        String sessionId = response.getData().getSessionId();
+
+                        if (mDefaultSharedPreferences == null) {
+                            mDefaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(Login_Register_Activity.this);
+                        }
+                        SharedPreferences.Editor edit = mDefaultSharedPreferences.edit();
+                        edit.putString(ConstantValues.KEY_SP_USERID, userId);
+                        edit.putString(ConstantValues.KEY_SP_SESSIONID, sessionId);
+                        edit.putString(ConstantValues.KEY_SP_PHONENUM, num);
+                        edit.apply();
+                        App.sessionId = sessionId;
+                        App.user_Id = userId;
+
                         register2persondata();
                     } else {
                         ToastManager.showShort(Login_Register_Activity.this, response.getErr_msg());
@@ -546,11 +575,11 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
 
         showLoadingProgress();
         RequestBeanLogin beanLogin = new RequestBeanLogin();
-        beanLogin.setMobile(num);
-        beanLogin.setPasswd(passwd);
+        beanLogin.setMobile(SecurityUtil.haokanEncode(num));
+        beanLogin.setPasswd(SecurityUtil.haokanEncode(passwd));
 
-        String url = UrlsUtil.getLoginSmsUrl(getApplicationContext(), JsonUtil.toJson(beanLogin));
-        Log.d("wangzixu", "login url = " + url);
+        String url = UrlsUtil.getLoginByPasswdUrl(getApplicationContext(), JsonUtil.toJson(beanLogin));
+        Log.d("wangzixu", "loginByPasswd url = " + url);
 
         HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanLogin>() {
             @Override
@@ -562,7 +591,6 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
 
                         String userId = response.getData().getUserId();
                         String sessionId = response.getData().getSessionId();
-
                         if (mDefaultSharedPreferences == null) {
                             mDefaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(Login_Register_Activity.this);
                         }
@@ -575,7 +603,8 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                         App.user_Id = userId;
 
                         getMyInfo();
-                        goHomePageActivity();
+                        getMyFollows();
+                        //goHomePageActivity();
                     } else {
                         ToastManager.showShort(Login_Register_Activity.this, response.getErr_msg());
                     }
@@ -590,6 +619,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
 
             @Override
             protected ResponseBeanLogin parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                Log.d("wangzixu", "loginByPasswd rawJsonData = " + rawJsonData);
                 return JsonUtil.fromJson(rawJsonData, ResponseBeanLogin.class);
             }
         });
@@ -619,15 +649,21 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                     }
 
                     //上传昵称
-                    String nickName = mEtPersonDataNickName.getText().toString().trim();
+                    final String nickName = mEtPersonDataNickName.getText().toString().trim();
                     if (!TextUtils.isEmpty(nickName)) {
-                        String url = UrlsUtil.getModilyNickNameUrl(sessionId, nickName);
+                        String url = UrlsUtil.getModilyNickNameUrl(sessionId);
+                        RequestParams params = new RequestParams();
+                        params.put("nickname", SecurityUtil.haokanEncode(nickName));
                         Log.d("wangzixu", "PersonDataClickListener ModilyNickNameUrl url = " + url);
-                        HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+                        HttpClientManager.getInstance(Login_Register_Activity.this).postData(url,params, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
                                 if (response.getErr_code() != 0) {
                                     ToastManager.showShort(Login_Register_Activity.this, "昵称修改失败 = " + response.getErr_msg());
+                                } else {
+                                    mDefaultSharedPreferences.edit().putString(ConstantValues.KEY_SP_NICKNAME
+                                            , nickName)
+                                            .apply(); //保存昵称信息
                                 }
                             }
 
@@ -787,9 +823,9 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                         edit.apply();
                         App.sessionId = sessionId;
                         App.user_Id = userId;
-
                         getMyInfo();
-                        goHomePageActivity();
+                        getMyFollows();
+                        //goHomePageActivity();
                     } else {
                         ToastManager.showShort(Login_Register_Activity.this, response.getErr_msg());
                     }
@@ -827,6 +863,8 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                     SharedPreferences.Editor edit = mDefaultSharedPreferences.edit();
                     edit.putString(ConstantValues.KEY_SP_AVATAR_URL, avatarUrl);
                     edit.putString(ConstantValues.KEY_SP_NICKNAME, response.getData().getNickname());
+                    edit.putString(ConstantValues.KEY_SP_DESC, response.getData().getDescription());
+                    edit.putString(ConstantValues.KEY_SP_PHONENUM, response.getData().getMobile());
                     edit.apply();
                 }
             }
@@ -837,7 +875,35 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
 
             @Override
             protected ResponseBeanMyUserInfo parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                Log.d("wangzixu", "Login_Register getMyInfo rawJsonData = " + rawJsonData);
                 return JsonUtil.fromJson(rawJsonData, ResponseBeanMyUserInfo.class);
+            }
+        });
+    }
+
+    private void getMyFollows() {
+        String url = UrlsUtil.getIlikeUrl(App.sessionId);
+        Log.d("wangzixu", "Splash getIlikeUrl url = " + url);
+        HttpClientManager.getInstance(this).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanFollwsUsers>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanFollwsUsers response) {
+                if (response.getErr_code() == 0) {
+                    App.sMyFollowsUser = response.getData();
+                } else {
+                    //没有关注的人
+                }
+                goHomePageActivity();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanFollwsUsers errorResponse) {
+                ToastManager.showShort(Login_Register_Activity.this, "获取我关注的人失败!");
+                goHomePageActivity();
+            }
+
+            @Override
+            protected ResponseBeanFollwsUsers parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return JsonUtil.fromJson(rawJsonData, ResponseBeanFollwsUsers.class);
             }
         });
     }
@@ -887,11 +953,11 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     }
 
     private void goHomePageActivity() {
-//        Intent intent = new Intent(this, MainActivity.class);
-//        startActivity(intent);
+        setResult(RESULT_OK);
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_in_top2bottom, R.anim.activity_out_top2bottom);
     }
+
 
     private Dialog mLoadingProgress;
     private void showLoadingProgress() {

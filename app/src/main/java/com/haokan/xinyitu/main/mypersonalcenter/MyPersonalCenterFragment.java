@@ -3,6 +3,7 @@ package com.haokan.xinyitu.main.mypersonalcenter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -20,7 +21,10 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.haokan.xinyitu.App;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseResponseBean;
+import com.haokan.xinyitu.albumfailed.FailedAlbumInfoBean;
+import com.haokan.xinyitu.database.MyDatabaseHelper;
 import com.haokan.xinyitu.main.Base_PTR_LoadMore_Fragment;
+import com.haokan.xinyitu.main.discovery.AlbumInfoBean;
 import com.haokan.xinyitu.main.discovery.RequestBeanAlbumInfo;
 import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
 import com.haokan.xinyitu.util.ConstantValues;
@@ -29,8 +33,10 @@ import com.haokan.xinyitu.util.ImageLoaderManager;
 import com.haokan.xinyitu.util.ImgAndTagWallManager;
 import com.haokan.xinyitu.util.JsonUtil;
 import com.haokan.xinyitu.util.UrlsUtil;
+import com.j256.ormlite.dao.Dao;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +45,7 @@ import cz.msebera.android.httpclient.Header;
 public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment implements PullToRefreshBase.OnRefreshListener<ListView> {
 
     private List<ResponseBeanAlbumListPersonnal.DataEntity> mAlbumIdList;
-    private ArrayList<ResponseBeanAlbumInfo.DataEntity> mData = new ArrayList<>();
+    private ArrayList<AlbumInfoBean> mData = new ArrayList<>();
     private View mIbPersonSetting;
     private View mRlTopbar;
     private View mIbPersonNotice;
@@ -47,12 +53,14 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
     private TextView mTvTitle;
     private TextView mTvHeaderTitle;
     private PersonnalcenterFragmentAdapter mAdapter;
+    private Handler mHandler = new Handler();
 
     //处理上划显示标题用到的一些数据
     private int mTopBarBottom; //actionbar的底部位置
     private int mHeaderTitleTop;
     private int mHeaderTitleHeight;
     private View mHeader;
+    private View mHeaderFailed;
     private View mRlMyGallery;
     private View mRlMyFollows;
     private View mRlFollowMe;
@@ -60,7 +68,13 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
     private TextView mTvAblumCount;
     private TextView mTvMyFollowsCount;
     private TextView mTvFollowMeCount;
+    private View mNotLoginLayout;
     private ImageView mIvAvatar;
+    private boolean mIsLogin;
+    private View mTvChangePersonData;
+    private String mOldAvatarUrl;
+    private String mOldNickName;
+    private String mOldDesc;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,6 +84,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         mIbPersonNotice = view.findViewById(R.id.ib_person_notice);
         mIvNoticePoint = view.findViewById(R.id.iv_notice_point);
         mTvTitle = (TextView) view.findViewById(R.id.tv_title);
+        mNotLoginLayout = view.findViewById(R.id.no_login_layout);
         mPullToRefreshListView = (PullToRefreshListView) view.findViewById(R.id.ptrlv_1);
         mPullToRefreshListView.setOnRefreshListener(this);
         mListView = mPullToRefreshListView.getRefreshableView();
@@ -78,9 +93,15 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         mBtnNetError = mNetErrorLayout.findViewById(R.id.iv_net_error);
 
         mHeader = inflater.inflate(R.layout.mypersonnalcenter_header, container, false);
+        mHeaderFailed = inflater.inflate(R.layout.mypersonnalcenter_header_albumfailed, container, false);
+        AbsListView.LayoutParams lp1 = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT
+                , AbsListView.LayoutParams.WRAP_CONTENT);
+        mHeaderFailed.setLayoutParams(lp1);
+
         mTvHeaderTitle = (TextView) mHeader.findViewById(R.id.tv_name);
         mTvHeaderDesc = (TextView) mHeader.findViewById(R.id.tv_desc);
         mIvAvatar = (ImageView) mHeader.findViewById(R.id.iv_avatar);
+        mTvChangePersonData = mHeader.findViewById(R.id.tv_change_personnaldata);
 
         mRlMyGallery = mHeader.findViewById(R.id.rl_mygallery);
         mTvAblumCount = (TextView) mHeader.findViewById(R.id.tv_mygallery_count);
@@ -94,14 +115,20 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         mHeader.setLayoutParams(lp);
         mListView.addHeaderView(mHeader);
 
-
-        mTvTitle.setText("Effie Riley");
         mRlMyGallery.setClickable(false);
         mRlMyGallery.setSelected(true);
         mIbPersonSetting.setOnClickListener((View.OnClickListener) getActivity());
         mRlMyFollows.setOnClickListener((View.OnClickListener) getActivity());
         mRlFollowMe.setOnClickListener((View.OnClickListener) getActivity());
-
+        mTvChangePersonData.setOnClickListener((View.OnClickListener) getActivity());
+        mHeaderFailed.findViewById(R.id.tv_failed_album).setOnClickListener((View.OnClickListener) getActivity());
+        mNotLoginLayout.findViewById(R.id.tv_not_login).setOnClickListener((View.OnClickListener) getActivity());
+        mNotLoginLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //nothing
+            }
+        });
         mRlTopbar.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -119,7 +146,53 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
             }
         });
 
+        if (TextUtils.isEmpty(App.sessionId)) {
+            mIsLogin = false;
+            mNotLoginLayout.setVisibility(View.VISIBLE);
+        } else {
+            mIsLogin = true;
+            mNotLoginLayout.setVisibility(View.GONE);
+        }
         return view;
+    }
+
+    public void reLoad() {
+        //mPullToRefreshListView.setRefreshing(true);
+        loadData(getActivity());
+    }
+
+    @Override
+    protected boolean hasLogin() {
+        return !TextUtils.isEmpty(App.sessionId);
+    }
+
+    private boolean hasFailedHeader = false;
+    public void addAblumFailedHeader() {
+        if (!hasFailedHeader) {
+            hasFailedHeader = true;
+            mListView.addHeaderView(mHeaderFailed);
+        }
+    }
+
+    public void removeAblumFailedHeader() {
+        hasFailedHeader = false;
+        mListView.removeHeaderView(mHeaderFailed);
+    }
+
+    /**
+     * 改变登录状态
+     */
+    public void updataLoginStatus(boolean isLogin) {
+        Log.d("wangzixu", "updataLoginStatus isLogin = " + isLogin);
+        if (isLogin && !mIsLogin) {
+            mIsLogin = true;
+            mNotLoginLayout.setVisibility(View.GONE);
+            loadData(getActivity());
+        } else if (!isLogin && mIsLogin) {
+            mIsLogin = false;
+            mNotLoginLayout.setVisibility(View.VISIBLE);
+            mPullToRefreshListView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -157,11 +230,61 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
     @Override
     protected String getLoadDataUrl() {
         String url = UrlsUtil.getMyinfoUrl(App.sessionId);
-        Log.d("MyPersonalCenter", "loadData url = " + url);
+        Log.d("wangzixu", "MyPersonalCenterFragment getLoadDataUrl url = " + url);
         return url;
     }
 
-//    @Override
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (TextUtils.isEmpty(App.sessionId)) {
+            return;
+        }
+        if (mIsFirstLoad) { //除了第一次进来是通过load加载的头像等，其他再回此界面需要重新加载一下名称和描述头像等，因为有可能改变
+            mIsFirstLoad = false;
+        } else {
+            SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String avatarUrl = defaultSharedPreferences.getString(ConstantValues.KEY_SP_AVATAR_URL, mOldAvatarUrl);
+            if (avatarUrl != null && !avatarUrl.equals(mOldAvatarUrl)) {
+                ImageLoaderManager.getInstance().asyncLoadCircleImage(mIvAvatar, avatarUrl
+                        , mIvAvatar.getWidth(), mIvAvatar.getHeight());
+            }
+
+            String nickName = defaultSharedPreferences.getString(ConstantValues.KEY_SP_NICKNAME, mOldNickName);
+            if (!nickName.equals(mOldNickName)) {
+                mTvTitle.setText(nickName);
+                mTvHeaderTitle.setText(nickName);
+            }
+
+            String desc = defaultSharedPreferences.getString(ConstantValues.KEY_SP_DESC, mOldDesc);
+            if (!desc.equals(mOldDesc)) {
+                if (TextUtils.isEmpty(desc)) {
+                    mTvHeaderDesc.setVisibility(View.GONE);
+                } else {
+                    mTvHeaderDesc.setVisibility(View.VISIBLE);
+                    mTvHeaderDesc.setText(desc);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        try {
+            Dao dao = MyDatabaseHelper.getInstance(getActivity()).getDaoQuickly(FailedAlbumInfoBean.class);
+            List list = dao.queryForAll();
+            if (list != null && list.size() > 0) { //说明至少有一个失败的
+                addAblumFailedHeader();
+            } else {
+                removeAblumFailedHeader();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //    @Override
 //    protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
 //        ResponseBeanAlbumListPersonnal responseBeanAlbumList = (ResponseBeanAlbumListPersonnal) response;
 //        mPullToRefreshListView.setVisibility(View.VISIBLE);
@@ -180,6 +303,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
     protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean baseResponseBean) {
         ResponseBeanMyUserInfo response = (ResponseBeanMyUserInfo) baseResponseBean;
         mPullToRefreshListView.setVisibility(View.VISIBLE);
+        //mLoadingLayout.setVisibility(View.GONE);
         String avatarUrl;
         if (App.sDensity >= 3) {
             avatarUrl = response.getData().getAvatar_url().getS150();
@@ -190,7 +314,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         mTvTitle.setText(nickname);
         mTvHeaderTitle.setText(nickname);
         mTvAblumCount.setText(response.getData().getAlbumnum());
-        mTvMyFollowsCount.setText(response.getData().getIlikenum());
+        mTvMyFollowsCount.setText(App.sMyFollowsUser.size() + "");
         mTvFollowMeCount.setText(response.getData().getLikemenum());
         if (TextUtils.isEmpty(response.getData().getDescription())) {
             mTvHeaderDesc.setVisibility(View.GONE);
@@ -210,6 +334,11 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         SharedPreferences.Editor edit = defaultSharedPreferences.edit();
         edit.putString(ConstantValues.KEY_SP_AVATAR_URL, avatarUrl);
         edit.putString(ConstantValues.KEY_SP_NICKNAME, nickname);
+        edit.putString(ConstantValues.KEY_SP_DESC, response.getData().getDescription());
+        edit.putString(ConstantValues.KEY_SP_PHONENUM, response.getData().getMobile());
+        mOldAvatarUrl = avatarUrl;
+        mOldNickName = nickname;
+        mOldDesc = response.getData().getDescription();
         edit.apply();
     }
 
@@ -224,11 +353,24 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanAlbumListPersonnal response) {
                 if (response.getErr_code() == 0) {
                     mAlbumIdList = null;
+                    mAdapter = null;
                     mCurrentPage = 0;
                     mAlbumIdList = response.getData();
                     mHasMoreData = true;
+                    if (mHasFootView) {
+                        removeFootView();
+                    }
                     //mTvAblumCount.setText(String.valueOf(mAlbumIdList.size()));
+                    Log.d("wangzixu", "loadAblumIdList url success ");
                     loadAlbumInfoData(context, true);
+                } else {//没有发布过组图 返回失败
+                    mAlbumIdList = null;
+                    mCurrentPage = 0;
+                    mHasMoreData = false;
+                    mAdapter = new PersonnalcenterFragmentAdapter(context, null, (View.OnClickListener)getActivity(), true);
+                    mListView.setAdapter(mAdapter);
+                    mListView.setBackgroundColor(getActivity().getResources().getColor(R.color.main_color_actionbar_item01));
+                    mLoadingLayout.setVisibility(View.GONE);
                 }
             }
 
@@ -238,9 +380,54 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
 
             @Override
             protected ResponseBeanAlbumListPersonnal parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                Log.d("wangzixu", "loadAblumIdList rawJsonData = " + rawJsonData);
                 return JsonUtil.fromJson(rawJsonData, ResponseBeanAlbumListPersonnal.class);
             }
         });
+    }
+
+    public void notifyFragmentsFollowChanged() {
+        if (mTvMyFollowsCount != null) {
+            mTvMyFollowsCount.setText("" + App.sMyFollowsUser.size());
+        }
+    }
+
+    public void notifyLikeStatusChanged(final String ablumId, final int newStatus) {
+        Log.d("wangzixu", "notifyLikeStatusChanged isVisible = ---" + isVisible());
+        if (!isVisible() || !isResumed()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mIsDestory) {
+                        return;
+                    }
+                    boolean hasChange = false;
+                    for (int i = 0; i < mData.size(); i++) {
+                        AlbumInfoBean entity = mData.get(i);
+                        if (ablumId.equals(entity.getAlbum_id())) {
+                            hasChange = true;
+                            entity.setIs_liked(newStatus);
+                            if (newStatus == 1) {
+                                entity.setLike_num(entity.getLike_num() + 1);
+                            } else {
+                                entity.setLike_num(entity.getLike_num() - 1);
+                            }
+                        }
+                    }
+                    mLastLoadDataTime = SystemClock.uptimeMillis();
+                    if (hasChange) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                }
+            }).start();
+        } else {
+            mLastLoadDataTime = SystemClock.uptimeMillis();
+        }
     }
 
     @Override
@@ -264,7 +451,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         return JsonUtil.fromJson(rawJsonData, ResponseBeanMyUserInfo.class);
     }
 
-    public void deleteAblum(final ResponseBeanAlbumInfo.DataEntity bean) {
+    public void deleteAblum(final AlbumInfoBean bean) {
         final String ablumId = bean.getAlbum_id();
         new Thread(new Runnable() {
             @Override
@@ -312,6 +499,11 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         int end = Math.min((mCurrentPage + 1) * COUNT_ONE_PAGE, mAlbumIdList.size());
         if (end >= mAlbumIdList.size()) {
             mHasMoreData = false;
+            if (mAlbumIdList.size() <= 1) {
+                mListView.setBackgroundColor(context.getResources().getColor(R.color.main_color_actionbar_item01));
+            } else if (!mHasFootView) {
+                addFootView();
+            }
         }
 
         if (begin < end) {
@@ -334,7 +526,13 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanAlbumInfo response) {
                     if (response.getErr_code() == 0) {
-                        List<ResponseBeanAlbumInfo.DataEntity> data1 = response.getData();
+                        List<AlbumInfoBean> data1 = response.getData();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                            }
+                        }).start();
                         for (int i = 0; i < data1.size(); i++) {
                             ImgAndTagWallManager.getInstance(context).initImgsWall(data1.get(i).getImages());
                             ImgAndTagWallManager.getInstance(context).initTagsWallForItem0(data1.get(i).getTags());
@@ -344,16 +542,31 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
                         }
                         mData.addAll(response.getData());
                         mCurrentPage ++;
-                        if (mAdapter == null) {
-                            mAdapter = new PersonnalcenterFragmentAdapter(context, mData, (View.OnClickListener)getActivity(), true);
-                            mListView.setAdapter(mAdapter);
-                        } else {
-                            mAdapter.notifyDataSetChanged();
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mAdapter == null || mAdapter.getData() == null) {
+                                    mAdapter = new PersonnalcenterFragmentAdapter(context, mData, (View.OnClickListener)getActivity(), true);
+                                    mListView.setAdapter(mAdapter);
+                                } else {
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                                mIsLoading = false;
+                                mLoadingLayout.setVisibility(View.GONE);
+                            }
+                        });
+                    } else {
+                        mIsLoading = false;
+                        mLoadingLayout.setVisibility(View.GONE);
+                        if (mData.size() == 0) {
+                            if (mAdapter == null || mAdapter.getData() != null) {
+                                mHasMoreData = false;
+                                mAdapter = new PersonnalcenterFragmentAdapter(context, null, (View.OnClickListener)getActivity(), true);
+                                mListView.setAdapter(mAdapter);
+                                mListView.setBackgroundColor(getActivity().getResources().getColor(R.color.main_color_actionbar_item01));
+                            }
                         }
-//                        mAdapter.notifyDataSetChanged();
                     }
-                    mIsLoading = false;
-                    mLoadingLayout.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -375,11 +588,12 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
      * 在发完组图后，发现页和个人页需要立马添加一条刚刚发布的信息（自己模拟的数据）
      */
     @Override
-    public void addFirstAblum(ResponseBeanAlbumInfo.DataEntity album) {
+    public void addFirstAblum(AlbumInfoBean album) {
         if (mAdapter != null) {
             mData.add(0, album);
+            int firstVisiblePosition = mListView.getFirstVisiblePosition();
             mAdapter.notifyDataSetChanged();
-            mListView.setSelection(0);
+            mListView.setSelection(firstVisiblePosition + 1);
             mLastLoadDataTime = SystemClock.uptimeMillis();
         }
     }

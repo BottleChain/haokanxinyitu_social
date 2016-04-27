@@ -56,7 +56,7 @@ public class BigImgBrowseActivity extends BaseActivity implements View.OnClickLi
     private void assignViews() {
         mUsed_Mode = getIntent().getIntExtra(EXTRA_USED, 1);
         if (mUsed_Mode == 1) {
-            ImageButton ibBigimgClose = (ImageButton) findViewById(R.id.ib_bigimg_close);
+            ImageButton ibBigimgClose = (ImageButton) findViewById(R.id.ib_close);
             ibBigimgClose.setOnClickListener(this);
             mTopBar = ibBigimgClose;
         } else if (mUsed_Mode == 2) {
@@ -155,12 +155,17 @@ public class BigImgBrowseActivity extends BaseActivity implements View.OnClickLi
         assignViews();
     }
 
+    @Override
+    protected boolean hasStatusBar() {
+        return false;
+    }
+
     final long[] hits = new long[2];
     @Override
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
-            case R.id.ib_bigimg_close:
+            case R.id.ib_close:
             case R.id.ib_upload_imgedit_back:
             case R.id.ib_upload_preview_back:
                 onBackPressed();
@@ -249,7 +254,7 @@ public class BigImgBrowseActivity extends BaseActivity implements View.OnClickLi
         mPopupWindow.setAnimationStyle(0);
 
         mPopBg = v.findViewById(R.id.pop_shadow);
-        mPopContent = v.findViewById(R.id.ll_morepop_content);
+        mPopContent = v.findViewById(R.id.ll_morepop_sharecontent);
 
         mPopBg.setOnClickListener(this);
         v.findViewById(R.id.tv_pop_cancel).setOnClickListener(this);

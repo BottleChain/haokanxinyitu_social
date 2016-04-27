@@ -56,8 +56,8 @@ public class UploadTagsActivity extends BaseActivity implements View.OnClickList
     private void assignViews() {
         mIbBack = (ImageButton) findViewById(R.id.ib_back);
         mTvConfirm = (TextView) findViewById(R.id.tv_confirm);
-        mTvCickAddTag = (TextView) findViewById(R.id.tv_click_add_tag);
-        mEtUploadEdit = (EditText) findViewById(R.id.et_upload_edit);
+        mTvCickAddTag = (TextView) findViewById(R.id.tv_click_add);
+        mEtUploadEdit = (EditText) findViewById(R.id.et_edit);
         mTvTextcount = (TextView) findViewById(R.id.tv_added);
         mTvUsedtags = (TextView) findViewById(R.id.tv_usedtags);
         mRlUsedtags = (RelativeLayout) findViewById(R.id.rl_usedtags);
@@ -372,7 +372,7 @@ public class UploadTagsActivity extends BaseActivity implements View.OnClickList
             case R.id.tv_confirm:
                 onBackPressed();
                 break;
-            case R.id.tv_click_add_tag:
+            case R.id.tv_click_add:
                 addTag();
                 break;
             case R.id.tv_tag:

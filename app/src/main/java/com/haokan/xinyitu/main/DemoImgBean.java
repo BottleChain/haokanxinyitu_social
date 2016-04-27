@@ -7,8 +7,8 @@ public class DemoImgBean implements Parcelable {
     private String id;
     private String name;
     private String url;
-    private int width;
-    private int height;
+    private String width;
+    private String height;
 
     private String md5; //图片对应的MD5唯一码
 
@@ -52,19 +52,19 @@ public class DemoImgBean implements Parcelable {
         this.url = url;
     }
 
-    public int getWidth() {
+    public String getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(String width) {
         this.width = width;
     }
 
-    public int getHeight() {
+    public String getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(String height) {
         this.height = height;
     }
 
@@ -117,8 +117,8 @@ public class DemoImgBean implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
         dest.writeString(this.url);
-        dest.writeInt(this.width);
-        dest.writeInt(this.height);
+        dest.writeString(this.width);
+        dest.writeString(this.height);
     }
 
     public DemoImgBean() {
@@ -127,8 +127,8 @@ public class DemoImgBean implements Parcelable {
     protected DemoImgBean(Parcel in) {
         this.id = in.readString();
         this.url = in.readString();
-        this.width = in.readInt();
-        this.height = in.readInt();
+        this.width = in.readString();
+        this.height = in.readString();
     }
 
     public static final Parcelable.Creator<DemoImgBean> CREATOR = new Parcelable.Creator<DemoImgBean>() {

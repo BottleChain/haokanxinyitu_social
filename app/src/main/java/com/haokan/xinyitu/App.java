@@ -2,13 +2,15 @@ package com.haokan.xinyitu;
 
 import android.app.Application;
 
+import com.haokan.xinyitu.follow.ResponseBeanFollwsUsers;
 import com.haokan.xinyitu.main.DemoImgBean;
 import com.haokan.xinyitu.main.DemoTagBean;
-import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
+import com.haokan.xinyitu.main.discovery.AlbumInfoBean;
 import com.haokan.xinyitu.util.ImageLoaderManager;
 import com.umeng.socialize.PlatformConfig;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class App extends Application {
     public static String sessionId = null;
@@ -16,6 +18,7 @@ public class App extends Application {
     public static float sDensity = 3;
     public static int sPreviewImgSize = 240; //加载图片时缩略图的大小，应该在splash时根据density给此值赋值，默认240宽
     public static int sBigImgSize = 720; //加载图片时大图的大小，应该在splash时根据density给此值赋值，默认240宽
+    public static String sTagString = ""; //已经进过的tag标签，防止重复进
 
     @Override
     public void onCreate() {
@@ -45,13 +48,13 @@ public class App extends Application {
      * 用户最新上传的一个组图，为了上传完后立马在主页面显示上传的结果，用这个变量temp一下
      * 上传完成后，给这个值赋值，然后通知主页，主页获取后取到这个值然后添加在第一个位置，然后情况这个值
      */
-    private ResponseBeanAlbumInfo.DataEntity mLastestUploadAlbum;
+    private AlbumInfoBean mLastestUploadAlbum;
 
-    public ResponseBeanAlbumInfo.DataEntity getLastestUploadAlbum() {
+    public AlbumInfoBean getLastestUploadAlbum() {
         return mLastestUploadAlbum;
     }
 
-    public void setLastestUploadAlbum(ResponseBeanAlbumInfo.DataEntity lastestUploadAlbum) {
+    public void setLastestUploadAlbum(AlbumInfoBean lastestUploadAlbum) {
         mLastestUploadAlbum = lastestUploadAlbum;
     }
 
@@ -92,4 +95,10 @@ public class App extends Application {
     public void setTagsTemp(ArrayList<DemoTagBean> tagsTemp) {
         mTagsTemp = tagsTemp;
     }
+
+    /**
+     * 我关注的人的id，一个公共数据，因为很多地方都要显示我关注的人，并且一个地方变动，其他地方都要跟着改变，
+     * 所以用这个共同的数据来维护，ps.关注的人很多时，可能需要改成用数据库存储的方式，暂时先用这个
+     */
+    public static List<ResponseBeanFollwsUsers.FollowUserIdBean> sMyFollowsUser = new ArrayList<>();
 }

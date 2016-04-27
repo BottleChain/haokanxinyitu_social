@@ -7,41 +7,38 @@
         android:id="@+id/rl_header"
         android:background="@color/main_color_actionbar_item01"
         android:layout_width="match_parent"
-        android:layout_height="44dp">
+        android:layout_height="@dimen/actionbar_h">
 
         <ImageButton
             android:id="@+id/ib_person_setting"
             android:background="@null"
             android:paddingLeft="16dp"
-            android:paddingBottom="10dp"
             android:paddingRight="25dp"
-            android:paddingTop="10dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:src="@drawable/icon_personnal_settting_selector"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
 
         <ImageButton
             android:id="@+id/ib_person_notice"
             android:background="@null"
             android:paddingLeft="10dp"
-            android:paddingBottom="10dp"
             android:paddingRight="16dp"
-            android:paddingTop="10dp"
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@id/ib_person_setting"
             android:src="@drawable/icon_personnal_notice_selector"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"/>
 
         <ImageView
             android:id="@+id/iv_notice_point"
+            android:visibility="gone"
             android:src="@drawable/icon_person_notice_point"
             android:layout_toLeftOf="@id/ib_person_setting"
             android:layout_alignParentBottom="true"
             android:layout_marginRight="15dp"
-            android:layout_marginBottom="27dp"
+            android:layout_marginBottom="28dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -57,18 +54,12 @@
             android:textColor="@color/bai"
             android:maxWidth="160dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="11dp"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="17dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </RelativeLayout>
-
-    <include
-        android:id="@+id/loading_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/loading_layout" />
 
     <com.handmark.pulltorefresh.library.PullToRefreshListView
         android:layout_below="@id/rl_header"
@@ -87,7 +78,26 @@
     <!--android:visibility="invisible"-->
 
     <include
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/loading_layout" />
+
+    <include
         android:id="@+id/net_error_layout"
         layout="@layout/net_error_layout"
         android:visibility="gone"/>
+
+    <include
+        android:visibility="gone"
+        android:id="@+id/no_login_layout"
+        layout="@layout/not_login_layout"
+        />
+
+    <!--<include-->
+        <!--android:id="@+id/no_item"-->
+        <!--android:visibility="gone"-->
+        <!--layout="@layout/mypersonalcenter_noitem_layout"-->
+        <!--/>-->
+
 </RelativeLayout>

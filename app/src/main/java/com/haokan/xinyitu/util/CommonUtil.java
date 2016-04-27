@@ -6,13 +6,18 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.SystemClock;
 import android.text.TextUtils;
+import android.view.View;
 
 public class CommonUtil {
     private static final String TAG = "CommonUtil";
     private static long sLastClickTime;
     public static boolean isQuickClick() {
+        return isQuickClick(null);
+    }
+
+    public static boolean isQuickClick(View view) {
         long time = SystemClock.uptimeMillis();
-        if ( time - sLastClickTime < 600) {
+        if ( time - sLastClickTime < 400) {
             return true;
         }
         sLastClickTime = time;

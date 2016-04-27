@@ -12,7 +12,7 @@
         android:layout_height="match_parent"/>
 
     <ImageButton
-        android:id="@+id/back"
+        android:id="@+id/ib_back"
         android:scaleType="center"
         android:background="@null"
         android:src="@drawable/icon_login_back"
@@ -20,6 +20,16 @@
         android:layout_marginLeft="5dp"
         android:layout_width="50dp"
         android:visibility="invisible"
+        android:layout_height="50dp"/>
+
+    <ImageButton
+        android:id="@+id/ib_close"
+        android:scaleType="center"
+        android:background="@null"
+        android:src="@drawable/icon_login_close"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
+        android:layout_width="50dp"
         android:layout_height="50dp"/>
 
     <!-- 注册，登录，短信验证登录三个界面的共同布局-->

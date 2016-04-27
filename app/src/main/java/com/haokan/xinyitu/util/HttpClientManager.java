@@ -16,7 +16,7 @@ import com.loopj.android.http.ResponseHandlerInterface;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import java.util.List;
 
 import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.client.protocol.ClientContext;
@@ -30,9 +30,14 @@ public class HttpClientManager {
 
     private HttpClientManager(Context context) {
         client = new AsyncHttpClient();
+        //client.setURLEncodingEnabled(false);
         //设置支持cookie
 //        PersistentCookieStore myCookieStore = new PersistentCookieStore(context);
-//        client.setCookieStore(myCookieStore);
+//        client.setCookieStore(null);
+    }
+
+    public void clearCredentials() {
+        client.clearCredentialsProvider();
     }
 
     public static HttpClientManager getInstance(Context context) {
@@ -64,6 +69,10 @@ public class HttpClientManager {
 
     public void getData(String url, ResponseHandlerInterface responseHandlerInterface) {
         client.get(url, responseHandlerInterface);
+    }
+
+    public void postData(String url, RequestParams params , ResponseHandlerInterface responseHandlerInterface) {
+        client.post(url, params, responseHandlerInterface);
     }
 
     public void loadFile(String url, FileAsyncHttpResponseHandler fileAsyncHttpResponseHandler) {
@@ -114,7 +123,7 @@ public class HttpClientManager {
         client.post(url, params, handler);
     }
 
-    public void upLoadImgFile(String url, File file,String title,ArrayList<DemoTagBean> tags,AsyncHttpResponseHandler handler) {
+    public void upLoadImgFile(String url, File file, String title, List<DemoTagBean> tags, AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         try {
             params.put("upfile", file);
@@ -133,7 +142,7 @@ public class HttpClientManager {
         client.post(url, params, handler);
     }
 
-    public void secondUpLoadFile(String url, String unique_id, String title, String fileName, ArrayList<DemoTagBean> tags,AsyncHttpResponseHandler handler) {
+    public void secondUpLoadFile(String url, String unique_id, String title, String fileName, List<DemoTagBean> tags,AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         params.put("unique_id", unique_id);
         params.put("file_name", fileName);
@@ -150,7 +159,7 @@ public class HttpClientManager {
     }
 
     public void createAblum(String url, String album_title, String album_desc
-            , ArrayList<DemoImgBean> imgBeans, ArrayList<String> tagIds, AsyncHttpResponseHandler handler) {
+            , List<DemoImgBean> imgBeans, List<String> tagIds, AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         if (!TextUtils.isEmpty(album_title)) {
             params.put("info[album_title]", album_title);

@@ -13,10 +13,12 @@ import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.base.BaseFragment;
 import com.haokan.xinyitu.base.BaseResponseBean;
-import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
+import com.haokan.xinyitu.main.discovery.AlbumInfoBean;
 import com.haokan.xinyitu.util.HttpClientManager;
+import com.haokan.xinyitu.util.JsonUtil;
 import com.haokan.xinyitu.util.ToastManager;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -35,11 +37,14 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
     protected static final int COUNT_ONE_PAGE = 15; //每页多少个数据
     protected boolean mHasMoreData;
     protected boolean mIsLoading = false;
+    protected boolean mIsFirstLoad = true;
     /**
      * 上一次最近的加载数据时间，下次加载数据（下拉刷新，或者来回切换tab页），如果事件间隔过短，则不去重新load，无意义
      */
-    protected long mLastLoadDataTime = -30000;
-    public static final int LOAD_DATA_DELTA = 30000; //两次加载数据的最小间隔，20s
+    protected long mLastLoadDataTime = -4000;
+    public static final int LOAD_DATA_DELTA = 4000; //两次加载数据的最小间隔，20s
+    private View mFootView;
+    protected boolean mHasFootView;
 
     @Nullable
     @Override
@@ -48,9 +53,10 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
 
         mPullToRefreshListView.setOnRefreshListener(this);
         mListView.setOnScrollListener(new PauseLoadImgOnScrollListener());
-        mPullToRefreshListView.setVisibility(View.INVISIBLE);
         if (HttpClientManager.checkNetWorkStatus(getActivity())) {
-            loadData(getActivity());
+            if (hasLogin()) {
+                loadData(getActivity());
+            }
         } else {
             mNetErrorLayout.setVisibility(View.VISIBLE);
             mLoadingLayout.setVisibility(View.GONE);
@@ -62,7 +68,6 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
             public void onClick(View v) {
                 if (HttpClientManager.checkNetWorkStatus(getActivity())) {
                     mLoadingLayout.setVisibility(View.VISIBLE);
-                    mPullToRefreshListView.setVisibility(View.INVISIBLE);
                     mNetErrorLayout.setVisibility(View.GONE);
                     mLastLoadDataTime = -LOAD_DATA_DELTA;
                     loadData(getActivity());
@@ -73,6 +78,39 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
             }
         });
         return view;
+    }
+
+    @Override
+    public void longClik() {
+        mListView.setSelection(0);
+    }
+
+    protected void addFootView() {
+        if (mFootView == null) {
+            if (getActivity() == null) {
+                return; //当网络还在请求时退出应用，有可能getContext为null
+            }
+            mFootView = View.inflate(getActivity(), R.layout.timeline_footer, null);
+            AbsListView.LayoutParams lp = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT
+                    , AbsListView.LayoutParams.WRAP_CONTENT);
+            mFootView.setLayoutParams(lp);
+        }
+        if (!mHasFootView) {
+            mListView.setFooterDividersEnabled(false);
+            mListView.addFooterView(mFootView);
+            mHasFootView = true;
+        }
+    }
+
+    protected void removeFootView() {
+        if (mHasFootView) {
+            mListView.removeFooterView(mFootView);
+            mHasFootView = false;
+        }
+    }
+
+    protected boolean hasLogin() {
+        return true;
     }
 
     /**
@@ -110,9 +148,16 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
     protected abstract BaseResponseBean getResponse(String rawJsonData, boolean isFailure);
 
     /**
+     * 返回的数据成功，但是errorCode不为0
+     */
+    protected void loadDataErrCodeError(BaseResponseBean response) {
+
+    }
+
+    /**
      * 在发完组图后，发现页和个人页需要立马添加一条刚刚发布的信息（自己模拟的数据）
      */
-    public void addFirstAblum(ResponseBeanAlbumInfo.DataEntity album) {
+    public void addFirstAblum(AlbumInfoBean album) {
 
     }
 
@@ -121,8 +166,10 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
             return;
         }
         if (mIsLoading) {
+            Log.d("wangzixu", "mIsLoading，直接返回");
             return;
         }
+
 
         //处理连续的两次加载数据
         long t = SystemClock.uptimeMillis();
@@ -140,7 +187,12 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
         }
         mLastLoadDataTime = t;
 
+        if (mHasFootView) {
+            removeFootView();
+        }
+
         mIsLoading = true;
+        mListView.setBackgroundColor(0);
         String url = getLoadDataUrl();
         HttpClientManager.getInstance(context).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
             @Override
@@ -149,7 +201,8 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
                 if (response.getErr_code() == 0) {
                     loadDataSuccess(context, statusCode, headers, rawJsonResponse, response);
                 } else {
-                    loadDataFailed();
+                    //ToastManager.showShort(context, response.getErr_msg());
+                    loadDataErrCodeError(response);
                 }
                 if (mPullToRefreshListView.isRefreshing()) {
                     mPullToRefreshListView.postDelayed(new Runnable() {
@@ -178,7 +231,13 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
             @Override
             protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
                 Log.d("wangzixu", "Base_PTR rawJsonData  = " + rawJsonData);
-                return getResponse(rawJsonData, isFailure);
+                BaseResponseBean responseBean;
+                try {
+                    responseBean = getResponse(rawJsonData, isFailure);
+                } catch (Exception e) {
+                    responseBean = JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+                }
+                return responseBean;
             }
         });
     }
@@ -220,7 +279,7 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
      */
     private class PauseLoadImgOnScrollListener extends PauseOnScrollListener {
         public PauseLoadImgOnScrollListener() {
-            super(ImageLoader.getInstance(), true, true, new AbsListView.OnScrollListener() {
+            super(ImageLoader.getInstance(), false, true, new AbsListView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
                     if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/pop_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/hei_50" />
+
+    <LinearLayout
+        android:id="@+id/ll_pop_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:paddingBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+            <!--android:layout_above="@id/tv_morepop_cancel"-->
+        <RelativeLayout
+            android:background="@drawable/popwindow_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_reupload"
+                android:text="重新上传"
+                android:includeFontPadding="false"
+                android:typeface="normal"
+                android:textColor="@color/click_hei60"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"/>
+
+            <View
+                android:id="@+id/devider_1"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_below="@id/tv_reupload"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/hei_10"
+                />
+
+            <TextView
+                android:id="@+id/tv_popup_delete"
+                android:layout_below="@id/devider_1"
+                android:text="删除"
+                android:includeFontPadding="false"
+                android:typeface="normal"
+                android:textColor="@color/click_hei60"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"/>
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/tv_pop_cancel"
+            android:text="@string/cancel"
+            android:textColor="@color/hei_60"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/popwindow_calcel_bg_selector"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"/>
+    </LinearLayout>
+</RelativeLayout>

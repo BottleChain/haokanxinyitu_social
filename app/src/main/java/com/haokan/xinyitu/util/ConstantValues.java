@@ -7,11 +7,23 @@ public class ConstantValues {
     public static String KEY_SP_SESSIONID = "sessionid";
     public static String KEY_SP_AVATAR_URL = "avatarurl"; //保存的头像地址
     public static String KEY_SP_NICKNAME = "nickname"; //保存的昵称
+    public static String KEY_SP_DESC = "desc"; //个人描述
+    public static String KEY_SP_PHONENUM = "phone"; //个人手机号
+    public static String KEY_SP_WEIXIN = "weixin"; //个人手机号
+    public static String KEY_SP_WEIBO = "weibo";
+    public static String KEY_SP_QQ = "qq";
+    public static String KEY_SP_GETLOCATION = "getlocation"; //是否获取地理位置的开关
 
     public static String PATH_CLIP_PH = "user_cut_ph"; //剪裁的头像存储的位置
     public static String PATH_DOWNLOAD_PIC = "/HaoKanYiTu/YituDownloadPic/"; //保存下载的图片到本地用的位置
     public static String PATH_DOWNLOAD_UPDATA_APK = "/HaoKanYiTu/Updata/";
     public static String OS = "android";
+
+    public static String ACTION_MYFOLLOWS_CHANGE = "action_myfollows_change";
+    public static String ACTION_LIKESTATUS_CHANGE = "action_likestatus_change";
+    public static String KEY_ALBUMID = "albumid";
+    public static String KEY__USERID = "userid";
+    public static String KEY_NEWSTATUS = "status";
 
     /** gridView列表页每次访问服务器加载多少个图片，按页访问，每页的数量 */
     public static int GRID_PAGE_SIZE = 30;
