@@ -29,9 +29,10 @@
             android:typeface="normal"
             android:hint="请输入您的手机号码"
             android:textSize="14sp"
+            android:textColorHighlight="@color/hei_40"
             android:background="@null"
             android:layout_marginLeft="3dp"
-            android:layout_alignBaseline="@id/tv_1"
+            android:layout_marginTop="37dp"
             android:layout_toRightOf="@id/tv_1"
             android:textColor="@color/edittext"
             android:inputType="phone"
@@ -57,8 +58,8 @@
             android:typeface="normal"
             android:text="@string/indentifycode"
             android:textSize="14sp"
-            android:layout_below="@id/devider_1"
             android:layout_marginLeft="36dp"
+            android:layout_below="@id/devider_1"
             android:layout_marginTop="25dp"
             android:textColor="@color/hei_30"
             android:layout_width="wrap_content"
@@ -70,7 +71,8 @@
             android:typeface="normal"
             android:textColor="@color/anhuang"
             android:textSize="14sp"
-            android:layout_alignBaseline="@id/tv_2"
+            android:layout_below="@id/devider_1"
+            android:layout_marginTop="18dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="30dp"
             android:padding="7dp"
@@ -79,6 +81,7 @@
             android:layout_width="88dp"
             android:layout_height="wrap_content"/>
 
+            <!--android:layout_alignBaseline="@id/tv_2"-->
         <EditText
             android:id="@+id/et_2"
             android:includeFontPadding="false"
@@ -89,7 +92,8 @@
             android:singleLine="true"
             android:layout_marginLeft="3dp"
             android:inputType="number"
-            android:layout_alignBaseline="@id/tv_2"
+            android:layout_below="@id/devider_1"
+            android:layout_marginTop="18dp"
             android:layout_toRightOf="@id/tv_2"
             android:layout_toLeftOf="@id/tv_desc"
             android:textColor="@color/edittext"
@@ -131,19 +135,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+            <!--android:layout_alignBaseline="@id/tv_password"-->
         <EditText
             android:id="@+id/et_password"
             android:includeFontPadding="false"
             android:typeface="normal"
-            android:hint="输入密码"
+            android:hint="请输入密码"
             android:textSize="14sp"
             android:background="@null"
             android:layout_marginLeft="5dp"
-            android:layout_alignBaseline="@id/tv_password"
             android:layout_toRightOf="@id/tv_password"
             android:textColor="@color/edittext"
+            android:textColorHighlight="@color/hei_40"
             android:inputType="textPassword"
             android:singleLine="true"
+            android:layout_below="@id/divider_2"
+            android:layout_marginTop="18dp"
             android:padding="7dp"
             android:layout_marginRight="30dp"
             android:layout_width="match_parent"
@@ -172,6 +179,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+            <!--android:layout_alignBaseline="@id/tv_invitecode"-->
         <EditText
             android:id="@+id/et_3"
             android:includeFontPadding="false"
@@ -181,7 +189,9 @@
             android:singleLine="true"
             android:background="@null"
             android:layout_marginLeft="3dp"
-            android:layout_alignBaseline="@id/tv_invitecode"
+            android:textColorHighlight="@color/hei_40"
+            android:layout_below="@id/devider_3"
+            android:layout_marginTop="18dp"
             android:layout_toRightOf="@id/tv_invitecode"
             android:textColor="@color/edittext"
             android:inputType="none"

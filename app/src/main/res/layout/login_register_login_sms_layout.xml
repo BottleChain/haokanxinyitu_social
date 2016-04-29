@@ -27,7 +27,8 @@
             android:background="@null"
             android:hint="请输入您的手机号码"
             android:layout_marginLeft="2dp"
-            android:layout_alignBaseline="@id/tv_1"
+            android:layout_marginTop="37dp"
+            android:textColorHighlight="@color/hei_40"
             android:layout_toRightOf="@id/tv_1"
             android:textColor="@color/edittext"
             android:padding="7dp"
@@ -67,7 +68,8 @@
             android:typeface="normal"
             android:textColor="@color/anhuang"
             android:textSize="14sp"
-            android:layout_alignBaseline="@id/tv_2"
+            android:layout_below="@id/devider_1"
+            android:layout_marginTop="18dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="30dp"
             android:text="@string/getindentifycode"
@@ -87,7 +89,9 @@
             android:inputType="number"
             android:padding="7dp"
             android:singleLine="true"
-            android:layout_alignBaseline="@id/tv_2"
+            android:layout_below="@id/devider_1"
+            android:layout_marginTop="18dp"
+            android:textColorHighlight="@color/hei_40"
             android:layout_toRightOf="@id/tv_2"
             android:layout_toLeftOf="@id/tv_desc"
             android:textColor="@color/edittext"
@@ -112,7 +116,6 @@
             android:background="@color/hei_10"
             android:layout_width="match_parent"
             android:layout_height="1dp"/>
-
         <TextView
             android:id="@+id/tv_4"
             android:includeFontPadding="false"

@@ -102,6 +102,12 @@ public class MyFollowTimeLineFragment extends Base_PTR_LoadMore_Fragment impleme
             if (mHasFootView) {
                 removeFootView();
             }
+            mPullToRefreshListView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mPullToRefreshListView.onRefreshComplete();
+                }
+            }, 600);
             return;
         }
         super.loadData(context);

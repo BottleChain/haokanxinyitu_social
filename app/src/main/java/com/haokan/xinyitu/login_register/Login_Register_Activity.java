@@ -523,7 +523,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         电信：133、153、180、189、（1349卫通）
         总结起来就是第一位必定为1，第二位必定为3或5或8，其他位置的可以为0-9
         */
-        String telRegex = "^((1[358][0-9])|(14[57])|(17[0678]))\\d{8}$";
+        String telRegex = "^((1[3578][0-9])|(14[57])|)\\d{8}$";
         if (TextUtils.isEmpty(num)) {
             ToastManager.showShort(this, "手机号码不能为空");
             return false;
