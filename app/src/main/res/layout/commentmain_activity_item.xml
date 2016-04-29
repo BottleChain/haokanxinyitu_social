@@ -10,7 +10,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"/>
 
-    <TextView
+    <com.rockerhieu.emojicon.EmojiconTextView
         android:id="@+id/tv_author"
         android:text="发布者"
         android:includeFontPadding="false"
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <TextView
+    <com.rockerhieu.emojicon.EmojiconTextView
         android:id="@+id/tv_author_to"
         android:text="被回复者"
         android:includeFontPadding="false"
@@ -61,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <TextView
+    <com.rockerhieu.emojicon.EmojiconTextView
         android:id="@+id/tv_desc"
         android:text="当清晨的第一缕阳光洒进窗子,我开始怀疑，漫长的记忆是否只是一场发生在梦里的幻境."
         android:includeFontPadding="false"

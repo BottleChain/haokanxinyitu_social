@@ -60,7 +60,7 @@ public class MyFollowsActivity extends BaseActivity implements View.OnClickListe
         mLvFollows = (ListView) findViewById(R.id.lv_listview);
         mLoadingLayout = findViewById(R.id.loading_layout);
         mNetErrorLayout = findViewById(R.id.net_error_layout);
-        mNoFollowedLayout = findViewById(R.id.ll_no_followed);
+        mNoFollowedLayout = findViewById(R.id.ll_no_item);
 
         mLvFollows.setOnScrollListener(new PauseLoadImgOnScrollListener());
         mIbBack.setOnClickListener(this);
@@ -98,6 +98,7 @@ public class MyFollowsActivity extends BaseActivity implements View.OnClickListe
                 if (response.getErr_code() == 0) {
                     mMyFollowsUser = response.getData();
                     App.sMyFollowsUser = mMyFollowsUser;
+                    mHasMoreData = true;
                     loadUsersInfo();
                 } else {
                     mNoFollowedLayout.setVisibility(View.VISIBLE);
@@ -324,7 +325,7 @@ public class MyFollowsActivity extends BaseActivity implements View.OnClickListe
      */
     private class PauseLoadImgOnScrollListener extends PauseOnScrollListener {
         public PauseLoadImgOnScrollListener() {
-            super(ImageLoader.getInstance(), true, true, new AbsListView.OnScrollListener() {
+            super(ImageLoader.getInstance(), false, true, new AbsListView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
                     if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {

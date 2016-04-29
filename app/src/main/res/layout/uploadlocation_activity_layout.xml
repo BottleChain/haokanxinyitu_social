@@ -38,6 +38,7 @@
     </RelativeLayout>
 
     <EditText
+        android:visibility="gone"
         android:id="@+id/et_edit"
         android:includeFontPadding="false"
         android:typeface="normal"
@@ -52,6 +53,7 @@
         android:layout_height="30dp"/>
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/tv_edit_bg"
         android:includeFontPadding="false"
         android:typeface="normal"
@@ -68,10 +70,10 @@
         android:gravity="center"
         android:layout_height="30dp"/>
 
+        <!--android:layout_marginTop="9dp"-->
     <ListView
         android:id="@+id/lv_location"
-        android:layout_below="@+id/et_edit"
-        android:layout_marginTop="9dp"
+        android:layout_below="@+id/rl_header"
         android:listSelector="@color/touming"
         android:divider="@null"
         android:layout_width="match_parent"

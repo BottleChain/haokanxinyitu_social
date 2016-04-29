@@ -12,7 +12,7 @@
         android:layout_width="46dp"
         android:layout_height="46dp"/>
 
-    <TextView
+    <com.rockerhieu.emojicon.EmojiconTextView
         android:id="@+id/tv_1"
         android:includeFontPadding="false"
         android:typeface="normal"

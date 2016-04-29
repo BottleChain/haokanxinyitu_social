@@ -176,6 +176,10 @@ public class UploadTagsActivity extends BaseActivity implements View.OnClickList
             ToastManager.showShort(this, "标签不能为空");
             return;
         }
+        if (s.contains("@")) {
+            ToastManager.showShort(UploadTagsActivity.this, "输入内容中不能含有 @ 符号");
+            return;
+        }
         boolean success = dynamicAddTag(s);
         if (success) {
             mEtUploadEdit.setText("");

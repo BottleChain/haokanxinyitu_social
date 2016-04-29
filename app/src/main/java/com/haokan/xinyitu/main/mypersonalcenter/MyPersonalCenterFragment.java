@@ -1,6 +1,7 @@
 package com.haokan.xinyitu.main.mypersonalcenter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,9 +25,11 @@ import com.haokan.xinyitu.base.BaseResponseBean;
 import com.haokan.xinyitu.albumfailed.FailedAlbumInfoBean;
 import com.haokan.xinyitu.database.MyDatabaseHelper;
 import com.haokan.xinyitu.main.Base_PTR_LoadMore_Fragment;
+import com.haokan.xinyitu.main.MainActivity;
 import com.haokan.xinyitu.main.discovery.AlbumInfoBean;
 import com.haokan.xinyitu.main.discovery.RequestBeanAlbumInfo;
 import com.haokan.xinyitu.main.discovery.ResponseBeanAlbumInfo;
+import com.haokan.xinyitu.notice.NoticeMainActivity;
 import com.haokan.xinyitu.util.ConstantValues;
 import com.haokan.xinyitu.util.HttpClientManager;
 import com.haokan.xinyitu.util.ImageLoaderManager;
@@ -122,6 +125,19 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         mRlFollowMe.setOnClickListener((View.OnClickListener) getActivity());
         mTvChangePersonData.setOnClickListener((View.OnClickListener) getActivity());
         mHeaderFailed.findViewById(R.id.tv_failed_album).setOnClickListener((View.OnClickListener) getActivity());
+        mIbPersonNotice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getActivity() instanceof MainActivity) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    activity.resetNoticePoint();
+                    Intent intent = new Intent(getActivity(), NoticeMainActivity.class);
+                    startActivity(intent);
+                    mIvNoticePoint.setVisibility(View.GONE);
+                }
+            }
+        });
+        mIvNoticePoint.setVisibility(((MainActivity)getActivity()).getNoticePointVisiblity() ? View.VISIBLE : View.GONE);
         mNotLoginLayout.findViewById(R.id.tv_not_login).setOnClickListener((View.OnClickListener) getActivity());
         mNotLoginLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,8 +165,10 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         if (TextUtils.isEmpty(App.sessionId)) {
             mIsLogin = false;
             mNotLoginLayout.setVisibility(View.VISIBLE);
+            mLoadingLayout.setVisibility(View.GONE);
         } else {
             mIsLogin = true;
+            mLoadingLayout.setVisibility(View.VISIBLE);
             mNotLoginLayout.setVisibility(View.GONE);
         }
         return view;
@@ -161,9 +179,28 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         loadData(getActivity());
     }
 
+//    @Override
+//    public void loadData(Context context) {
+//        if (TextUtils.isEmpty(App.sessionId)) {
+//            mIsLogin = false;
+//            mNotLoginLayout.setVisibility(View.VISIBLE);
+//            mLoadingLayout.setVisibility(View.GONE);
+//        } else {
+//            mIsLogin = true;
+//            mNotLoginLayout.setVisibility(View.GONE);
+//            super.loadData(context);
+//        }
+//    }
+
     @Override
     protected boolean hasLogin() {
         return !TextUtils.isEmpty(App.sessionId);
+    }
+
+    public void setNoticeVisible(int visible) {
+        if (mIvNoticePoint != null) {
+            mIvNoticePoint.setVisibility(visible);
+        }
     }
 
     private boolean hasFailedHeader = false;
@@ -284,7 +321,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         }
     }
 
-    //    @Override
+//    @Override
 //    protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
 //        ResponseBeanAlbumListPersonnal responseBeanAlbumList = (ResponseBeanAlbumListPersonnal) response;
 //        mPullToRefreshListView.setVisibility(View.VISIBLE);
@@ -342,8 +379,22 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         edit.apply();
     }
 
-    private void loadAblumIdList(final Context context) {
+    private void hasNoAblum(Context context) {
+        if (context == null) {
+            return;
+        }
+        mAlbumIdList = null;
+        mCurrentPage = 0;
+        mHasMoreData = false;
+        if (mAdapter == null || mAdapter.getData() != null) {
+            mAdapter = new PersonnalcenterFragmentAdapter(context, null, (View.OnClickListener)getActivity(), true);
+            mListView.setAdapter(mAdapter);
+        }
+        mListView.setBackgroundColor(getActivity().getResources().getColor(R.color.main_color_actionbar_item01));
+        mLoadingLayout.setVisibility(View.GONE);
+    }
 
+    private void loadAblumIdList(final Context context) {
         //获取个人信息存下来
         String url = UrlsUtil.getMyAlbumsUrl(App.sessionId);
         Log.d("wangzixu", "loadAblumIdList url = " + url);
@@ -362,20 +413,19 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
                     }
                     //mTvAblumCount.setText(String.valueOf(mAlbumIdList.size()));
                     Log.d("wangzixu", "loadAblumIdList url success ");
-                    loadAlbumInfoData(context, true);
+                    if (mAlbumIdList == null || mAlbumIdList.size() == 0) {
+                        hasNoAblum(context);
+                    } else {
+                        loadAlbumInfoData(context, true);
+                    }
                 } else {//没有发布过组图 返回失败
-                    mAlbumIdList = null;
-                    mCurrentPage = 0;
-                    mHasMoreData = false;
-                    mAdapter = new PersonnalcenterFragmentAdapter(context, null, (View.OnClickListener)getActivity(), true);
-                    mListView.setAdapter(mAdapter);
-                    mListView.setBackgroundColor(getActivity().getResources().getColor(R.color.main_color_actionbar_item01));
-                    mLoadingLayout.setVisibility(View.GONE);
+                    hasNoAblum(context);
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanAlbumListPersonnal errorResponse) {
+                hasNoAblum(context);
             }
 
             @Override
@@ -483,6 +533,9 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
                     @Override
                     public void run() {
                         mAdapter.notifyDataSetChanged();
+                        if (mData.size() == 0 && mAlbumIdList.size() == 0) {
+                            hasNoAblum(getActivity());
+                        }
                     }
                 });
                 mLastLoadDataTime = SystemClock.uptimeMillis();
@@ -492,6 +545,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
 
     public void loadAlbumInfoData(final Context context, final boolean isClearData) {
         if (mIsLoading) {
+            mLoadingLayout.setVisibility(View.GONE);
             return;
         }
 
@@ -589,12 +643,16 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
      */
     @Override
     public void addFirstAblum(AlbumInfoBean album) {
-        if (mAdapter != null) {
+        if (mAdapter != null && mAdapter.getData() != null) {
             mData.add(0, album);
             int firstVisiblePosition = mListView.getFirstVisiblePosition();
             mAdapter.notifyDataSetChanged();
             mListView.setSelection(firstVisiblePosition + 1);
             mLastLoadDataTime = SystemClock.uptimeMillis();
+        } else if (getActivity() != null) {
+            mData.add(0, album);
+            mAdapter = new PersonnalcenterFragmentAdapter(getActivity(), mData, (View.OnClickListener)getActivity(), true);
+            mListView.setAdapter(mAdapter);
         }
     }
 }

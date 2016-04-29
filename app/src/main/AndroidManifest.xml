@@ -9,8 +9,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_LOGS" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.SET_DEBUG_APP" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -216,6 +214,11 @@
 
         <activity
             android:name=".albumfailed.FailedAlbumActivity"
+            android:theme="@style/My.Holo.NoActionBar"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".notice.NoticeMainActivity"
             android:theme="@style/My.Holo.NoActionBar"
             android:screenOrientation="portrait" />
 

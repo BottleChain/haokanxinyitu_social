@@ -640,7 +640,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                     break;
                 case R.id.tv_4: //确认
                     //上传头像
-                    String sessionId = App.sessionId;
+                    final String sessionId = App.sessionId;
                     if (TextUtils.isEmpty(sessionId)) {
                         ToastManager.showShort(Login_Register_Activity.this, "sessionId null, return!");
                         return;
@@ -648,77 +648,129 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                         Log.d("wangzixu", "PersonDataClickListener sessionId = " + sessionId);
                     }
 
+                    if (TextUtils.isEmpty(mClipedHpPath)) {
+                        ToastManager.showShort(Login_Register_Activity.this, "您还没有设置头像");
+                        return;
+                    }
+
                     //上传昵称
                     final String nickName = mEtPersonDataNickName.getText().toString().trim();
-                    if (!TextUtils.isEmpty(nickName)) {
-                        String url = UrlsUtil.getModilyNickNameUrl(sessionId);
-                        RequestParams params = new RequestParams();
-                        params.put("nickname", SecurityUtil.haokanEncode(nickName));
-                        Log.d("wangzixu", "PersonDataClickListener ModilyNickNameUrl url = " + url);
-                        HttpClientManager.getInstance(Login_Register_Activity.this).postData(url,params, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
-                            @Override
-                            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
-                                if (response.getErr_code() != 0) {
-                                    ToastManager.showShort(Login_Register_Activity.this, "昵称修改失败 = " + response.getErr_msg());
-                                } else {
-                                    mDefaultSharedPreferences.edit().putString(ConstantValues.KEY_SP_NICKNAME
-                                            , nickName)
-                                            .apply(); //保存昵称信息
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
-                                ToastManager.showShort(Login_Register_Activity.this, "昵称修改失败 = onFailure");
-                                Log.d("wangzixu", "PersonDataClickListener 昵称修改失败 = " + rawJsonData);
-                            }
-
-                            @Override
-                            protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
-                                return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
-                            }
-                        });
-                    } else {
+                    if (TextUtils.isEmpty(nickName)) {
                         ToastManager.showShort(Login_Register_Activity.this, "请输入正确的昵称");
                         return;
                     }
 
-                    if (!TextUtils.isEmpty(mClipedHpPath)) {
-                        String url = UrlsUtil.getUploadAvatarUrl(sessionId);
-                        Log.d("wangzixu", "PersonDataClickListener upavatar url = " + url);
-                        //HttpClientManager.getInstance(Login_Register_Activity.this).LogCookcie();
-                        File file = new File(mClipedHpPath);
-                        if (file.exists() && file.length() > 0) {
-                            HttpClientManager.getInstance(Login_Register_Activity.this).upLoadAvatarFile(url, file, new BaseJsonHttpResponseHandler<ResponseBeanUploadPh>() {
-                                @Override
-                                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanUploadPh response) {
-                                    //ToastManager.showShort(Login_Register_Activity.this, "上传成功 = " + response.getErr_msg());
-                                    if (response.getErr_code() != 0) {
-                                        ToastManager.showShort(Login_Register_Activity.this, "头像上传失败 = " + response.getErr_msg());
-                                    }
-                                    mDefaultSharedPreferences.edit().putString(ConstantValues.KEY_SP_AVATAR_URL
-                                            , ImageDownloader.Scheme.FILE.wrap(mClipedHpPath))
-                                            .apply(); //保存头像信息
-                                }
-
-                                @Override
-                                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanUploadPh errorResponse) {
-                                    ToastManager.showShort(Login_Register_Activity.this, "失败 ");
-                                    Log.d("wangzixu", "PersonDataClickListener 头像上传失败 = " + rawJsonData);
-                                }
-
-                                @Override
-                                protected ResponseBeanUploadPh parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
-                                    return JsonUtil.fromJson(rawJsonData, ResponseBeanUploadPh.class);
-                                }
-                            });
+                    showLoadingProgress();
+                    //检测昵称是否重复
+                    String urlNameRepeat = UrlsUtil.getCanRegNickNameUrl(sessionId);
+                    final String encodeName = SecurityUtil.haokanEncode(nickName);
+                    RequestParams params = new RequestParams();
+                    params.put("nickname", encodeName);
+                    Log.d("wangzixu", "PersonDataClickListener getCanRegNickNameUrl = " + urlNameRepeat);
+                    HttpClientManager.getInstance(Login_Register_Activity.this).postData(urlNameRepeat ,params, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+                            if (response.getErr_code() == 0) {
+                                modifyNickName(encodeName, nickName);
+                            } else {
+                                disMissLoadingProgress();
+                                ToastManager.showShort(Login_Register_Activity.this, response.getErr_msg());
+                                Log.d("wangzixu", "PersonDataClickListener 检测昵称是否重复, 失败 = " + response.getErr_msg());
+                            }
                         }
-                    }
-                    goHomePageActivity();
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
+                            ToastManager.showShort(Login_Register_Activity.this, "检测昵称是否重复失败 = onFailure");
+                            Log.d("wangzixu", "PersonDataClickListener 检测昵称是否重复失败 = " + rawJsonData);
+                            disMissLoadingProgress();
+                        }
+
+                        @Override
+                        protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                            return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+                        }
+                    });
+
                     break;
                 default:
                     break;
             }
+        }
+    }
+
+    private void modifyNickName(String encodeName, final String nickName) {
+        String url = UrlsUtil.getModilyNickNameUrl(App.sessionId);
+        RequestParams params = new RequestParams();
+        params.put("nickname", encodeName);
+        Log.d("wangzixu", "PersonDataClickListener ModilyNickNameUrl url = " + url);
+        HttpClientManager.getInstance(Login_Register_Activity.this).postData(url, params, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
+                if (response.getErr_code() == 0) {
+                    mDefaultSharedPreferences.edit().putString(ConstantValues.KEY_SP_NICKNAME
+                            , nickName)
+                            .apply(); //保存昵称信息
+                    uploadAvatar();
+                } else {
+                    ToastManager.showShort(Login_Register_Activity.this, "昵称修改失败 = " + response.getErr_msg());
+                    Log.d("wangzixu", "PersonDataClickListener 昵称修改失败  = " + response.getErr_msg());
+                    disMissLoadingProgress();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, BaseResponseBean errorResponse) {
+                ToastManager.showShort(Login_Register_Activity.this, "昵称修改失败 = onFailure");
+                Log.d("wangzixu", "PersonDataClickListener 昵称修改失败 = " + rawJsonData);
+                disMissLoadingProgress();
+            }
+
+            @Override
+            protected BaseResponseBean parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                return JsonUtil.fromJson(rawJsonData, BaseResponseBean.class);
+            }
+        });
+    }
+
+    private void uploadAvatar() {
+        String url = UrlsUtil.getUploadAvatarUrl(App.sessionId);
+        Log.d("wangzixu", "PersonDataClickListener upavatar url = " + url);
+        //HttpClientManager.getInstance(Login_Register_Activity.this).LogCookcie();
+        File file = new File(mClipedHpPath);
+        if (file.exists() && file.length() > 0) {
+            HttpClientManager.getInstance(Login_Register_Activity.this).upLoadAvatarFile(url, file, new BaseJsonHttpResponseHandler<ResponseBeanUploadPh>() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanUploadPh response) {
+                    //ToastManager.showShort(Login_Register_Activity.this, "上传成功 = " + response.getErr_msg());
+                    disMissLoadingProgress();
+                    if (response.getErr_code() == 0) {
+                        mDefaultSharedPreferences.edit().putString(ConstantValues.KEY_SP_AVATAR_URL
+                                , ImageDownloader.Scheme.FILE.wrap(mClipedHpPath))
+                                .apply(); //保存头像信息
+                        goHomePageActivity();
+                    } else {
+                        ToastManager.showShort(Login_Register_Activity.this, "头像上传失败 = " + response.getErr_msg());
+                        Log.d("wangzixu", "PersonDataClickListener 头像上传失败 = " + response.getErr_msg());
+                    }
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanUploadPh errorResponse) {
+                    ToastManager.showShort(Login_Register_Activity.this, "失败 ");
+                    Log.d("wangzixu", "PersonDataClickListener 头像上传失败 = " + rawJsonData);
+                    disMissLoadingProgress();
+                }
+
+                @Override
+                protected ResponseBeanUploadPh parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                    return JsonUtil.fromJson(rawJsonData, ResponseBeanUploadPh.class);
+                }
+            });
+        } else {
+            ToastManager.showShort(Login_Register_Activity.this, "失败 ");
+            Log.d("wangzixu", "PersonDataClickListener 头像上传失败 头像文件不存在!");
+            disMissLoadingProgress();
         }
     }
 
@@ -963,7 +1015,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     private void showLoadingProgress() {
         if (mLoadingProgress == null) {
             mLoadingProgress = new Dialog(this, R.style.loading_progress);
-            mLoadingProgress.setContentView(R.layout.loading_layout);
+            mLoadingProgress.setContentView(R.layout.loading_layout_progressdialog_titleloading);
             mLoadingProgress.setCancelable(false);
         }
         mLoadingProgress.show();

@@ -23,6 +23,9 @@ public class UrlsUtil {
 
         public static final String URL_HOST_user = "http://user.demo.levect.com"; //用户部分域名，https://user.levect.com
         public static final String URL_HOST_yitu = "http://1px.demo.levect.com"; //用户部分域名，http://1px.levect.com
+
+//        public static final String URL_HOST_user = "https://user.levect.com"; //用户部分域名，https://user.levect.com
+//        public static final String URL_HOST_yitu = "http://1px.levect.com"; //用户部分域名，http://1px.levect.com
         //注册登录
         public static final String URL_apiUserLogin_c = "apiUserLogin";
         public static final String URL_sendsms_a = "SendSms"; //发送短信
@@ -78,6 +81,36 @@ public class UrlsUtil {
 
         public static final String URL_apialbumlike_c = "apialbumlike"; //点赞相关C
         public static final String URL_LikeAlbum_a = "LikeAlbum"; //点赞
+
+        public static final String URL_apinotice_c = "apinotice"; //通知相关C
+        public static final String URL_HasLastestNotice_a = "HasLastestNotice";
+        public static final String URL_MyReceivedLastestNoticeList_a = "MyReceivedLastestNoticeList";
+        public static final String URL_MyReceivedNoticeIdList_a = "MyReceivedNoticeIdList"; //我的所有通知列表ID
+        public static final String URL_MyReceivedNoticeList_a = "MyReceivedNoticeList";
+
+        public static final String URL_apilocation_c = "apilocation"; //location相关C
+        public static final String URL_GetLocations_a = "GetLocations";
+    }
+
+    public static String getLocationsUrl(String sessidonId, String latlng) {
+        String data = "{\"latlng\":" + latlng + "}";
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_GetLocations_a, Urls.URL_apilocation_c, data, Urls.URL_V, sessidonId);
+    }
+
+    public static String getMyReceivedNoticeListUrl(String sessidonId, String data) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_MyReceivedNoticeList_a, Urls.URL_apinotice_c, data, Urls.URL_V, sessidonId);
+    }
+
+    public static String getMyReceivedNoticeIdListUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_MyReceivedNoticeIdList_a, Urls.URL_apinotice_c, null, Urls.URL_V, sessidonId);
+    }
+
+    public static String getMyReceivedLastestNoticeListUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_MyReceivedLastestNoticeList_a, Urls.URL_apinotice_c, null, Urls.URL_V, sessidonId);
+    }
+
+    public static String getHasLstestNoticeUrl(String sessidonId) {
+        return getYiTuUrlWithSessionId(Urls.URL_HOST_yitu, Urls.URL_HasLastestNotice_a, Urls.URL_apinotice_c, null, Urls.URL_V, sessidonId);
     }
 
     public static String getMyMomentListUrl(String sessidonId) {

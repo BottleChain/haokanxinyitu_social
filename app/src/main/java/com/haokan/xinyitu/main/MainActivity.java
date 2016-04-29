@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,9 +23,16 @@ import com.haokan.xinyitu.main.discovery.AlbumInfoBean;
 import com.haokan.xinyitu.main.discovery.DiscoveryFragment;
 import com.haokan.xinyitu.main.event.EventFragment;
 import com.haokan.xinyitu.main.mypersonalcenter.MyPersonalCenterFragment;
+import com.haokan.xinyitu.notice.ResponseBeanLastestNotice;
 import com.haokan.xinyitu.upload.UpLoadMainActivity;
 import com.haokan.xinyitu.util.ConstantValues;
+import com.haokan.xinyitu.util.HttpClientManager;
+import com.haokan.xinyitu.util.JsonUtil;
 import com.haokan.xinyitu.util.ToastManager;
+import com.haokan.xinyitu.util.UrlsUtil;
+import com.loopj.android.http.BaseJsonHttpResponseHandler;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends BaseMainActivity implements View.OnLongClickListener {
 
@@ -41,6 +49,8 @@ public class MainActivity extends BaseMainActivity implements View.OnLongClickLi
     private View mCurrentSelectTab;
     private BaseFragment mCurrentFragment;
     BroadcastReceiver mReceiver; // 刚发布完组图后，要在应该显示的页面显示出来（发现或者个人中心页），用来接收发完组图的广播
+    private Handler mHandler = new Handler();
+    private View mNoticePoint;
 
     private void assignViews() {
         mIvBottomBar1 = (ImageButton) findViewById(R.id.iv_bottom_bar_1);
@@ -48,6 +58,7 @@ public class MainActivity extends BaseMainActivity implements View.OnLongClickLi
         mIvBottomBar3 = (ImageButton) findViewById(R.id.iv_bottom_bar_3);
         mIvBottomBar4 = (ImageButton) findViewById(R.id.iv_bottom_bar_4);
         mIvBottomBar5 = (ImageButton) findViewById(R.id.iv_bottom_bar_5);
+        mNoticePoint = findViewById(R.id.iv_notice_point);
 
         mIvBottomBar1.setOnClickListener(this);
         mIvBottomBar2.setOnClickListener(this);
@@ -61,6 +72,8 @@ public class MainActivity extends BaseMainActivity implements View.OnLongClickLi
         mIvBottomBar5.setOnLongClickListener(this);
 
         mFm = getFragmentManager();
+
+        pullNotice();
     }
 
     @Override
@@ -70,6 +83,50 @@ public class MainActivity extends BaseMainActivity implements View.OnLongClickLi
         assignViews();
         setDiscoveryFragment();
         registerMainBroadcast();
+    }
+
+    private Runnable mPullNoticeRun = new Runnable() {
+        @Override
+        public void run() {
+            pullNotice();
+        }
+    };
+
+    private void pullNotice() {
+        if (!TextUtils.isEmpty(App.sessionId)) {
+            String url = UrlsUtil.getHasLstestNoticeUrl(App.sessionId);
+            Log.d("wangzixu", "pullNotice url = " + url);
+            HttpClientManager.getInstance(MainActivity.this).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanLastestNotice>() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanLastestNotice response) {
+                    if (response.getErr_code() == 0) {
+                        if (response.getData().getCount() > 0) {
+                            mNoticePoint.setVisibility(View.VISIBLE);
+                            if (mMyPersonalCenterFragment != null) {
+                                mMyPersonalCenterFragment.setNoticeVisible(View.VISIBLE);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanLastestNotice errorResponse) {
+
+                }
+
+                @Override
+                protected ResponseBeanLastestNotice parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                    return JsonUtil.fromJson(rawJsonData, ResponseBeanLastestNotice.class);
+                }
+            });
+        } else {
+            mNoticePoint.setVisibility(View.GONE);
+            if (mMyPersonalCenterFragment != null) {
+                mMyPersonalCenterFragment.setNoticeVisible(View.GONE);
+            }
+        }
+        mHandler.removeCallbacks(mPullNoticeRun);
+        mHandler.postDelayed(mPullNoticeRun, 30000);
     }
 
     /**
@@ -219,6 +276,7 @@ public class MainActivity extends BaseMainActivity implements View.OnLongClickLi
                     if (mMyPersonalCenterFragment != null) {
                         mMyPersonalCenterFragment.addFirstAblum(album);
                     }
+                    Log.d("wangzixu", "registerMainBroadcast onReceive 刚发布了组图---");
                 } else if (ConstantValues.ACTION_MYFOLLOWS_CHANGE.equals(action)) {
                     String userId = intent.getStringExtra(ConstantValues.KEY__USERID);
                     boolean newStatus = intent.getBooleanExtra(ConstantValues.KEY_NEWSTATUS, false);
@@ -351,5 +409,13 @@ public class MainActivity extends BaseMainActivity implements View.OnLongClickLi
                 break;
         }
         return false;
+    }
+
+    public void resetNoticePoint() {
+        mNoticePoint.setVisibility(View.GONE);
+    }
+
+    public boolean getNoticePointVisiblity() {
+        return mNoticePoint.getVisibility() == View.VISIBLE;
     }
 }

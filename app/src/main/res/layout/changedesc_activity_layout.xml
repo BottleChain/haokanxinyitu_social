@@ -53,7 +53,7 @@
             android:layout_height="match_parent"/>
     </RelativeLayout>
 
-    <EditText
+    <com.rockerhieu.emojicon.EmojiconEditText
         android:id="@+id/et_change"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
@@ -62,6 +62,7 @@
         android:textColor="@color/hei_90"
         android:textColorHint="@color/hei_20"
         android:hint="简单说一句，描述一下你自己"
+        android:lineSpacingExtra="4dp"
         android:gravity="left|top"
         android:paddingTop="10dp"
         android:paddingLeft="10dp"

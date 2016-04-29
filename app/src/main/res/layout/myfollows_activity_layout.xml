@@ -57,7 +57,7 @@
 
     <LinearLayout
         android:visibility="gone"
-        android:id="@+id/ll_no_followed"
+        android:id="@+id/ll_no_item"
         android:orientation="vertical"
         android:layout_below="@id/rl_header"
         android:gravity="center_horizontal"

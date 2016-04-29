@@ -12,7 +12,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"/>
     <!-- 15 6-->
-    <TextView
+    <com.rockerhieu.emojicon.EmojiconTextView
         android:id="@+id/tv_name"
         android:text="Effie Riley"
         android:includeFontPadding="false"
@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <TextView
+    <com.rockerhieu.emojicon.EmojiconTextView
         android:id="@+id/tv_desc"
         android:text="有的鱼是永远都关不住的!"
         android:includeFontPadding="false"

@@ -56,11 +56,12 @@
             android:layout_height="match_parent"/>
 
             <!--android:singleLine="true"-->
-        <EditText
+        <com.rockerhieu.emojicon.EmojiconEditText
             android:id="@+id/et_edit"
             android:includeFontPadding="false"
             android:typeface="normal"
             android:hint="请输入评论内容"
+            android:lineSpacingExtra="4dp"
             android:inputType="none"
             android:background="@drawable/addcomment_edittext_bg"
             android:gravity="center_vertical"

@@ -32,8 +32,8 @@
             android:layout_height="match_parent"/>
 
         <ImageView
-            android:id="@+id/iv_notice_point"
             android:visibility="gone"
+            android:id="@+id/iv_notice_point"
             android:src="@drawable/icon_person_notice_point"
             android:layout_toLeftOf="@id/ib_person_setting"
             android:layout_alignParentBottom="true"
@@ -42,14 +42,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <TextView
+        <com.rockerhieu.emojicon.EmojiconTextView
             android:id="@+id/tv_title"
             android:singleLine="true"
             android:includeFontPadding="false"
             android:typeface="normal"
             android:ellipsize="end"
             android:visibility="gone"
-            android:text="Phillip Fledcher"
+            android:text=""
             android:textSize="16sp"
             android:textColor="@color/bai"
             android:maxWidth="160dp"
@@ -78,6 +78,7 @@
     <!--android:visibility="invisible"-->
 
     <include
+        android:visibility="gone"
         android:id="@+id/loading_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -86,6 +86,13 @@ public class OtherPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impl
         mIvAvatar = (ImageView) mHeader.findViewById(R.id.iv_avatar);
         mIbFollow = mHeader.findViewById(R.id.ib_follow);
 
+//        try {
+//            Typeface typeFace = Typeface.createFromAsset(getResources().getAssets(),"AndroidEmoji.ttf");
+//            mTvHeaderDesc.setTypeface(typeFace);
+//            mTvHeaderTitle.setTypeface(typeFace);
+//        } catch (Exception e) {
+//        }
+
         mRlMyGallery = mHeader.findViewById(R.id.rl_mygallery);
         mTvAblumCount = (TextView) mHeader.findViewById(R.id.tv_mygallery_count);
         mRlMyFollows = mHeader.findViewById(R.id.rl_personalcenter_myfollow);

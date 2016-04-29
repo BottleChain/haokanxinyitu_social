@@ -140,6 +140,10 @@ public class ImageLoaderManager {
         ImageLoader.getInstance().displayImage(imageUrl, new ImageViewAware(img), display_circle_img_options);
     }
 
+    public void simpleDisplayImg(ImageView img, String url) {
+        ImageLoader.getInstance().displayImage(url, img);
+    }
+
     public void asyncLoadImage(final ImageView img, String imageUrl, int width, int heigh) {
         asyncLoadImage(img, imageUrl, width, heigh, null, null, null, null);
     }

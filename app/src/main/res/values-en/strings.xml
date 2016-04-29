@@ -16,4 +16,13 @@
     <string name="nickname">Nickname</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="password">Password</string>
+    <string name="forget_password">Forget password</string>
+    <string name="sms_login">Sms_login</string>
+
+    <string name="TAG_KEY_IMG_HOLDER">TAG_KEY_IMG_HOLDER</string>
+    <string name="TAG_KEY_LISTENER_HOLDER">TAG_KEY_LISTENER_HOLDER</string>
+    <string name="TAG_KEY_IS_FADEIN">TAG_KEY_IS_FADEIN</string>
+    <string name="TAG_KEY_POSITION">TAG_KEY_POSITION</string>
+    <string name="TAG_KEY_BEAN_FOR_BIGIMG">TAG_KEY_POSITION</string>
 </resources>

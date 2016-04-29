@@ -110,6 +110,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -128,4 +129,5 @@ dependencies {
     compile project(':pullToRefreshLibrary')
     compile project(':social_sdk_library_project')
     compile files('libs/AMap_Location_V2.4.0_20160308.jar')
+    compile 'com.rockerhieu.emojicon:library:1.3.3'
 }

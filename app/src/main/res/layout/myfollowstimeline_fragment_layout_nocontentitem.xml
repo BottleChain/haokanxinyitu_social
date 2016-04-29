@@ -3,7 +3,7 @@
     android:background="@color/main_color_actionbar_item01"
     android:focusableInTouchMode="false"
     android:focusable="false"
-    android:id="@+id/ll_no_followed"
+    android:id="@+id/ll_no_item"
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:layout_width="match_parent"

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <!--xxx 赞了你-->
+    <com.rockerhieu.emojicon.EmojiconTextView
+        android:id="@+id/tv_title"
+        android:text="xxx 刚刚评论了你"
+        android:includeFontPadding="false"
+        android:typeface="normal"
+        android:textSize="14sp"
+        android:textColor="@color/bai_50"
+        android:layout_toRightOf="@id/iv_avatar"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_marginLeft="21dp"
+        android:layout_marginRight="70dp"
+        android:paddingTop="17dp"
+        android:paddingBottom="9dp"
+        android:paddingRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_below="@id/tv_title"
+        android:layout_marginLeft="21dp"
+        android:layout_marginBottom="17dp"
+        android:text="5分钟前"
+        android:textSize="10sp"
+        android:textColor="@color/bai_30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

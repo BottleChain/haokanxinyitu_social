@@ -49,7 +49,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
+            <com.rockerhieu.emojicon.EmojiconEditText
                 android:id="@+id/et_edit"
                 android:includeFontPadding="false"
                 android:textCursorDrawable="@drawable/text_cursor_holo_light"

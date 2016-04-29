@@ -9,17 +9,24 @@ import android.widget.TextView;
 
 import com.haokan.xinyitu.R;
 
+import java.util.List;
+
 public class UpLoadLocationAdapter extends BaseAdapter {
     private Context mContext;
     private int mSelectPos;
+    private List<ResponseBeanLocation.LocationAddressBean> mData;
 
-    public UpLoadLocationAdapter(Context context) {
+    public UpLoadLocationAdapter(Context context, List<ResponseBeanLocation.LocationAddressBean> data) {
         mContext = context;
+        mData = data;
     }
 
     @Override
     public int getCount() {
-        return 10;
+        if (mData == null || mData.size() == 0) {
+            return 0;
+        }
+        return mData.size() + 1;
     }
 
     @Override
@@ -34,13 +41,13 @@ public class UpLoadLocationAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 3;
+        return 2;
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position > 1) {
-            return 2;
+            return 1;
         } else {
             return position;
         }
@@ -119,7 +126,7 @@ public class UpLoadLocationAdapter extends BaseAdapter {
 
         public ViewHolder2(View root) {
             super(root);
-            tvlocationitemsub = (TextView) root.findViewById(R.id.tv_locationitem_sub);
+            tvlocationitemsub = (TextView) root.findViewById(R.id.tv_sub);
         }
     }
 }

@@ -151,7 +151,8 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
      * 返回的数据成功，但是errorCode不为0
      */
     protected void loadDataErrCodeError(BaseResponseBean response) {
-
+        mLoadingLayout.setVisibility(View.GONE);
+        Log.d("wangzixu", "loadDataErrCodeError = " + response.getErr_msg());
     }
 
     /**
@@ -167,9 +168,9 @@ public abstract class Base_PTR_LoadMore_Fragment extends BaseFragment implements
         }
         if (mIsLoading) {
             Log.d("wangzixu", "mIsLoading，直接返回");
+            mLoadingLayout.setVisibility(View.GONE);
             return;
         }
-
 
         //处理连续的两次加载数据
         long t = SystemClock.uptimeMillis();

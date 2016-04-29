@@ -53,7 +53,7 @@
             android:layout_height="match_parent"/>
     </RelativeLayout>
 
-    <EditText
+    <com.rockerhieu.emojicon.EmojiconEditText
         android:id="@+id/et_change"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"

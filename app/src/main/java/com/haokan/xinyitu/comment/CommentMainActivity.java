@@ -72,23 +72,22 @@ public class CommentMainActivity extends BaseActivity implements View.OnClickLis
         mIbClose.setOnClickListener(this);
         mListView.setOnItemClickListener(this);
         mListView.setOnScrollListener(new PauseLoadImgOnScrollListener());
-        findViewById(R.id.rl_edit_container).addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                Log.d("wangzixu", "onLayoutChange: bottom, old= " + bottom + ", " + oldBottom);
-                //利用这个玩意监听软键盘的出现和隐藏
-                if (oldBottom != 0 && bottom > oldBottom + 250) { //过滤掉华为手机隐藏显示导航栏的情况
-                    //隐藏了软键盘
-                    resetEditText();
-                }
-            }
-        });
+//        findViewById(R.id.rl_edit_container).addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//            @Override
+//            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+//                Log.d("wangzixu", "onLayoutChange: bottom, old= " + bottom + ", " + oldBottom);
+//                //利用这个玩意监听软键盘的出现和隐藏
+//                if (oldBottom != 0 && bottom > oldBottom + 250) { //过滤掉华为手机隐藏显示导航栏的情况
+//                    //隐藏了软键盘
+//                    resetEditText();
+//                }
+//            }
+//        });
 
         mNetErrorLayout.findViewById(R.id.iv_net_error).setOnClickListener(this);
     }
 
     private void loadCommitIdData() {
-        mLoadingLayout.setVisibility(View.VISIBLE);
         mNoCommentLayout.setVisibility(View.GONE);
         if (HttpClientManager.checkNetWorkStatus(this)) {
             mAlbumId = getIntent().getStringExtra(KEY_INITENT_ALBUMID);
@@ -99,6 +98,7 @@ public class CommentMainActivity extends BaseActivity implements View.OnClickLis
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanCommentIdList response) {
                     if (response.getErr_code() == 0) {
                         mCommitIdBeanList = response.getData();
+                        mHasMoreData = true;
                         loadCommitInfoData(true);
                     } else {
                         if (mCommitIdBeanList == null || mCommitIdBeanList.size() == 0) {
@@ -267,10 +267,12 @@ public class CommentMainActivity extends BaseActivity implements View.OnClickLis
             ToastManager.showShort(CommentMainActivity.this, "您还未登录");
             return;
         }
+        if (comment.contains("@")) {
+            ToastManager.showShort(CommentMainActivity.this, "输入内容中不能含有 @ 符号");
+            return;
+        }
         if (HttpClientManager.checkNetWorkStatus(this)) {
             String url = UrlsUtil.getAddCommentUrl(App.sessionId);
-            Log.d("wangzixu", "addComment url = " + url);
-            Log.d("wangzixu", "addComment comment = " + comment);
             RequestParams params = new RequestParams();
             params.put("album_id", mAlbumId);
             params.put("comment", comment);
@@ -278,6 +280,10 @@ public class CommentMainActivity extends BaseActivity implements View.OnClickLis
                 params.put("to_user_id", m2UserId);
                 params.put("pcomment_id", m2CommentId);
             }
+            Log.d("wangzixu", "addComment album_id = " + mAlbumId);
+            Log.d("wangzixu", "addComment comment = " + comment);
+            Log.d("wangzixu", "addComment to_user_id = " + m2UserId);
+            Log.d("wangzixu", "addComment pcomment_id = " + m2CommentId);
             HttpClientManager.getInstance(this).postData(url, params, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
@@ -334,7 +340,7 @@ public class CommentMainActivity extends BaseActivity implements View.OnClickLis
      */
     private class PauseLoadImgOnScrollListener extends PauseOnScrollListener {
         public PauseLoadImgOnScrollListener() {
-            super(ImageLoader.getInstance(), true, true, new AbsListView.OnScrollListener() {
+            super(ImageLoader.getInstance(), false, true, new AbsListView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
                     if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {

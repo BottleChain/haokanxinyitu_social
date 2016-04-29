@@ -239,7 +239,7 @@ public class FragmentAdapterItemHelper {
             , ViewGroup parent, boolean shouldDisplayDelBtn, boolean shouldDidplayFollowBtn) {
         ViewHolderDiscoveryItem0 holder;
         boolean isShowFadeIn;
-        boolean isHost = App.user_Id.equals(beanDiscovery.getUser_id());// 判断是否是自己发的
+        boolean isHost = TextUtils.isEmpty(App.user_Id) || App.user_Id.equals(beanDiscovery.getUser_id());// 判断是否是自己发的
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.distovery_item_0, parent, false);
             holder = new ViewHolderDiscoveryItem0(convertView);

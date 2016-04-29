@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <EditText
+        <com.rockerhieu.emojicon.EmojiconEditText
             android:id="@+id/et_1"
             android:includeFontPadding="false"
             android:typeface="normal"
@@ -78,6 +78,7 @@
             android:layout_toRightOf="@id/tv_1"
             android:textColor="@color/edittext"
             android:padding="7dp"
+            android:singleLine="true"
             android:layout_marginRight="30dp"
             android:inputType="none"
             android:layout_width="match_parent"

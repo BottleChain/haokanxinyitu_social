@@ -43,7 +43,7 @@ public class FollowMeActivity extends BaseActivity implements View.OnClickListen
     private View mNetErrorLayout;
     private ListView mLvFollows;
     protected int mCurrentPage; //分页加载，当前第几页
-    protected static final int COUNT_ONE_PAGE = 20; //每页多少个数据
+    protected static final int COUNT_ONE_PAGE = 25; //每页多少个数据
     protected boolean mHasMoreData;
     protected boolean mIsLoading = false;
     private ArrayList<ResponseBeanOtherUserInfo.FollowUserInfoBean> mData = new ArrayList<>();
@@ -60,7 +60,7 @@ public class FollowMeActivity extends BaseActivity implements View.OnClickListen
         mLvFollows = (ListView) findViewById(R.id.lv_listview);
         mLoadingLayout = findViewById(R.id.loading_layout);
         mNetErrorLayout = findViewById(R.id.net_error_layout);
-        mNoFollowedLayout = findViewById(R.id.ll_no_followed);
+        mNoFollowedLayout = findViewById(R.id.ll_no_item);
 
         mLvFollows.setOnScrollListener(new PauseLoadImgOnScrollListener());
         mIbBack.setOnClickListener(this);
@@ -97,6 +97,7 @@ public class FollowMeActivity extends BaseActivity implements View.OnClickListen
             public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanFollwsUsers response) {
                 if (response.getErr_code() == 0) {
                     mFollowMeUsers = response.getData();
+                    mHasMoreData = true;
                     loadUsersInfo();
                 } else {
                     mNoFollowedLayout.setVisibility(View.VISIBLE);
@@ -323,7 +324,7 @@ public class FollowMeActivity extends BaseActivity implements View.OnClickListen
      */
     private class PauseLoadImgOnScrollListener extends PauseOnScrollListener {
         public PauseLoadImgOnScrollListener() {
-            super(ImageLoader.getInstance(), true, true, new AbsListView.OnScrollListener() {
+            super(ImageLoader.getInstance(), false, true, new AbsListView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
                     if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {

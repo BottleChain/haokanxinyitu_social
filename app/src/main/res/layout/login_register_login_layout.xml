@@ -19,6 +19,7 @@
             android:textSize="14sp"
             android:layout_marginLeft="36dp"
             android:layout_marginTop="44dp"
+            android:singleLine="true"
             android:textColor="@color/hei_30"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -36,6 +37,7 @@
             android:textColor="@color/edittext"
             android:inputType="phone"
             android:padding="7dp"
+            android:singleLine="true"
             android:layout_marginRight="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -76,6 +78,7 @@
             android:layout_toRightOf="@id/tv_2"
             android:textColor="@color/edittext"
             android:padding="7dp"
+            android:singleLine="true"
             android:layout_marginRight="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

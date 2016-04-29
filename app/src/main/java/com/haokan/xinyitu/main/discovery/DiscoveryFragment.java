@@ -181,7 +181,6 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
     protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
         ResponseBeanAlbumList responseBeanAlbumList = (ResponseBeanAlbumList) response;
         mPullToRefreshListView.setVisibility(View.VISIBLE);
-        mLoadingLayout.setVisibility(View.GONE);
         mAlbumIdList = null;
         //mData.clear();
         mCurrentPage = 0;
@@ -301,9 +300,9 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
     @Override
     protected void loadDataFailed() {
         mLoadingLayout.setVisibility(View.GONE);
-        if (mData.size() == 0) {
-            mNetErrorLayout.setVisibility(View.VISIBLE);
-        }
+//        if (mData.size() == 0) {
+//            mNetErrorLayout.setVisibility(View.VISIBLE);
+//        }
     }
 
     @Override
@@ -324,6 +323,7 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
             return;
         }
         if (mIsLoading) {
+            mLoadingLayout.setVisibility(View.GONE);
             return;
         }
         int begin = mCurrentPage * COUNT_ONE_PAGE;
@@ -404,17 +404,13 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                                         } else {
                                             mAdapter.notifyDataSetChanged();
                                         }
-                                        mIsLoading = false;
-                                        mLoadingLayout.setVisibility(View.GONE);
                                     }
                                 });
                             }
                         }).start();
-                    } else {
-                        //loadDataFailed();
-                        mIsLoading = false;
-                        mLoadingLayout.setVisibility(View.GONE);
                     }
+                    mIsLoading = false;
+                    mLoadingLayout.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -428,6 +424,9 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
                     return JsonUtil.fromJson(rawJsonData, ResponseBeanAlbumInfo.class);
                 }
             });
+        } else {
+            mIsLoading = false;
+            mLoadingLayout.setVisibility(View.GONE);
         }
     }
 
@@ -528,6 +527,9 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
             mListView.smoothScrollToPosition(nextPostion);
 //            mListView.setSelection(nextPostion);
             mLastLoadDataTime = SystemClock.uptimeMillis();
+        } else if (getActivity() != null) {
+            mAdapter = new DiscoveryFragmentAdapter(getActivity(), mData, (View.OnClickListener) getActivity());
+            mListView.setAdapter(mAdapter);
         }
     }
 

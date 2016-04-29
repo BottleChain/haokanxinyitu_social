@@ -170,32 +170,38 @@ public class ChangeDataMainActivity extends BaseActivity implements View.OnClick
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanUploadPh response) {
                         //ToastManager.showShort(Login_Register_Activity.this, "上传成功 = " + response.getErr_msg());
-                        if (response.getErr_code() != 0) {
+                        if (response.getErr_code() == 0) {
+                            Log.d("wangzixu", "ChangePersonData savePersonanData 头像修改成功");
+                            ToastManager.showShort(ChangeDataMainActivity.this, "头像上传成功");
+                            mDefaultSharedPreferences.edit().putString(ConstantValues.KEY_SP_AVATAR_URL
+                                    , ImageDownloader.Scheme.FILE.wrap(mNewAvatarPath))
+                                    .apply(); //保存头像信息
+                        } else {
                             ToastManager.showShort(ChangeDataMainActivity.this, "头像上传失败 = " + response.getErr_msg());
                             if (!TextUtils.isEmpty(mOldAvatarUrl)) {
                                 ImageLoaderManager.getInstance().asyncLoadCircleImage(mIvAvatar, mOldAvatarUrl
                                         , mIvAvatar.getWidth(), mIvAvatar.getHeight());
+                            } else {
+                                mIvAvatar.setImageResource(R.drawable.icon_login_photo);
                             }
-                        } else {
-                            Log.d("wangzixu", "ChangePersonData savePersonanData 头像修改成功");
-                            mDefaultSharedPreferences.edit().putString(ConstantValues.KEY_SP_AVATAR_URL
-                                    , ImageDownloader.Scheme.FILE.wrap(mNewAvatarPath))
-                                    .apply(); //保存头像信息
                         }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanUploadPh errorResponse) {
-                        ToastManager.showShort(ChangeDataMainActivity.this, "失败 ");
-                        Log.d("wangzixu", "ChangePersonData savePersonanData 头像上传失败 = " + rawJsonData);
+                        ToastManager.showShort(ChangeDataMainActivity.this, rawJsonData);
+                        Log.i("wangzixu", "ChangePersonData savePersonanData 头像上传失败 = " + rawJsonData);
                         if (!TextUtils.isEmpty(mOldAvatarUrl)) {
                             ImageLoaderManager.getInstance().asyncLoadCircleImage(mIvAvatar, mOldAvatarUrl
                                     , mIvAvatar.getWidth(), mIvAvatar.getHeight());
+                        } else {
+                            mIvAvatar.setImageResource(R.drawable.icon_login_photo);
                         }
                     }
 
                     @Override
                     protected ResponseBeanUploadPh parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                        Log.d("wangzixu", "ChangePersonData savePersonanData rawJsonData = " + "[]" + rawJsonData);
                         return JsonUtil.fromJson(rawJsonData, ResponseBeanUploadPh.class);
                     }
                 });

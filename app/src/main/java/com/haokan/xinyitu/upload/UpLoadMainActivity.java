@@ -1,7 +1,7 @@
 package com.haokan.xinyitu.upload;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -71,7 +71,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
     private ArrayList<DemoImgBean> mImgData;
     private Handler mHandler = new Handler();
     private int mLastLoadImgCount;
-    private ProgressDialog mProgressDialog;
+    private Dialog mProgressDialog;
 
     private int START_CODE_TAG = 100;
     private int START_CODE_LOCATION = 101;
@@ -205,6 +205,10 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
         }, 800);
 
         mAlbumDes = mEtUploadmainEdit.getText().toString();
+        if (mAlbumDes.contains("@")) {
+            ToastManager.showShort(UpLoadMainActivity.this, "描述内容中不能含有 @ 符号");
+            return;
+        }
 
         //makeLastestReleaseAlbum(); 造假数据展示在首页，去掉
 
@@ -479,7 +483,10 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                     ToastManager.showShort(this, "您还没有选择图片");
                     return;
                 }
-                mProgressDialog = ProgressDialog.show(this, null, "图片载入中...");
+//                mProgressDialog = ProgressDialog.show(this, null, "图片载入中...");
+                mProgressDialog = new Dialog(this, R.style.loading_progress);
+                mProgressDialog.setContentView(R.layout.loading_layout_progressdialog_titleloading);
+                mProgressDialog.show();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mEtUploadmainEdit.getWindowToken(), 0);
                 new Thread(new Runnable() {
@@ -516,9 +523,9 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                 overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
                 break;
             case R.id.rl_uploadmian_location:
-                Intent iLocation = new Intent(UpLoadMainActivity.this, UploadLocationActivity.class);
-                startActivity(iLocation);
-                overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
+//                Intent iLocation = new Intent(UpLoadMainActivity.this, UploadLocationActivity.class);
+//                startActivity(iLocation);
+//                overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
                 break;
             case R.id.tv_uploadmain_goonadd: //继续添加
                 Intent intent = new Intent(UpLoadMainActivity.this, UpLoadGalleryActivity.class);
