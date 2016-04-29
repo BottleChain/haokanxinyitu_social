@@ -126,7 +126,7 @@ public class MainActivity extends BaseMainActivity implements View.OnLongClickLi
             }
         }
         mHandler.removeCallbacks(mPullNoticeRun);
-        mHandler.postDelayed(mPullNoticeRun, 30000);
+        mHandler.postDelayed(mPullNoticeRun, 19000);
     }
 
     /**

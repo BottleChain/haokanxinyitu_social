@@ -139,6 +139,7 @@
                 android:layout_height="6dp"/>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/rl_uploadmian_location"
                 android:layout_below="@id/devider_2"
                 android:layout_width="match_parent"
@@ -165,10 +166,10 @@
                     android:src="@drawable/icon_upload_right_jiantou"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
-
             </RelativeLayout>
 
             <View
+                android:visibility="gone"
                 android:id="@+id/devider_3"
                 android:layout_below="@id/rl_uploadmian_location"
                 android:background="#f4f4f4"

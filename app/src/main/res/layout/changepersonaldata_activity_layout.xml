@@ -283,6 +283,7 @@
                 android:layout_height="6dp"/>
 
             <TextView
+                android:visibility="invisible"
                 android:textColor="@color/bai_30"
                 android:background="@color/main_color_actionbar_item01"
                 android:textSize="12sp"
@@ -297,6 +298,7 @@
 
                 <!--android:background="@drawable/settingitem_bg_selector"-->
             <RelativeLayout
+                android:visibility="invisible"
                 android:id="@+id/rl_bind_phone"
                 android:background="@drawable/settingitem_bg_selector"
                 android:layout_width="match_parent"
@@ -342,6 +344,7 @@
                 <!--android:layout_height="2dp"/>-->
             </RelativeLayout>
             <RelativeLayout
+                android:visibility="invisible"
                 android:id="@+id/rl_bind_weixin"
                 android:background="@drawable/settingitem_bg_selector"
                 android:layout_width="match_parent"
@@ -388,6 +391,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:visibility="invisible"
                 android:id="@+id/rl_bind_weibo"
                 android:background="@drawable/settingitem_bg_selector"
                 android:layout_width="match_parent"
@@ -433,6 +437,7 @@
                 <!--android:layout_height="2dp"/>-->
             </RelativeLayout>
             <RelativeLayout
+                android:visibility="invisible"
                 android:id="@+id/rl_bind_qq"
                 android:background="@drawable/settingitem_bg_selector"
                 android:layout_width="match_parent"

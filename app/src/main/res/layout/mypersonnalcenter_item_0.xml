@@ -67,6 +67,7 @@
         <!--android:layout_height="34dp"/>-->
 
         <ImageButton
+            android:visibility="invisible"
             android:id="@+id/ib_item0_more"
             android:background="@null"
             android:src="@drawable/btn_home_more_selector"

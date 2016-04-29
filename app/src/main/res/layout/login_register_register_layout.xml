@@ -142,7 +142,7 @@
             android:layout_alignBaseline="@id/tv_password"
             android:layout_toRightOf="@id/tv_password"
             android:textColor="@color/edittext"
-            android:inputType="none"
+            android:inputType="textPassword"
             android:singleLine="true"
             android:padding="7dp"
             android:layout_marginRight="30dp"

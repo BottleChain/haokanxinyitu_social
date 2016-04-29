@@ -196,20 +196,25 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
 //            return;
 //        }
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mProgressDialog.dismiss();
-                UpLoadMainActivity.super.onBackPressed();
-            }
-        }, 800);
 
         mAlbumDes = mEtUploadmainEdit.getText().toString();
         if (mAlbumDes.contains("@")) {
             ToastManager.showShort(UpLoadMainActivity.this, "描述内容中不能含有 @ 符号");
             return;
         }
-
+        if (mProgressDialog == null) {
+            mProgressDialog = new Dialog(this, R.style.loading_progress);
+            mProgressDialog.setContentView(R.layout.loading_layout_progressdialog_titleloading);
+            mProgressDialog.setCancelable(false);
+        }
+        mProgressDialog.show();
+//        mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mProgressDialog.dismiss();
+//                UpLoadMainActivity.super.onBackPressed();
+//            }
+//        }, 800);
         //makeLastestReleaseAlbum(); 造假数据展示在首页，去掉
 
         //1,检测图片是否支持秒传
@@ -234,7 +239,9 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, ResponseBeanSecondUploadCheck errorResponse) {
                     //访问服务器失败
+                    imgBean.setId("true");
                     Log.d("wangzixu", "releaseImgs scecondUploadCheck onFailure i");
+                    tryCreateAblum();
                 }
 
                 @Override
@@ -400,9 +407,10 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
             e.printStackTrace();
         }
 
-        ToastManager.showShort(UpLoadMainActivity.this, "您有组图发布失败");
+        ToastManager.showShort(UpLoadMainActivity.this, "组图发布失败");
         Intent intent = new Intent(ACTION_CREATE_ALBUM_FAILED);
         sendBroadcast(intent);
+        mProgressDialog.dismiss();
     }
 
     /**
@@ -435,6 +443,8 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
         app.setLastestUploadAlbum(myCreatedAblumEntity);
         Intent intent = new Intent(ACTION_UPDATA_LAST_ABLUM);
         sendBroadcast(intent);
+        mProgressDialog.dismiss();
+        super.onBackPressed();
     }
 
     private void getImgsMd5() throws IOException {
@@ -484,9 +494,6 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                     return;
                 }
 //                mProgressDialog = ProgressDialog.show(this, null, "图片载入中...");
-                mProgressDialog = new Dialog(this, R.style.loading_progress);
-                mProgressDialog.setContentView(R.layout.loading_layout_progressdialog_titleloading);
-                mProgressDialog.show();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mEtUploadmainEdit.getWindowToken(), 0);
                 new Thread(new Runnable() {
@@ -502,7 +509,9 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
                             });
                         } catch (IOException e) {
                             Log.d("wangzixu", "releaseImgs 传图时报了Io异常");
-                            mProgressDialog.dismiss();
+                            if (mProgressDialog != null) {
+                                mProgressDialog.dismiss();
+                            }
                             //ToastManager.showShort(UpLoadMainActivity.this, "传图时报了Io异常");
                             e.printStackTrace();
                         }

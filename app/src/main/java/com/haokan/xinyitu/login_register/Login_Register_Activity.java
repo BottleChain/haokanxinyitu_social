@@ -403,7 +403,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
         RequestBeanRegister beanRegister = new RequestBeanRegister();
         beanRegister.setMobile(SecurityUtil.haokanEncode(num));
         beanRegister.setSmscode(SecurityUtil.haokanEncode(verfycode));
-        beanRegister.setPasswd(pas);
+        beanRegister.setPasswd(SecurityUtil.haokanEncode(pas));
         beanRegister.setInvite(SecurityUtil.haokanEncode(invitecode));
 
         String url = UrlsUtil.getRegisterUrl(getApplicationContext(), JsonUtil.toJson(beanRegister));
@@ -455,7 +455,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             String url = UrlsUtil.getSendSmsUrl(getApplicationContext()
                     , "{\"mobile\":\"" + SecurityUtil.haokanEncode(s) +"\",\"do\":\"reg\"}");
             Log.d("wangzixu", "getVerfyCodeToRegister url = " + url);
-
+            mEtRegisterVerfyCode.requestFocus();
             startCountDown(mTvRegisterGetVerfyCode);
             HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
                 @Override
@@ -967,7 +967,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
             String url = UrlsUtil.getSendSmsUrl(getApplicationContext()
                     , "{\"mobile\":\"" + SecurityUtil.haokanEncode(s) + "\",\"do\":\"login\"}");
             Log.d("wangzixu", "getVerfyCodeToRegister url = " + url);
-
+            mEtLoginSmsVerfyCode.requestFocus();
             startCountDown(mTvLoginSmsGetVerfyCode);
             HttpClientManager.getInstance(Login_Register_Activity.this).getData(url, new BaseJsonHttpResponseHandler<BaseResponseBean>() {
                 @Override

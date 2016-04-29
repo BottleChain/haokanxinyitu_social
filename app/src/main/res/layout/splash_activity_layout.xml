@@ -2,11 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/hei_50"
+    android:background="@color/hei_60"
     android:id="@+id/rl_content"
     android:orientation="vertical" >
 
     <TextView
+        android:visibility="invisible"
         android:textSize="18sp"
         android:includeFontPadding="false"
         android:typeface="normal"
@@ -20,9 +21,16 @@
     <ImageView
         android:id="@+id/image"
         android:scaleType="fitXY"
-        android:layout_width="match_parent"
         android:background="@color/touming"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <ImageView
+        android:scaleType="fitXY"
+        android:layout_centerInParent="true"
+        android:src="@drawable/icon_launcher"
+        android:layout_width="70dp"
+        android:layout_height="70dp"/>
 
     <Button
         android:id="@+id/bt_more"

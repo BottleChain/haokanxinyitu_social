@@ -294,7 +294,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
             }
 
             String desc = defaultSharedPreferences.getString(ConstantValues.KEY_SP_DESC, mOldDesc);
-            if (!desc.equals(mOldDesc)) {
+            if (desc == null || !desc.equals(mOldDesc)) {
                 if (TextUtils.isEmpty(desc)) {
                     mTvHeaderDesc.setVisibility(View.GONE);
                 } else {
@@ -647,7 +647,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
             mData.add(0, album);
             int firstVisiblePosition = mListView.getFirstVisiblePosition();
             mAdapter.notifyDataSetChanged();
-            mListView.setSelection(firstVisiblePosition + 1);
+            mListView.setSelection(0);
             mLastLoadDataTime = SystemClock.uptimeMillis();
         } else if (getActivity() != null) {
             mData.add(0, album);

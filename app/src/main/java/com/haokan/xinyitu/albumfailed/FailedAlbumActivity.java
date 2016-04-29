@@ -256,6 +256,7 @@ public class FailedAlbumActivity extends BaseActivity implements AdapterView.OnI
                 if (mProgressDialog == null) {
                     mProgressDialog = new Dialog(FailedAlbumActivity.this, R.style.loading_progress);
                     mProgressDialog.setContentView(R.layout.loading_layout_progressdialog_titleloading);
+                    mProgressDialog.setCancelable(false);
                 }
                 mProgressDialog.show();
                 disMissMorePop(new Runnable() {
