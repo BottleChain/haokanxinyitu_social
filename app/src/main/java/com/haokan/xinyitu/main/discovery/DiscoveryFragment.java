@@ -146,6 +146,7 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
         mAlbumIdList = null;
         //mData.clear();
         mCurrentPage = 0;
+        Log.d("wangzixu", "000000000,responseBeanAlbumList,.getData() = " + responseBeanAlbumList + ", " + responseBeanAlbumList.getData());
         mAlbumIdList = responseBeanAlbumList.getData().getAlbumList();
         mHasMoreData = true;
         if (mHasFootView) {
@@ -312,7 +313,7 @@ public class DiscoveryFragment extends Base_PTR_LoadMore_Fragment implements Pul
             requestBean.setSize(App.sPreviewImgSize);
             final String data = JsonUtil.toJson(requestBean);
             String url = UrlsUtil.getAblumInfoUrl(App.sessionId, data);
-            Log.d("DiscoveryFragment", "loadAlbumInfoData url = " + url);
+            Log.d("wangzixu", "loadAlbumInfoData url = " + url);
             HttpClientManager.getInstance(context).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanAlbumInfo>() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanAlbumInfo response) {

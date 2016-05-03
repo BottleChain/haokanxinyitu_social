@@ -78,6 +78,7 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
     private String mOldAvatarUrl;
     private String mOldNickName;
     private String mOldDesc;
+    private ResponseBeanMyUserInfo mUserInfoResponse;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -271,12 +272,58 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         return url;
     }
 
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        if (TextUtils.isEmpty(App.sessionId)) {
+//            return;
+//        }
+//        if (mIsFirstLoad) { //除了第一次进来是通过load加载的头像等，其他再回此界面需要重新加载一下名称和描述头像等，因为有可能改变
+//            mIsFirstLoad = false;
+//        } else {
+//            SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//            String avatarUrl = defaultSharedPreferences.getString(ConstantValues.KEY_SP_AVATAR_URL, mOldAvatarUrl);
+//            if (avatarUrl != null && !avatarUrl.equals(mOldAvatarUrl)) {
+//                ImageLoaderManager.getInstance().asyncLoadCircleImage(mIvAvatar, avatarUrl
+//                        , mIvAvatar.getWidth(), mIvAvatar.getHeight());
+//            }
+//
+//            String nickName = defaultSharedPreferences.getString(ConstantValues.KEY_SP_NICKNAME, mOldNickName);
+//            if (!nickName.equals(mOldNickName)) {
+//                mTvTitle.setText(nickName);
+//                mTvHeaderTitle.setText(nickName);
+//            }
+//
+//            String desc = defaultSharedPreferences.getString(ConstantValues.KEY_SP_DESC, mOldDesc);
+//            if (desc == null || !desc.equals(mOldDesc)) {
+//                if (TextUtils.isEmpty(desc)) {
+//                    mTvHeaderDesc.setVisibility(View.GONE);
+//                } else {
+//                    mTvHeaderDesc.setVisibility(View.VISIBLE);
+//                    mTvHeaderDesc.setText(desc);
+//                }
+//            }
+//        }
+//    }
+
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         if (TextUtils.isEmpty(App.sessionId)) {
             return;
         }
+        try {
+            Dao dao = MyDatabaseHelper.getInstance(getActivity()).getDaoQuickly(FailedAlbumInfoBean.class);
+            List list = dao.queryForAll();
+            if (list != null && list.size() > 0) { //说明至少有一个失败的
+                addAblumFailedHeader();
+            } else {
+                removeAblumFailedHeader();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         if (mIsFirstLoad) { //除了第一次进来是通过load加载的头像等，其他再回此界面需要重新加载一下名称和描述头像等，因为有可能改变
             mIsFirstLoad = false;
         } else {
@@ -305,22 +352,6 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        try {
-            Dao dao = MyDatabaseHelper.getInstance(getActivity()).getDaoQuickly(FailedAlbumInfoBean.class);
-            List list = dao.queryForAll();
-            if (list != null && list.size() > 0) { //说明至少有一个失败的
-                addAblumFailedHeader();
-            } else {
-                removeAblumFailedHeader();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 //    @Override
 //    protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
 //        ResponseBeanAlbumListPersonnal responseBeanAlbumList = (ResponseBeanAlbumListPersonnal) response;
@@ -338,26 +369,26 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
 
     @Override
     protected void loadDataSuccess(Context context, int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean baseResponseBean) {
-        ResponseBeanMyUserInfo response = (ResponseBeanMyUserInfo) baseResponseBean;
+        mUserInfoResponse = (ResponseBeanMyUserInfo) baseResponseBean;
         mPullToRefreshListView.setVisibility(View.VISIBLE);
         //mLoadingLayout.setVisibility(View.GONE);
         String avatarUrl;
         if (App.sDensity >= 3) {
-            avatarUrl = response.getData().getAvatar_url().getS150();
+            avatarUrl = mUserInfoResponse.getData().getAvatar_url().getS150();
         } else {
-            avatarUrl = response.getData().getAvatar_url().getS100();
+            avatarUrl = mUserInfoResponse.getData().getAvatar_url().getS100();
         }
-        String nickname = response.getData().getNickname();
+        String nickname = mUserInfoResponse.getData().getNickname();
         mTvTitle.setText(nickname);
         mTvHeaderTitle.setText(nickname);
-        mTvAblumCount.setText(response.getData().getAlbumnum());
+        mTvAblumCount.setText(mUserInfoResponse.getData().getAlbumnum());
         mTvMyFollowsCount.setText(App.sMyFollowsUser.size() + "");
-        mTvFollowMeCount.setText(response.getData().getLikemenum());
-        if (TextUtils.isEmpty(response.getData().getDescription())) {
+        mTvFollowMeCount.setText(mUserInfoResponse.getData().getLikemenum());
+        if (TextUtils.isEmpty(mUserInfoResponse.getData().getDescription())) {
             mTvHeaderDesc.setVisibility(View.GONE);
         } else {
             mTvHeaderDesc.setVisibility(View.VISIBLE);
-            mTvHeaderDesc.setText(response.getData().getDescription());
+            mTvHeaderDesc.setText(mUserInfoResponse.getData().getDescription());
         }
         //开始加载组图
         loadAblumIdList(context);
@@ -371,11 +402,11 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
         SharedPreferences.Editor edit = defaultSharedPreferences.edit();
         edit.putString(ConstantValues.KEY_SP_AVATAR_URL, avatarUrl);
         edit.putString(ConstantValues.KEY_SP_NICKNAME, nickname);
-        edit.putString(ConstantValues.KEY_SP_DESC, response.getData().getDescription());
-        edit.putString(ConstantValues.KEY_SP_PHONENUM, response.getData().getMobile());
+        edit.putString(ConstantValues.KEY_SP_DESC, mUserInfoResponse.getData().getDescription());
+        edit.putString(ConstantValues.KEY_SP_PHONENUM, mUserInfoResponse.getData().getMobile());
         mOldAvatarUrl = avatarUrl;
         mOldNickName = nickname;
-        mOldDesc = response.getData().getDescription();
+        mOldDesc = mUserInfoResponse.getData().getDescription();
         edit.apply();
     }
 
@@ -648,11 +679,14 @@ public class MyPersonalCenterFragment extends Base_PTR_LoadMore_Fragment impleme
             int firstVisiblePosition = mListView.getFirstVisiblePosition();
             mAdapter.notifyDataSetChanged();
             mListView.setSelection(0);
-            mLastLoadDataTime = SystemClock.uptimeMillis();
         } else if (getActivity() != null) {
             mData.add(0, album);
             mAdapter = new PersonnalcenterFragmentAdapter(getActivity(), mData, (View.OnClickListener)getActivity(), true);
             mListView.setAdapter(mAdapter);
         }
+        mLastLoadDataTime = SystemClock.uptimeMillis();
+        int albumnum = Integer.valueOf(mUserInfoResponse.getData().getAlbumnum()) + 1;
+        mUserInfoResponse.getData().setAlbumnum(albumnum+"");
+        mTvAblumCount.setText(albumnum+"");
     }
 }

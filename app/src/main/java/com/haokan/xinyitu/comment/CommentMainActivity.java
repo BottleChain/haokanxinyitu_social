@@ -85,12 +85,13 @@ public class CommentMainActivity extends BaseActivity implements View.OnClickLis
 //        });
 
         mNetErrorLayout.findViewById(R.id.iv_net_error).setOnClickListener(this);
+
+        mAlbumId = getIntent().getStringExtra(KEY_INITENT_ALBUMID);
     }
 
     private void loadCommitIdData() {
         mNoCommentLayout.setVisibility(View.GONE);
         if (HttpClientManager.checkNetWorkStatus(this)) {
-            mAlbumId = getIntent().getStringExtra(KEY_INITENT_ALBUMID);
             String url = UrlsUtil.getCommentIdListUrl(App.sessionId, mAlbumId);
             Log.d("wangzixu", "getCommentIdListUrl url = " + url);
             HttpClientManager.getInstance(this).getData(url, new BaseJsonHttpResponseHandler<ResponseBeanCommentIdList>() {
@@ -98,12 +99,19 @@ public class CommentMainActivity extends BaseActivity implements View.OnClickLis
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, ResponseBeanCommentIdList response) {
                     if (response.getErr_code() == 0) {
                         mCommitIdBeanList = response.getData();
-                        mHasMoreData = true;
-                        loadCommitInfoData(true);
+                        if (mCommitIdBeanList == null || mCommitIdBeanList.size() == 0) {
+                            mNoCommentLayout.setVisibility(View.VISIBLE);
+                            mLoadingLayout.setVisibility(View.GONE);
+                            mHasMoreData = false;
+                        } else {
+                            mHasMoreData = true;
+                            loadCommitInfoData(true);
+                        }
                     } else {
                         if (mCommitIdBeanList == null || mCommitIdBeanList.size() == 0) {
                             mNoCommentLayout.setVisibility(View.VISIBLE);
                             mLoadingLayout.setVisibility(View.GONE);
+                            mHasMoreData = false;
                         }
                     }
                 }
@@ -288,7 +296,7 @@ public class CommentMainActivity extends BaseActivity implements View.OnClickLis
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, BaseResponseBean response) {
                     if (response.getErr_code() == 0) {
-                        ToastManager.showShort(CommentMainActivity.this, "发布成功");
+                        ToastManager.showShort(CommentMainActivity.this, "评论成功");
                         resetEditText();
                         InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                         inputManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
@@ -316,6 +324,13 @@ public class CommentMainActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onBackPressed() {
         Log.d("wangzixu", "onBackPressed");
+        int count = 0;
+        if (mCommitIdBeanList != null) {
+            count = mCommitIdBeanList.size();
+        }
+        Intent intent = new Intent();
+        intent.putExtra("count", String.valueOf(count));
+        setResult(RESULT_OK, intent);
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_in_left2right, R.anim.activity_out_left2right);
     }

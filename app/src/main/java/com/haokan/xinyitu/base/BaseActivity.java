@@ -3,12 +3,13 @@ package com.haokan.xinyitu.base;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.bugtags.library.Bugtags;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.util.SystemBarTintManager;
-import com.umeng.analytics.MobclickAgent;
 
 /**
  * activity基类，实现了状态栏半透明黑的效果
@@ -47,12 +48,19 @@ public class BaseActivity extends Activity {
 
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this); //友盟统计基础
+        Bugtags.onResume(this);
     }
 
     protected void onPause() {
         super.onPause();
-        MobclickAgent.onPause(this); //友盟统计基础
+        Bugtags.onPause(this);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        //注：回调 3
+        Bugtags.onDispatchTouchEvent(this, event);
+        return super.dispatchTouchEvent(event);
     }
 
     @Override

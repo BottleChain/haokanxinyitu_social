@@ -2,6 +2,8 @@ package com.haokan.xinyitu;
 
 import android.app.Application;
 
+import com.bugtags.library.Bugtags;
+import com.bugtags.library.BugtagsOptions;
 import com.haokan.xinyitu.follow.ResponseBeanFollwsUsers;
 import com.haokan.xinyitu.main.DemoImgBean;
 import com.haokan.xinyitu.main.DemoTagBean;
@@ -33,6 +35,19 @@ public class App extends Application {
         // QQ和Qzone appid appkey
         PlatformConfig.setQQZone("1104684488", "KIlK2enqcjHR2EsU");
         //Log.LOG = false;
+
+        BugtagsOptions options = new BugtagsOptions.Builder().
+                trackingLocation(false).       //是否获取位置
+                trackingCrashLog(true).       //是否收集闪退
+                trackingConsoleLog(true).     //是否收集控制台日志
+                trackingUserSteps(true).      //是否跟踪用户操作步骤
+                crashWithScreenshot(true).    //收集闪退是否附带截图
+                versionName("1.0").         //自定义版本名称
+                versionCode(1).              //自定义版本号
+                trackingNetworkURLFilter("(.*)").//自定义网络请求跟踪的 url 规则
+                build();
+        Bugtags.start("c2afa530841b4fe3a2f8a82f865557ac", this, Bugtags.BTGInvocationEventBubble, options);
+//        Bugtags.start("APP_KEY", this, Bugtags.BTGInvocationEventBubble);
     }
 
     //图库选择图片时，点击大图时预览，预览大图时可以改变选中的状态，

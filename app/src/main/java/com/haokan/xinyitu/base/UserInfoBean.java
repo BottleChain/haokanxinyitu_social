@@ -4,7 +4,7 @@ package com.haokan.xinyitu.base;
  * 作者：wangzixu on 2016/4/7 19:11
  * QQ：378320002
  */
-public class UserInfoBean {
+public class UserInfoBean extends BaseBean {
     /**
      * userid : 1000016
      * nickname : 用户_1457510026808822

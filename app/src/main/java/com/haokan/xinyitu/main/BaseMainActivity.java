@@ -1,13 +1,18 @@
 package com.haokan.xinyitu.main;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -73,6 +78,9 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
     private String mShareUrl;
     public static final int REQUEST_CODE_LOGIN = 100;
     public static final int REQUEST_CODE_SETTING = 101;
+    final public static int REQUEST_CODE_PERMISSION_STORAGE = 102;
+    public static final int REQUEST_CODE_COMMENT = 103;
+    private TextView mTvCommentBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,11 +181,25 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
                 if (CommonUtil.isQuickClick()) {
                     return;
                 }
+
                 if (TextUtils.isEmpty(App.sessionId)) {
                     Log.d("wangzixu", "App.sessionId = " + App.sessionId);
                     Intent i5 = new Intent(BaseMainActivity.this, Login_Register_Activity.class);
                     startActivity(i5);
                     overridePendingTransition(R.anim.activity_in_bottom2top, R.anim.activity_out_boootom2top);
+                    return;
+                }
+
+                if (Build.VERSION.SDK_INT >= 23) {
+                    int checkCallPhonePermission = ContextCompat.checkSelfPermission(BaseMainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED){
+                        ActivityCompat.requestPermissions(BaseMainActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CODE_PERMISSION_STORAGE);
+                        return;
+                    }else{
+                        Intent i3 = new Intent(BaseMainActivity.this, UpLoadGalleryActivity.class);
+                        startActivity(i3);
+                        overridePendingTransition(R.anim.activity_in_bottom2top, R.anim.activity_out_boootom2top);
+                    }
                 } else {
                     Intent i3 = new Intent(BaseMainActivity.this, UpLoadGalleryActivity.class);
                     startActivity(i3);
@@ -240,10 +262,11 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
                 if (CommonUtil.isQuickClick()) {
                     return;
                 }
-                String ablumId = (String) v.getTag();
+                mTvCommentBtn = (TextView) v;
+                AlbumInfoBean beanDiscovery = (AlbumInfoBean) v.getTag();
                 Intent iComment = new Intent(this, CommentMainActivity.class);
-                iComment.putExtra(CommentMainActivity.KEY_INITENT_ALBUMID, ablumId);
-                startActivity(iComment);
+                iComment.putExtra(CommentMainActivity.KEY_INITENT_ALBUMID, beanDiscovery.getAlbum_id());
+                startActivityForResult(iComment, REQUEST_CODE_COMMENT);
                 overridePendingTransition(R.anim.activity_in_right2left, R.anim.activity_out_right2left);
                 break;
             case R.id.ib_1://首页的关注按钮，关注某人，或者不再关注某人
@@ -432,6 +455,24 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
         }
         if  (v instanceof ImageView && !(v instanceof ImageButton)) {
             ImageUtil.changeLight((ImageView) v, true);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION_STORAGE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //用户点击了同意
+                    Intent i3 = new Intent(BaseMainActivity.this, UpLoadGalleryActivity.class);
+                    startActivity(i3);
+                    overridePendingTransition(R.anim.activity_in_bottom2top, R.anim.activity_out_boootom2top);
+                } else {
+                    // 不同意
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -726,6 +767,22 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);//友盟分享需要重写的
+        switch (requestCode) {
+            case REQUEST_CODE_COMMENT:
+                if (resultCode == RESULT_OK) {
+                    if (mTvCommentBtn != null ) {
+                        String commentCount = data.getStringExtra("count");
+                        mTvCommentBtn.setText(commentCount);
+                        Object object = mTvCommentBtn.getTag();
+                        if (object != null) {
+                            AlbumInfoBean beanDiscovery = (AlbumInfoBean)object;
+                            beanDiscovery.setComment_num(Integer.valueOf(commentCount));
+                        }
+                    }
+                }
+                break;
+            default:
+        }
     }
 
     @Override

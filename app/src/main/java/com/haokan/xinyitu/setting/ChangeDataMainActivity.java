@@ -1,9 +1,14 @@
 package com.haokan.xinyitu.setting;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -62,6 +67,8 @@ public class ChangeDataMainActivity extends BaseActivity implements View.OnClick
     private String mOldDesc;
     private SharedPreferences mDefaultSharedPreferences;
     private String mOldAvatarUrl;
+    final public static int REQUEST_CODE_PERMISSION_STORAGE = 102;
+
 
     private void assignViews() {
         mRlHeader = (RelativeLayout) findViewById(R.id.rl_header);
@@ -132,7 +139,18 @@ public class ChangeDataMainActivity extends BaseActivity implements View.OnClick
                 onBackPressed();
                 break;
             case R.id.rl_setting_avatar:
-                ClipPhotoManager.startPickImg(ChangeDataMainActivity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
+                if (Build.VERSION.SDK_INT >= 23) {
+                    int checkCallPhonePermission = ContextCompat.checkSelfPermission(ChangeDataMainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED){
+                        ActivityCompat.requestPermissions(ChangeDataMainActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CODE_PERMISSION_STORAGE);
+                        return;
+                    }else{
+                        ClipPhotoManager.startPickImg(ChangeDataMainActivity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
+                    }
+                } else {
+                    ClipPhotoManager.startPickImg(ChangeDataMainActivity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
+                }
+                //ClipPhotoManager.startPickImg(ChangeDataMainActivity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
                 break;
             case R.id.rl_change_nickname:
                 Intent intent1 = new Intent(ChangeDataMainActivity.this, ChangeNickNameActivity.class);
@@ -151,6 +169,22 @@ public class ChangeDataMainActivity extends BaseActivity implements View.OnClick
                 break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION_STORAGE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //用户点击了同意
+                    ClipPhotoManager.startPickImg(ChangeDataMainActivity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
+                } else {
+                    // 不同意
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

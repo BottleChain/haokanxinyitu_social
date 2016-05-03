@@ -62,8 +62,14 @@
 -keep public class * extends android.app.Fragment
 -keep public class * extends android.support.v4.**
 -dontwarn android.support.v4.**
-#-keep class com.haokan.yitu.bean.** { *; }        # 所有的javaBean不混淆com.haokan.xinyitu.base.BaseRequestBean
+
+##----------javaBean 不混淆
 -keep class * extends com.haokan.xinyitu.base.BaseRequestBean
+-keep class * extends com.haokan.xinyitu.base.BaseResponseBean
+-keep class * extends com.haokan.xinyitu.base.BaseBean
+#                     com.haokan.xinyitu.base.BaseBean
+-keep class com.haokan.xinyitu.base.** { *; }
+           #com.haokan.xinyitu.base # 所有的javaBean不混淆com.haokan.xinyitu.base.BaseResponseBean
 
 ##---------------Begin: Ormlite  ----------
 -keep class com.j256.**
@@ -76,73 +82,74 @@
     @com.j256.ormlite.field.DatabaseField *;
 }
 
+##---------------Begin: BUgTags ----------
+-keepattributes LineNumberTable,SourceFile
+-keep class com.bugtags.library.** {*;}
+-dontwarn org.apache.http.**
+-dontwarn android.net.http.AndroidHttpClient
+-dontwarn com.bugtags.library.**
+
 ##---------------Begin: Umeng ----------
--dontshrink
--dontoptimize
--dontwarn com.google.android.maps.**
--dontwarn android.webkit.WebView
--dontwarn com.umeng.**
--dontwarn com.tencent.weibo.sdk.**
--dontwarn com.facebook.**
-
--keep enum com.facebook.**
--keepattributes Exceptions,InnerClasses,Signature
--keepattributes *Annotation*
--keepattributes SourceFile,LineNumberTable
-
--keep public interface com.facebook.**
--keep public interface com.tencent.**
--keep public interface com.umeng.socialize.**
--keep public interface com.umeng.socialize.sensor.**
--keep public interface com.umeng.scrshot.**
-
--keep public class com.umeng.socialize.* {*;}
--keep public class javax.**
--keep public class android.webkit.**
-
--keep class com.facebook.**
--keep class com.facebook.** { *; }
--keep class com.umeng.scrshot.**
--keep public class com.tencent.** {*;}
--keep class com.umeng.socialize.sensor.**
--keep class com.umeng.socialize.handler.**
--keep class com.rockerhieu.** {*;}
--keep class com.umeng.socialize.handler.*
--keep class com.tencent.mm.sdk.modelmsg.WXMediaMessage {*;}
--keep class com.tencent.mm.sdk.modelmsg.** implements com.tencent.mm.sdk.modelmsg.WXMediaMessage$IMediaObject {*;}
-
--keep class im.yixin.sdk.api.YXMessage {*;}
--keep class im.yixin.sdk.api.** implements im.yixin.sdk.api.YXMessage$YXMessageData{*;}
-
--dontwarn twitter4j.**
--keep class twitter4j.** { *; }
-
--keep class com.tencent.** {*;}
--dontwarn com.tencent.**
--keep public class com.umeng.soexample.R$*{
-    public static final int *;
-}
--keep public class com.umeng.soexample.R$*{
-    public static final int *;
-}
--keep class com.tencent.open.TDialog$*
--keep class com.tencent.open.TDialog$* {*;}
--keep class com.tencent.open.PKDialog
--keep class com.tencent.open.PKDialog {*;}
--keep class com.tencent.open.PKDialog$*
--keep class com.tencent.open.PKDialog$* {*;}
-
--keep class com.sina.** {*;}
--dontwarn com.sina.**
--keep class  com.alipay.share.sdk.** {
-   *;
-}
--keepnames class * implements android.os.Parcelable {
-    public static final ** CREATOR;
-}
--keep class com.linkedin.** { *; }
--keepattributes Signature
-##---------------end: Umeng ----------
+#-dontshrink
+#-dontoptimize
+#-dontwarn com.google.android.maps.**
+#-dontwarn android.webkit.WebView
+#-dontwarn com.umeng.**
+#-dontwarn com.tencent.weibo.sdk.**
+#-dontwarn com.facebook.**
+#
+#-keep enum com.facebook.**
+#-keepattributes Exceptions,InnerClasses,Signature
+#-keepattributes *Annotation*
+#-keepattributes SourceFile,LineNumberTable
+#
+#-keep public interface com.facebook.**
+#-keep public interface com.tencent.**
+#-keep public interface com.umeng.socialize.**
+#-keep public interface com.umeng.socialize.sensor.**
+#-keep public interface com.umeng.scrshot.**
+#
+#-keep public class com.umeng.socialize.* {*;}
+##-keep public class javax.**
+##-keep public class android.webkit.**
+#
+#-keep class com.facebook.**
+#-keep class com.facebook.** { *; }
+#-keep class com.umeng.scrshot.**
+#-keep public class com.tencent.** {*;}
+#-keep class com.umeng.socialize.sensor.**
+#-keep class com.umeng.socialize.handler.**
+#-keep class com.rockerhieu.** {*;}
+#-keep class com.umeng.socialize.handler.*
+#-keep class com.tencent.mm.sdk.modelmsg.WXMediaMessage {*;}
+#-keep class com.tencent.mm.sdk.modelmsg.** implements com.tencent.mm.sdk.modelmsg.WXMediaMessage$IMediaObject {*;}
+#
+#-keep class com.tencent.** {*;}
+#-dontwarn com.tencent.**
+#-keep public class com.umeng.soexample.R$*{
+#    public static final int *;
+#}
+#-keep public class com.umeng.soexample.R$*{
+#    public static final int *;
+#}
+#-keep class com.tencent.open.TDialog$*
+#-keep class com.tencent.open.TDialog$* {*;}
+#-keep class com.tencent.open.PKDialog
+#-keep class com.tencent.open.PKDialog {*;}
+#-keep class com.tencent.open.PKDialog$*
+#-keep class com.tencent.open.PKDialog$* {*;}
+#
+#-keep class com.sina.** {*;}
+#-dontwarn com.sina.**
+#-keep class  com.alipay.share.sdk.** {
+#   *;
+#}
+#-keepnames class * implements android.os.Parcelable {
+#    public static final ** CREATOR;
+#}
+#-keep class com.linkedin.** { *; }
+#-keepattributes Signature
+###---------------end: Umeng ----------
 
 
 -keep public class com.haokan.xinyitu.R$*{

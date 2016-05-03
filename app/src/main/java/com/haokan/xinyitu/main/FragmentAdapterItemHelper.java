@@ -147,7 +147,7 @@ public class FragmentAdapterItemHelper {
         }
         holder.pos = position;
 
-        holder.tvcomment1.setTag(beanDiscovery.getAlbum_id());
+        holder.tvcomment1.setTag(beanDiscovery);
         holder.tvcomment1.setText(String.valueOf(beanDiscovery.getComment_num()));
         holder.tvlike1.setText(String.valueOf(beanDiscovery.getLike_num()));
         holder.tvlike1.setTag(beanDiscovery);
@@ -257,7 +257,7 @@ public class FragmentAdapterItemHelper {
         }
         holder.pos = position;
 
-        holder.tvcomment1.setTag(beanDiscovery.getAlbum_id());
+        holder.tvcomment1.setTag(beanDiscovery);
         holder.tvcomment1.setText(String.valueOf(beanDiscovery.getComment_num()));
         holder.tvlike1.setText(String.valueOf(beanDiscovery.getLike_num()));
         holder.tvlike1.setTag(beanDiscovery);

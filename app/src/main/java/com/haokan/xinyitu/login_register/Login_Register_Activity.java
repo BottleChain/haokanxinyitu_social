@@ -1,14 +1,19 @@
 package com.haokan.xinyitu.login_register;
 
+import android.Manifest;
 import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -73,8 +78,7 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
     private String mClipedHpPath;
     private SharedPreferences mDefaultSharedPreferences;
     private int[] mBgIds = {R.drawable.bg_login_1, R.drawable.bg_login_2, R.drawable.bg_login_3};
-    public static final int RESULT_CODE_LOGIN_SUCCESS = 1;
-    public static final int RESULT_CODE_LOGIN_FAILED = 2;
+    final public static int REQUEST_CODE_PERMISSION_STORAGE = 102;
     /**
      * 服务条款
      */
@@ -636,7 +640,17 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                 case R.id.civ_1: //头像选取
                     //ToastManager.showShort(Login_Register_Activity.this, "头像选取");
                     ImageUtil.changeLight(mIvPersonDataPhoto, true);
-                    ClipPhotoManager.startPickImg(Login_Register_Activity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        int checkCallPhonePermission = ContextCompat.checkSelfPermission(Login_Register_Activity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED){
+                            ActivityCompat.requestPermissions(Login_Register_Activity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CODE_PERMISSION_STORAGE);
+                            return;
+                        }else{
+                            ClipPhotoManager.startPickImg(Login_Register_Activity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
+                        }
+                    } else {
+                        ClipPhotoManager.startPickImg(Login_Register_Activity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
+                    }
                     break;
                 case R.id.tv_4: //确认
                     //上传头像
@@ -648,15 +662,9 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                         Log.d("wangzixu", "PersonDataClickListener sessionId = " + sessionId);
                     }
 
-                    if (TextUtils.isEmpty(mClipedHpPath)) {
-                        ToastManager.showShort(Login_Register_Activity.this, "您还没有设置头像");
-                        return;
-                    }
-
-                    //上传昵称
                     final String nickName = mEtPersonDataNickName.getText().toString().trim();
-                    if (TextUtils.isEmpty(nickName)) {
-                        ToastManager.showShort(Login_Register_Activity.this, "请输入正确的昵称");
+                    if (TextUtils.isEmpty(mClipedHpPath) || TextUtils.isEmpty(nickName)) {
+                        ToastManager.showShort(Login_Register_Activity.this, "请设置正确的头像和昵称");
                         return;
                     }
 
@@ -696,6 +704,22 @@ public class Login_Register_Activity extends BaseActivity implements View.OnClic
                 default:
                     break;
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION_STORAGE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //用户点击了同意
+                    ClipPhotoManager.startPickImg(Login_Register_Activity.this, ClipPhotoManager.REQUEST_SELECT_PICK);
+                } else {
+                    // 不同意
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

@@ -1,13 +1,14 @@
 package com.haokan.xinyitu.albumfailed;
 
+import com.haokan.xinyitu.base.BaseBean;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * 我的收藏用的实体类
+ * 发布失败的组图
  */
 @DatabaseTable(tableName = "table_failedalbuminfo")
-public class FailedAlbumInfoBean {
+public class FailedAlbumInfoBean extends BaseBean {
 
     @DatabaseField(generatedId = true)
     private int _id;
