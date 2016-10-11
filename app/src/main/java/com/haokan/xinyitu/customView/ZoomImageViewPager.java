@@ -112,7 +112,7 @@ public class ZoomImageViewPager extends ViewPager {
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    if (mPerformClik && mOnCustomClikListener != null && (SystemClock.uptimeMillis() - mPerformDownTime) < 150) { //
+                    if (mPerformClik && mOnCustomClikListener != null && (SystemClock.uptimeMillis() - mPerformDownTime) < 300) { //
                         float xup = event.getX();
                         if (xup - mPerformDownX < mTouchSlop) {
                             mOnCustomClikListener.onCustomClick(mImgView);

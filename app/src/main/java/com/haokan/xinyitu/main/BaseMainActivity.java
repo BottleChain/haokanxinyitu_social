@@ -657,7 +657,6 @@ public abstract class BaseMainActivity extends BaseActivity implements View.OnCl
             final ScaleAnimation animation = new ScaleAnimation(1.0f, 1.2f, 1.0f, 1.2f
                     , Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             animation.setDuration(duration);
-            //animation.setInterpolator(new AnticipateInterpolator());
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {

@@ -392,7 +392,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
         bean.setDesc(mAlbumDes);
         bean.setUserId(App.user_Id);
         String tags="";
-        if (mTags.size() > 0) {
+        if (mTags != null && mTags.size() > 0) {
             tags = JsonUtil.toJson(mTags);
         }
         bean.setTags(tags);
@@ -454,6 +454,7 @@ public class UpLoadMainActivity extends BaseActivity implements View.OnClickList
             File file = new File(filePath);
             String md5 = SecurityUtil.md5File(file);
             imgBean.setMd5(md5);
+            imgBean.setId("");
         }
     }
 

@@ -7,11 +7,11 @@ public class DemoImgBean implements Parcelable {
     private String id;
     private String name;
     private String url;
-    private String width;
-    private String height;
 
     private String md5; //图片对应的MD5唯一码
 
+    private String width;
+    private String height;
     //这四个属性都是用来确定图片位置的，不是服务器给的，需要自己算出
     private int marginLeft;
     private int marginTop;

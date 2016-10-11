@@ -1,5 +1,6 @@
 package com.haokan.xinyitu.clipphoto;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -39,6 +40,7 @@ public class ClipPhotoManager {
         return path;
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private static String getPath(final Context context, final Uri uri) {
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
         // DocumentProvider

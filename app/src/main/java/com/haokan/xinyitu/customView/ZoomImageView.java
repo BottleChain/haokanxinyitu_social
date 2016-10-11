@@ -136,7 +136,7 @@ public class ZoomImageView extends ImageView {
     //如果有剪裁框，那么需要使用者主动去指定边缘框，如果还没指定，则返回
     //因为有剪裁框时，有时候需要依据剪裁框填充图片，例如截图用来锁屏，
     //有时候需要依据屏幕边缘剪裁图片，例如用来截取头像
-    //如果设置为null，则自动去屏幕边缘
+    //如果设置为null，则自动取屏幕边缘
     public boolean mHasSetEdgeRect = false;
     public void setEdgeRect(RectF edgeRect) {
         mHasSetEdgeRect = true;
@@ -213,6 +213,11 @@ public class ZoomImageView extends ImageView {
 
 	public void setScaleMode(int mode) {
 		mScaleType = mode;
+	}
+
+	@Override
+	protected boolean setFrame(int l, int t, int r, int b) {
+		return super.setFrame(l, t, r, b);
 	}
 
 	@Override

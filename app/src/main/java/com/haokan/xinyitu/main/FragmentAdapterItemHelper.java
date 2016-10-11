@@ -359,7 +359,7 @@ public class FragmentAdapterItemHelper {
                 tv.setTag(bean);
                 if (App.sTagString.contains(tag)) {
                     tv.setTextColor(0x4cF8E076);
-                    tv.setOnLongClickListener(null);
+                    tv.setOnClickListener(null);
                 } else {
                     tv.setTextColor(mTagTextColor);
                     tv.setOnClickListener(mOnClickListener);

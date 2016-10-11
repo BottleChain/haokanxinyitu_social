@@ -32,7 +32,6 @@ public class CircleDisplayer implements BitmapDisplayer {
         if (!(imageAware instanceof ImageViewAware)) {
             throw new IllegalArgumentException("ImageAware should wrap ImageView. ImageViewAware is expected.");
         }
-
         imageAware.setImageDrawable(new CircleDrawable(bitmap, margin));
     }
 
@@ -61,7 +60,6 @@ public class CircleDisplayer implements BitmapDisplayer {
             super.onBoundsChange(bounds);
             computeBitmapShaderSize();
             computeRadius();
-
         }
 
         @Override
