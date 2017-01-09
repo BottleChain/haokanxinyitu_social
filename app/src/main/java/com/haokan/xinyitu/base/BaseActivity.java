@@ -3,11 +3,9 @@ package com.haokan.xinyitu.base;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.bugtags.library.Bugtags;
 import com.haokan.xinyitu.R;
 import com.haokan.xinyitu.util.SystemBarTintManager;
 
@@ -48,19 +46,10 @@ public class BaseActivity extends Activity {
 
     protected void onResume() {
         super.onResume();
-        Bugtags.onResume(this);
     }
 
     protected void onPause() {
         super.onPause();
-        Bugtags.onPause(this);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        //注：回调 3
-        Bugtags.onDispatchTouchEvent(this, event);
-        return super.dispatchTouchEvent(event);
     }
 
     @Override
